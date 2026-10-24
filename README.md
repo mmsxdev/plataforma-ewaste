@@ -33,6 +33,8 @@ Abra http://localhost:8080. A verificação de saúde fica em http://localhost:8
 
 **DBeaver:** nova conexão PostgreSQL em `localhost:5432`, banco `ewaste`, usuário `ewaste`, senha `ewaste`.
 
+**Usuários de exemplo** (perfil dev, senha `senha123`): `admin@teste.com`, `geradora@teste.com`, `coletora@teste.com` e `coletora2@teste.com`. Detalhes em [docs/contratos.md](docs/contratos.md).
+
 ## Comandos do dia a dia
 
 | Objetivo | Linux/Mac | Windows |
