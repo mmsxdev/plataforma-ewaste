@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Conferir formatação
+        run: ./mvnw -B spotless:check
+
+      - name: Build, testes unitários e de integração
+        # Testcontainers usa o Docker que já existe no runner do GitHub
+        run: ./mvnw -B verify
+
+      - name: Publicar relatórios
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios
+          path: |
+            target/surefire-reports
+            target/failsafe-reports
+            target/site/jacoco

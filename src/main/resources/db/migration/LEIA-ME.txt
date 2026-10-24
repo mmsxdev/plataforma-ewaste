@@ -1,0 +1,1 @@
+-- Migrações versionadas. Faixas por dono: base V1 | Dev 1 V100-199 | Dev 2 V200-299 | Dev 3 V300-399 | Dev 4 V400-499 | Dev 5 V500-599

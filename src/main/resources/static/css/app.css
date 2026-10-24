@@ -1,0 +1,13 @@
+/* Estilos globais. Dono: Dev 1 (Miguel). Estilos de um módulo ficam em static/css/<modulo>.css */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  color: #1f2933;
+  background: #ffffff;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}

@@ -1,0 +1,1 @@
+-- Dados de exemplo (perfil dev). Use migrações repetíveis idempotentes: R__<nn>_seed_<modulo>.sql com ON CONFLICT DO NOTHING

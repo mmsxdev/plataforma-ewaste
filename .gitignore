@@ -1,0 +1,19 @@
+# Build
+target/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Ambiente local
+.env
+uploads/
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db

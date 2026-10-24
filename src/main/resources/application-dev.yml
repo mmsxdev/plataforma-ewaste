@@ -1,0 +1,9 @@
+# Perfil de desenvolvimento: ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+spring:
+  flyway:
+    # db/seed tem dados de exemplo (só no perfil dev)
+    locations: classpath:db/migration,classpath:db/seed
+    # cada dev tem uma faixa de versões; permite aplicar uma versão menor que chegou depois
+    out-of-order: true
+  thymeleaf:
+    cache: false
