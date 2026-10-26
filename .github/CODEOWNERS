@@ -1,14 +1,13 @@
 # Dono de cada pasta: o GitHub pede a revisão dele automaticamente.
-# TODO: substituir @usuario-miguel, @usuario-guilherme e @usuario-rafael pelos usuários reais.
 
-*                                                   @usuario-miguel
+*                                                   @mmsxdev
 
-/pom.xml                                            @usuario-miguel
-/.github/                                           @usuario-miguel
-/src/main/resources/application*.yml                @usuario-miguel
-/src/main/java/br/com/ewaste/shared/                @usuario-miguel
-/src/main/java/br/com/ewaste/usuario/               @usuario-miguel
-/src/main/resources/templates/fragments/            @usuario-miguel
+/pom.xml                                            @mmsxdev
+/.github/                                           @mmsxdev
+/src/main/resources/application*.yml                @mmsxdev
+/src/main/java/br/com/ewaste/shared/                @mmsxdev
+/src/main/java/br/com/ewaste/usuario/               @mmsxdev
+/src/main/resources/templates/fragments/            @mmsxdev
 
 /src/main/java/br/com/ewaste/homologacao/           @phillypmack
 /src/main/java/br/com/ewaste/armazenamento/         @phillypmack
@@ -20,17 +19,17 @@
 /src/main/resources/templates/solicitacao/          @Davi-Fraga
 /src/main/resources/templates/roteamento/           @Davi-Fraga
 
-/src/main/java/br/com/ewaste/rastreio/              @usuario-guilherme
-/src/main/java/br/com/ewaste/documento/             @usuario-guilherme
-/src/main/resources/templates/rastreio/             @usuario-guilherme
-/src/main/resources/templates/documento/            @usuario-guilherme
+/src/main/java/br/com/ewaste/rastreio/              @maelzn
+/src/main/java/br/com/ewaste/documento/             @maelzn
+/src/main/resources/templates/rastreio/             @maelzn
+/src/main/resources/templates/documento/            @maelzn
 
-/src/main/java/br/com/ewaste/notificacao/           @usuario-rafael
-/src/main/java/br/com/ewaste/mapa/                  @usuario-rafael
-/src/main/java/br/com/ewaste/monetizacao/           @usuario-rafael
-/src/main/resources/templates/notificacao/          @usuario-rafael
-/src/main/resources/templates/mapa/                 @usuario-rafael
-/src/main/resources/templates/monetizacao/          @usuario-rafael
+/src/main/java/br/com/ewaste/notificacao/           @camargorf-dev
+/src/main/java/br/com/ewaste/mapa/                  @camargorf-dev
+/src/main/java/br/com/ewaste/monetizacao/           @camargorf-dev
+/src/main/resources/templates/notificacao/          @camargorf-dev
+/src/main/resources/templates/mapa/                 @camargorf-dev
+/src/main/resources/templates/monetizacao/          @camargorf-dev
 
 # Contratos: qualquer mudança precisa de 2 aprovações (combinado da equipe)
-/src/main/java/br/com/ewaste/shared/events/         @usuario-miguel @Davi-Fraga
+/src/main/java/br/com/ewaste/shared/events/         @mmsxdev @Davi-Fraga
