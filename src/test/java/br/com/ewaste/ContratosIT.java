@@ -58,13 +58,14 @@ class ContratosIT {
   }
 
   @Test
-  void consultaDeEmpresasEColetorasAptasProvisorias() {
+  void consultaDeEmpresasEColetorasAptas() {
     inserirEmpresa("GERADORA", "11222333000181");
     long coletora = inserirEmpresa("COLETORA", "22333444000181");
 
     assertThat(empresas.buscar(coletora)).get().extracting("tipo").isEqualTo(TipoEmpresa.COLETORA);
     assertThat(empresas.listarColetoras()).hasSize(1);
-    assertThat(aptas.listarAptas()).containsExactly(coletora);
+    // ColetorasAptas real (Dev 2): coletora sem homologação aprovada não é apta
+    assertThat(aptas.listarAptas()).isEmpty();
   }
 
   @Test
