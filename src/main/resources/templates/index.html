@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plataforma E-Waste</title>
-  <link rel="stylesheet" th:href="@{/css/app.css}">
-</head>
+<head th:replace="~{fragments/layout :: head('Início')}"></head>
 <body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
   <main class="container">
-    <h1>Plataforma E-Waste</h1>
-    <p>Gestão B2B de resíduos eletrônicos. Projeto em construção.</p>
+    <section class="hero"><p class="eyebrow">Conectando empresas. Transformando destinos.</p>
+    <h1>O próximo ciclo dos seus eletrônicos começa aqui.</h1>
+    <p>Conecte sua empresa a coletoras da região e acompanhe a coleta e a destinação dos resíduos em um só lugar.</p>
+    <div class="nav-links"><a class="button" th:href="@{/cadastro/geradora}">Quero destinar resíduos</a><a class="button secondary" th:href="@{/cadastro/coletora}">Sou uma coletora</a></div></section>
+    <div class="cards"><section class="card"><p class="eyebrow">01 / Conexão</p><h2>Cadastre sua empresa</h2><p>Geradoras e coletoras com acessos próprios para cada etapa.</p></section><section class="card"><p class="eyebrow">02 / Operação</p><h2>Acompanhe a coleta</h2><p>Da solicitação ao registro da execução, tudo no painel.</p></section><section class="card"><p class="eyebrow">03 / Destino</p><h2>Consulte os documentos</h2><p>Documentos simulados para demonstrar o fluxo acadêmico.</p></section></div>
   </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
 </body>
 </html>
