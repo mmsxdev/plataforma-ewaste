@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(titulo)">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${titulo} + ' | E-Waste'">E-Waste</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:fragment="navbar">
+  <nav class="container navbar" aria-label="Navegação principal">
+    <a class="brand" th:href="@{/}">E-Waste<span> / resíduos com destino</span></a>
+    <div class="nav-links">
+      <a th:href="@{/mapa}">Mapa de descarte</a>
+      <a sec:authorize="isAnonymous()" th:href="@{/login}">Entrar</a>
+      <a sec:authorize="isAuthenticated()" th:href="@{/painel}">Meu painel</a>
+      <a sec:authorize="hasRole('GERADORA')" th:href="@{/geradora/solicitacoes}">Solicitações</a>
+      <a sec:authorize="hasRole('COLETORA')" th:href="@{/coletora/oportunidades}">Oportunidades</a>
+      <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/homologacoes}">Homologações</a>
+      <a sec:authorize="isAuthenticated()" th:href="@{/notificacoes}">Notificações <span id="aviso-notificacoes" aria-live="polite"></span></a>
+      <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post"><button class="link-button" type="submit">Sair</button></form>
+    </div>
+  </nav>
+</header>
+<footer th:fragment="rodape"><div class="container">E-Waste · Plataforma de resíduos eletrônicos<br><small>Projeto acadêmico. Integrações e documentos simulados.</small></div></footer>
+</body></html>
