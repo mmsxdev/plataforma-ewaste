@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Meu painel')}"></head>
+<body><header th:replace="~{fragments/layout :: navbar}"></header><main class="container">
+  <p class="eyebrow" th:text="${usuario.perfil}"></p><h1>Olá, <span th:text="${usuario.nome}"></span>.</h1><p>Acompanhe sua operação e escolha o próximo passo.</p>
+  <div class="cards" sec:authorize="hasRole('GERADORA')">
+    <a class="card action" th:href="@{/geradora/solicitacoes}"><h2>Solicitações de coleta</h2><p>Solicite e acompanhe a retirada dos seus resíduos.</p></a>
+    <a class="card action" th:href="@{/geradora/documentos}"><h2>Meus documentos</h2><p>Consulte os documentos liberados após a coleta.</p></a>
+  </div>
+  <div class="cards" sec:authorize="hasRole('COLETORA')">
+    <a class="card action" th:href="@{/coletora/homologacao}"><h2>Homologação</h2><p>Envie os documentos e acompanhe a análise.</p></a>
+    <a class="card action" th:href="@{/coletora/oportunidades}"><h2>Oportunidades</h2><p>Encontre solicitações na sua região de atendimento.</p></a>
+    <a class="card action" th:href="@{/coletora/coletas}"><h2>Minhas coletas</h2><p>Registre a execução e o destino dos resíduos.</p></a>
+  </div>
+  <div class="cards" sec:authorize="hasRole('ADMIN')">
+    <a class="card action" th:href="@{/admin/homologacoes}"><h2>Homologações</h2><p>Analise a documentação das coletoras.</p></a>
+    <a class="card action" th:href="@{/admin/financeiro}"><h2>Financeiro</h2><p>Consulte os lançamentos da plataforma.</p></a>
+  </div>
+  <p>Os atalhos dependem da entrega dos respectivos módulos pelo time.</p>
+</main><footer th:replace="~{fragments/layout :: rodape}"></footer></body></html>

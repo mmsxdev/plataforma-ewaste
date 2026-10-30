@@ -31,6 +31,25 @@ docker compose up -d            # sobe o PostgreSQL
 
 Abra http://localhost:8080. A verificação de saúde fica em http://localhost:8080/actuator/health e deve responder `{"status":"UP"}`.
 
+## Entrega Dev 1 (P1)
+
+Cadastro em `/cadastro/geradora` e `/cadastro/coletora`, login em `/login` e painel por perfil em `/painel`. O cadastro valida CNPJ, e-mail, senha, coordenadas e raio da coletora; grava empresa e usuário na mesma transação, protege a senha com BCrypt e publica `EmpresaCadastradaEvent` para o módulo de homologação. CNPJ e e-mail duplicados são recusados, inclusive com restrição de unicidade no banco. E-mails são comparados sem distinção de maiúsculas.
+
+`UsuarioAtual` e `EmpresaConsulta` já usam implementações reais. A navbar e os painéis exibem os atalhos do perfil. Os destinos desses atalhos são implementados pelos demais desenvolvedores; nesta base ainda podem retornar 404. O cadastro de coletora não substitui sua homologação (Dev 2).
+
+O layout reutilizável está em `templates/fragments/layout.html`, com os fragmentos `head(titulo)`, `navbar` e `rodape`. A navbar reserva `#aviso-notificacoes` para o Dev 5. O seletor compartilhado `static/js/shared/seletor-localizacao.js` usa `#mapa-localizacao`, `#latitude` e `#longitude`; o mapa requer internet para Leaflet/OpenStreetMap e oferece preenchimento manual das coordenadas.
+
+Roteiro completo de revisão e apresentação: [docs/entrega-dev1.md](docs/entrega-dev1.md). A tela “Minha empresa”, acabamento extra das páginas de erro e E2E automatizado são P2 no plano.
+
+No PowerShell, se o `java` padrão apontar para uma versão antiga, configure o JDK 21 antes do Maven:
+
+```powershell
+$env:JAVA_HOME = 'C:\Program Files\Java\jdk-21' # ajuste para sua instalação
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+.\mvnw.cmd verify
+.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=dev'
+```
+
 **DBeaver:** nova conexão PostgreSQL em `localhost:5432`, banco `ewaste`, usuário `ewaste`, senha `ewaste`.
 
 **Usuários de exemplo** (perfil dev, senha `senha123`): `admin@teste.com`, `geradora@teste.com`, `coletora@teste.com` e `coletora2@teste.com`. Detalhes em [docs/contratos.md](docs/contratos.md).
