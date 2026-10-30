@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Entrar')}"></head>
+<body><header th:replace="~{fragments/layout :: navbar}"></header>
+<main class="container narrow">
+  <p class="eyebrow">Sua operação em um só lugar</p><h1>Bem-vindo de volta</h1>
+  <p>Acesse o painel da sua empresa para acompanhar o destino dos resíduos.</p>
+  <p class="notice" role="status" th:if="${param.cadastro}">Cadastro concluído! Entre com seu e-mail e senha.</p>
+  <p class="error-box" role="alert" th:if="${param.error}">E-mail ou senha inválidos, ou conta desativada.</p>
+  <form class="card" th:action="@{/login}" method="post">
+    <label for="username">E-mail</label><input id="username" name="username" type="email" required autocomplete="username" maxlength="150">
+    <label for="password">Senha</label><input id="password" name="password" type="password" required autocomplete="current-password">
+    <button type="submit">Entrar no painel</button>
+  </form>
+  <p>Ainda não tem conta? <a th:href="@{/cadastro/geradora}">Sou geradora</a> · <a th:href="@{/cadastro/coletora}">Sou coletora</a></p>
+</main><footer th:replace="~{fragments/layout :: rodape}"></footer></body></html>
