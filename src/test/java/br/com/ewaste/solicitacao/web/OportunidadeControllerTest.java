@@ -145,6 +145,24 @@ class OportunidadeControllerTest {
   }
 
   @Test
+  void coletaCanceladaOuExpiradaAvisaQueNaoEstaMaisDisponivel() throws Exception {
+    when(aceite.aceitar(7L, COLETORA)).thenReturn(ResultadoAceite.INDISPONIVEL);
+
+    mvc.perform(post("/coletora/oportunidades/7/aceitar").with(coletora()).with(csrf()))
+        .andExpect(redirectedUrl("/coletora/oportunidades"))
+        .andExpect(flash().attribute("erro", "Esta coleta não está mais disponível."));
+  }
+
+  @Test
+  void cliqueDuploDaVencedoraNaoDizQueOutraAceitou() throws Exception {
+    when(aceite.aceitar(7L, COLETORA)).thenReturn(ResultadoAceite.JA_ERA_SUA);
+
+    mvc.perform(post("/coletora/oportunidades/7/aceitar").with(coletora()).with(csrf()))
+        .andExpect(redirectedUrl("/coletora/oportunidades/7"))
+        .andExpect(flash().attribute("mensagem", "Você já aceitou esta coleta."));
+  }
+
+  @Test
   void homologacaoInativaRecebeAviso() throws Exception {
     when(aceite.aceitar(7L, COLETORA)).thenReturn(ResultadoAceite.HOMOLOGACAO_INATIVA);
 
