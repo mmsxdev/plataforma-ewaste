@@ -30,6 +30,12 @@ public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long> 
 
   List<Solicitacao> findByIdInAndStatus(Collection<Long> ids, StatusSolicitacao status);
 
+  /** Solicitação só se esta coletora venceu o aceite. */
+  Optional<Solicitacao> findByIdAndColetoraId(Long id, Long coletoraId);
+
+  List<Solicitacao> findByColetoraIdAndStatusInOrderByAceitaEmDesc(
+      Long coletoraId, Collection<StatusSolicitacao> status);
+
   /**
    * Aceite atômico (RF04 / RN04). Só altera a linha se ela ainda estiver ABERTA, numa única
    * instrução: o PostgreSQL trava a linha, e quem chegar depois reavalia o WHERE e altera 0 linhas.

@@ -147,6 +147,20 @@ public class Solicitacao {
   // Transições de status
   // ---------------------------------------------------------------------------------------------
 
+  /**
+   * ACEITA -> AGENDADA, definindo a data da retirada. Já AGENDADA: só troca a data (reagendamento),
+   * sem mudar o status. Qualquer outro status lança {@link TransicaoInvalidaException}.
+   */
+  public void agendar(Instant data) {
+    if (data == null) {
+      throw new IllegalArgumentException("Informe a data da retirada.");
+    }
+    if (status != StatusSolicitacao.AGENDADA) {
+      mudarPara(StatusSolicitacao.AGENDADA);
+    }
+    agendadaPara = data;
+  }
+
   /** AGENDADA -> COLETADA. Pedido pelo rastreio (Dev 4). */
   public void marcarColetada() {
     mudarPara(StatusSolicitacao.COLETADA);
