@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cadastrar empresa')}"></head>
+<body><header th:replace="~{fragments/layout :: navbar}"></header>
+<main class="container form-page">
+  <p class="eyebrow" th:text="${tipo == 'coletora' ? 'Parceiros de coleta' : 'Empresas geradoras'}"></p>
+  <h1 th:text="${tipo == 'coletora' ? 'Cadastre sua coletora' : 'Dê um destino aos seus resíduos'}"></h1>
+  <p th:if="${tipo == 'coletora'}">Após o cadastro, envie sua documentação para homologação. O cadastro não habilita o recebimento de oportunidades automaticamente.</p>
+  <p>Preencha todos os campos. A localização pode ser indicada no mapa ou pelas coordenadas.</p>
+  <form class="card" th:action="@{/cadastro/{tipo}(tipo=${tipo})}" th:object="${cadastro}" method="post">
+    <div class="error-box" role="alert" th:if="${#fields.hasAnyErrors()}">
+      <strong>Revise os dados antes de continuar.</strong><ul><li th:each="erro : ${#fields.allErrors()}" th:text="${erro}"></li></ul>
+    </div>
+    <h2>Dados da empresa</h2>
+    <div class="form-grid">
+      <div><label for="razaoSocial">Razão social</label><input th:field="*{razaoSocial}" required maxlength="150" autocomplete="organization"></div>
+      <div><label for="cnpj">CNPJ</label><input th:field="*{cnpj}" required maxlength="30" placeholder="00.000.000/0001-00"></div>
+      <div><label for="telefone">Telefone</label><input th:field="*{telefone}" required maxlength="20" autocomplete="tel" type="tel"></div>
+      <div><label for="endereco">Endereço</label><input th:field="*{endereco}" required maxlength="200" autocomplete="street-address"></div>
+      <div><label for="cidade">Cidade</label><input th:field="*{cidade}" required maxlength="100" autocomplete="address-level2"></div>
+      <div><label for="uf">UF</label><select th:field="*{uf}" required autocomplete="address-level1"><option value="">Selecione</option><option th:each="estado : ${#strings.arraySplit('AC,AL,AP,AM,BA,CE,DF,ES,GO,MA,MT,MS,MG,PA,PB,PR,PE,PI,RJ,RN,RS,RO,RR,SC,SP,SE,TO', ',')}" th:value="${estado}" th:text="${estado}"></option></select></div>
+    </div>
+    <h2>Localização <span th:if="${tipo == 'coletora'}">da base</span></h2>
+    <p id="localizacao-ajuda">Clique no mapa para marcar o endereço. Se o mapa não carregar, preencha latitude e longitude manualmente.</p>
+    <div id="mapa-localizacao" class="map" aria-label="Mapa para selecionar localização" aria-describedby="localizacao-ajuda"></div>
+    <p id="localizacao-status" role="status"></p>
+    <div class="form-grid">
+      <div><label for="latitude">Latitude</label><input th:field="*{latitude}" required type="number" min="-90" max="90" step="any" placeholder="-23.5505"></div>
+      <div><label for="longitude">Longitude</label><input th:field="*{longitude}" required type="number" min="-180" max="180" step="any" placeholder="-46.6333"></div>
+      <div th:if="${tipo == 'coletora'}"><label for="raioAtendimentoKm">Raio de atendimento (km)</label><input th:field="*{raioAtendimentoKm}" required type="number" min="1" step="1"></div>
+    </div>
+    <h2>Seu acesso</h2><div class="form-grid">
+      <div><label for="nome">Nome do responsável</label><input th:field="*{nome}" required maxlength="120" autocomplete="name"></div>
+      <div><label for="email">E-mail</label><input th:field="*{email}" type="email" required maxlength="150" autocomplete="username"></div>
+      <div><label for="senha">Senha</label><input id="senha" name="senha" type="password" required minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="senha-ajuda"><small id="senha-ajuda">De 8 a 72 caracteres (até 72 bytes em UTF-8).</small></div>
+    </div><button type="submit">Concluir cadastro</button>
+    <p>Já possui uma conta? <a th:href="@{/login}">Entrar</a></p>
+  </form>
+</main>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+<script th:src="@{/js/shared/seletor-localizacao.js}" defer></script>
+</body></html>
