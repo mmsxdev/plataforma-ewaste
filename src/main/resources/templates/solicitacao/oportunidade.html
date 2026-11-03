@@ -47,7 +47,10 @@
         <button type="submit">Aceitar esta coleta</button>
       </form>
     </section>
-    <p class="notice secao" th:unless="${s.status.name() == 'ABERTA'}">
+    <p class="notice secao" th:if="${s.status.name() != 'ABERTA' and s.coletoraId == coletoraLogada}">
+      Você aceitou esta coleta em <span th:text="${@datasSolicitacao.dataHora(s.aceitaEm)}">—</span>.
+    </p>
+    <p class="notice secao" th:if="${s.status.name() != 'ABERTA' and s.coletoraId != coletoraLogada}">
       Esta coleta não está mais disponível para aceite.
     </p>
   </main>

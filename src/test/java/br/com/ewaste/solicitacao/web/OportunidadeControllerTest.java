@@ -2,12 +2,17 @@ package br.com.ewaste.solicitacao.web;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -16,8 +21,10 @@ import br.com.ewaste.solicitacao.api.StatusSolicitacao;
 import br.com.ewaste.solicitacao.dominio.Solicitacao;
 import br.com.ewaste.solicitacao.dominio.SolicitacaoNaoEncontradaException;
 import br.com.ewaste.solicitacao.dominio.TipoResiduo;
+import br.com.ewaste.solicitacao.servico.AceiteService;
 import br.com.ewaste.solicitacao.servico.Oportunidade;
 import br.com.ewaste.solicitacao.servico.OportunidadeService;
+import br.com.ewaste.solicitacao.servico.ResultadoAceite;
 import br.com.ewaste.usuario.api.PerfilUsuario;
 import br.com.ewaste.usuario.api.UsuarioAtual;
 import br.com.ewaste.usuario.api.UsuarioLogado;
@@ -42,6 +49,7 @@ class OportunidadeControllerTest {
 
   @Autowired MockMvc mvc;
   @MockitoBean OportunidadeService oportunidades;
+  @MockitoBean AceiteService aceite;
   @MockitoBean UsuarioAtual usuarioAtual;
 
   @BeforeEach
@@ -99,6 +107,61 @@ class OportunidadeControllerTest {
     mvc.perform(get("/coletora/oportunidades/7").with(user("g").roles("GERADORA")))
         .andExpect(status().isForbidden());
     verify(oportunidades, never()).listarAbertas(COLETORA);
+  }
+
+  // ---- Aceite ----
+
+  @Test
+  void aceiteVencedorVaiParaODetalheComMensagem() throws Exception {
+    when(aceite.aceitar(7L, COLETORA)).thenReturn(ResultadoAceite.ACEITO);
+
+    mvc.perform(post("/coletora/oportunidades/7/aceitar").with(coletora()).with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/coletora/oportunidades/7"))
+        .andExpect(flash().attribute("mensagem", "Coleta aceita! Agora agende a retirada."));
+  }
+
+  @Test
+  void quemPerdeVoltaParaAListaComAvisoDeJaAceita() throws Exception {
+    when(aceite.aceitar(7L, COLETORA)).thenReturn(ResultadoAceite.JA_ACEITA);
+
+    mvc.perform(post("/coletora/oportunidades/7/aceitar").with(coletora()).with(csrf()))
+        .andExpect(redirectedUrl("/coletora/oportunidades"))
+        .andExpect(flash().attribute("erro", "Esta coleta já foi aceita por outra coletora."));
+  }
+
+  @Test
+  void homologacaoInativaRecebeAviso() throws Exception {
+    when(aceite.aceitar(7L, COLETORA)).thenReturn(ResultadoAceite.HOMOLOGACAO_INATIVA);
+
+    mvc.perform(post("/coletora/oportunidades/7/aceitar").with(coletora()).with(csrf()))
+        .andExpect(redirectedUrl("/coletora/oportunidades/7"))
+        .andExpect(flash().attribute("erro", "Sua homologação não está ativa."));
+  }
+
+  @Test
+  void aceiteDeOportunidadeNaoAlertadaResponde404() throws Exception {
+    when(aceite.aceitar(8L, COLETORA)).thenThrow(new SolicitacaoNaoEncontradaException(8L));
+
+    mvc.perform(post("/coletora/oportunidades/8/aceitar").with(coletora()).with(csrf()))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void geradoraNaoAceita() throws Exception {
+    mvc.perform(
+            post("/coletora/oportunidades/7/aceitar")
+                .with(user("g").roles("GERADORA"))
+                .with(csrf()))
+        .andExpect(status().isForbidden());
+    verify(aceite, never()).aceitar(anyLong(), anyLong());
+  }
+
+  @Test
+  void aceiteSemTokenCsrfEhRecusado() throws Exception {
+    mvc.perform(post("/coletora/oportunidades/7/aceitar").with(coletora()))
+        .andExpect(status().isForbidden());
+    verify(aceite, never()).aceitar(anyLong(), anyLong());
   }
 
   private static RequestPostProcessor coletora() {
