@@ -1,0 +1,20 @@
+/* Estilos das telas de solicitação e oportunidades. Dono: Dev 3 (Davi). */
+.tabela { width: 100%; border-collapse: collapse; background: white; border: 1px solid #d8e3da; border-radius: 14px; overflow: hidden; }
+.tabela th, .tabela td { text-align: left; padding: 12px 16px; border-bottom: 1px solid #e8efe9; }
+.tabela th { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: #426852; background: #f0f5f1; }
+.tabela tr:last-child td { border-bottom: 0; }
+.tabela-rolagem { overflow-x: auto; }
+.status { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; background: #e4eee5; color: #17634c; }
+.status-ABERTA { background: #fff4d6; color: #7a5300; }
+.status-CANCELADA, .status-EXPIRADA { background: #eceeed; color: #526c5b; }
+.dados { display: grid; grid-template-columns: max-content 1fr; gap: 6px 24px; margin: 0; }
+.dados dt { font-weight: 600; }
+.dados dd { margin: 0; }
+.itens-form { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px 16px; align-items: end; }
+.erro { color: #872b17; font-size: .85rem; margin-top: 4px; display: block; }
+.dica { color: #526c5b; font-size: .85rem; }
+.linha-check { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+.linha-check input { width: auto; }
+.cabecalho-pagina { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.secao { margin-top: 24px; }
+@media (max-width: 620px) { .itens-form { grid-template-columns: 1fr; } .dados { grid-template-columns: 1fr; } }
