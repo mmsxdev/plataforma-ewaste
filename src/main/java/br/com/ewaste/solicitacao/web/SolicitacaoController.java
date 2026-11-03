@@ -1,5 +1,6 @@
 package br.com.ewaste.solicitacao.web;
 
+import br.com.ewaste.roteamento.api.AlertaConsulta;
 import br.com.ewaste.solicitacao.dominio.Solicitacao;
 import br.com.ewaste.solicitacao.dominio.TipoResiduo;
 import br.com.ewaste.solicitacao.servico.SolicitacaoService;
@@ -28,12 +29,17 @@ class SolicitacaoController {
   private final SolicitacaoService servico;
   private final UsuarioAtual usuarioAtual;
   private final EmpresaConsulta empresas;
+  private final AlertaConsulta alertas;
 
   SolicitacaoController(
-      SolicitacaoService servico, UsuarioAtual usuarioAtual, EmpresaConsulta empresas) {
+      SolicitacaoService servico,
+      UsuarioAtual usuarioAtual,
+      EmpresaConsulta empresas,
+      AlertaConsulta alertas) {
     this.servico = servico;
     this.usuarioAtual = usuarioAtual;
     this.empresas = empresas;
+    this.alertas = alertas;
   }
 
   @ModelAttribute("tiposResiduo")
@@ -71,6 +77,8 @@ class SolicitacaoController {
   String detalhe(@PathVariable Long id, Model model) {
     Solicitacao s = servico.buscarDaGeradora(id, geradoraLogada());
     model.addAttribute("s", s);
+    // O roteamento roda logo após o commit da criação, na mesma thread: aqui os alertas já existem
+    model.addAttribute("alertas", alertas.contarAlertas(id));
     if (s.getColetoraId() != null) {
       model.addAttribute(
           "coletoraNome",

@@ -2,6 +2,7 @@ package br.com.ewaste.solicitacao.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import br.com.ewaste.roteamento.api.AlertaConsulta;
 import br.com.ewaste.shared.security.SecurityConfig;
 import br.com.ewaste.solicitacao.dominio.Solicitacao;
 import br.com.ewaste.solicitacao.dominio.SolicitacaoNaoEncontradaException;
@@ -53,6 +55,9 @@ class SolicitacaoControllerTest {
   @MockitoBean SolicitacaoService servico;
   @MockitoBean UsuarioAtual usuarioAtual;
   @MockitoBean EmpresaConsulta empresas;
+  @MockitoBean AlertaConsulta alertas;
+
+  static final String SEM_COLETORA = "Nenhuma coletora apta na sua região no momento.";
 
   @BeforeEach
   void geradoraLogada() {
@@ -172,12 +177,24 @@ class SolicitacaoControllerTest {
   @Test
   void detalheMostraOsDadosDaPropriaSolicitacao() throws Exception {
     when(servico.buscarDaGeradora(7L, GERADORA)).thenReturn(solicitacao());
+    when(alertas.contarAlertas(7L)).thenReturn(2L);
 
     mvc.perform(get("/geradora/solicitacoes/7").with(geradora()))
         .andExpect(status().isOk())
         .andExpect(content().string(containsString("250,00 kg")))
         .andExpect(content().string(containsString("Aguardando o aceite de uma coletora")))
+        .andExpect(content().string(not(containsString(SEM_COLETORA))))
         .andExpect(content().string(containsString("id=\"linha-do-tempo\"")));
+  }
+
+  @Test
+  void detalheAvisaQuandoNenhumaColetoraFoiAlertada() throws Exception {
+    when(servico.buscarDaGeradora(7L, GERADORA)).thenReturn(solicitacao());
+    when(alertas.contarAlertas(7L)).thenReturn(0L);
+
+    mvc.perform(get("/geradora/solicitacoes/7").with(geradora()))
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString(SEM_COLETORA)));
   }
 
   @Test
