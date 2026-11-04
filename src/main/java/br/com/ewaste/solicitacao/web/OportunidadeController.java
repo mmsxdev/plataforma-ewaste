@@ -74,6 +74,14 @@ class OportunidadeController {
         redirect.addFlashAttribute("erro", "Esta coleta já foi aceita por outra coletora.");
         yield "redirect:/coletora/oportunidades";
       }
+      case INDISPONIVEL -> {
+        redirect.addFlashAttribute("erro", "Esta coleta não está mais disponível.");
+        yield "redirect:/coletora/oportunidades";
+      }
+      case JA_ERA_SUA -> {
+        redirect.addFlashAttribute("mensagem", "Você já aceitou esta coleta.");
+        yield "redirect:/coletora/oportunidades/" + id;
+      }
       case HOMOLOGACAO_INATIVA -> {
         redirect.addFlashAttribute("erro", "Sua homologação não está ativa.");
         yield "redirect:/coletora/oportunidades/" + id;

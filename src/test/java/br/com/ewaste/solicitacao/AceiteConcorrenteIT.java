@@ -11,6 +11,7 @@ import br.com.ewaste.shared.events.SolicitacaoAceitaEvent;
 import br.com.ewaste.solicitacao.dominio.SolicitacaoNaoEncontradaException;
 import br.com.ewaste.solicitacao.servico.AceiteService;
 import br.com.ewaste.solicitacao.servico.ResultadoAceite;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -106,6 +107,16 @@ class AceiteConcorrenteIT {
   }
 
   @Test
+  void vencedoraQueClicaDeNovoNaoVeQueOutraAceitouNemDuplicaEvento() {
+    assertThat(aceite.aceitar(solicitacao, coletoraA)).isEqualTo(ResultadoAceite.ACEITO);
+
+    assertThat(aceite.aceitar(solicitacao, coletoraA)).isEqualTo(ResultadoAceite.JA_ERA_SUA);
+
+    assertThat(coletoraNoBanco()).isEqualTo(coletoraA);
+    assertThat(eventos.doTipo(SolicitacaoAceitaEvent.class)).hasSize(1);
+  }
+
+  @Test
   void coletoraNaoAlertadaNaoAceita() {
     Long semAlerta = inserirEmpresa("COLETORA", "44555666000181");
 
@@ -125,11 +136,37 @@ class AceiteConcorrenteIT {
   }
 
   @Test
-  void solicitacaoCanceladaNaoPodeSerAceita() {
+  void solicitacaoCanceladaNaoPodeSerAceitaENaoDizQueOutraAceitou() {
     jdbc.update("update solicitacao set status = 'CANCELADA' where id = ?", solicitacao);
 
-    assertThat(aceite.aceitar(solicitacao, coletoraA)).isEqualTo(ResultadoAceite.JA_ACEITA);
+    // Ninguém aceitou: não é "já aceita por outra coletora"
+    assertThat(aceite.aceitar(solicitacao, coletoraA)).isEqualTo(ResultadoAceite.INDISPONIVEL);
     assertThat(statusNoBanco()).isEqualTo("CANCELADA");
+    assertThat(eventos.doTipo(SolicitacaoAceitaEvent.class)).isEmpty();
+  }
+
+  @Test
+  void vencedoraComHomologacaoSuspensaDepoisContinuaVendoQueAColetaEhDela() {
+    assertThat(aceite.aceitar(solicitacao, coletoraA)).isEqualTo(ResultadoAceite.ACEITO);
+    when(aptas.isApta(coletoraA)).thenReturn(false); // documento venceu depois do aceite
+
+    assertThat(aceite.aceitar(solicitacao, coletoraA)).isEqualTo(ResultadoAceite.JA_ERA_SUA);
+    assertThat(eventos.doTipo(SolicitacaoAceitaEvent.class)).hasSize(1);
+  }
+
+  @RepeatedTest(5)
+  void cliqueDuploSimultaneoDaVencedoraNaoViraDerrotaNemDuplicaEvento() throws Exception {
+    var largada = new CountDownLatch(1);
+    try (var pool = Executors.newFixedThreadPool(2)) {
+      Future<ResultadoAceite> primeiro = pool.submit(() -> aceitarNaLargada(largada, coletoraA));
+      Future<ResultadoAceite> segundo = pool.submit(() -> aceitarNaLargada(largada, coletoraA));
+      largada.countDown();
+
+      assertThat(List.of(primeiro.get(), segundo.get()))
+          .containsExactlyInAnyOrder(ResultadoAceite.ACEITO, ResultadoAceite.JA_ERA_SUA);
+    }
+    assertThat(coletoraNoBanco()).isEqualTo(coletoraA);
+    assertThat(eventos.doTipo(SolicitacaoAceitaEvent.class)).hasSize(1);
   }
 
   // ---- Auxiliares ----
