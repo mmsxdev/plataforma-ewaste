@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Coletas aceitas')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container">
+    <p><a th:href="@{/coletora/oportunidades}">Voltar para as oportunidades</a></p>
+    <h1>Coletas aceitas</h1>
+    <p>Coletas que você aceitou e ainda vai retirar. Agende a data em cada uma.</p>
+
+    <p th:if="${#lists.isEmpty(aceitas)}" class="card">Você ainda não aceitou nenhuma coleta.</p>
+
+    <div class="tabela-rolagem" th:unless="${#lists.isEmpty(aceitas)}">
+      <table class="tabela">
+        <thead>
+          <tr><th>Nº</th><th>Aceita em</th><th>Peso estimado</th><th>Local</th><th>Retirada</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="s : ${aceitas}">
+            <td th:text="${s.id}">1</td>
+            <td th:text="${@datasSolicitacao.dataHora(s.aceitaEm)}">—</td>
+            <td th:text="|${#numbers.formatDecimal(s.pesoEstimadoKg, 1, 'POINT', 2, 'COMMA')} kg|">250,00 kg</td>
+            <td th:text="|${s.cidade}/${s.uf}|">São Paulo/SP</td>
+            <td th:text="${s.agendadaPara} ? ${@datasSolicitacao.dataHora(s.agendadaPara)} : 'A agendar'">A agendar</td>
+            <td><span th:class="|status status-${s.status}|" th:text="${s.status}">ACEITA</span></td>
+            <td><a th:href="@{/coletora/oportunidades/{id}(id=${s.id})}" th:text="${s.agendadaPara} ? 'Reagendar' : 'Agendar'">Agendar</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

@@ -1,11 +1,18 @@
 package br.com.ewaste.solicitacao.web;
 
+import br.com.ewaste.solicitacao.dominio.TransicaoInvalidaException;
 import br.com.ewaste.solicitacao.servico.AceiteService;
+import br.com.ewaste.solicitacao.servico.AgendamentoService;
+import br.com.ewaste.solicitacao.servico.Oportunidade;
 import br.com.ewaste.solicitacao.servico.OportunidadeService;
 import br.com.ewaste.usuario.api.UsuarioAtual;
+import jakarta.validation.Valid;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +28,17 @@ class OportunidadeController {
 
   private final OportunidadeService oportunidades;
   private final AceiteService aceite;
+  private final AgendamentoService agendamento;
   private final UsuarioAtual usuarioAtual;
 
   OportunidadeController(
-      OportunidadeService oportunidades, AceiteService aceite, UsuarioAtual usuarioAtual) {
+      OportunidadeService oportunidades,
+      AceiteService aceite,
+      AgendamentoService agendamento,
+      UsuarioAtual usuarioAtual) {
     this.oportunidades = oportunidades;
     this.aceite = aceite;
+    this.agendamento = agendamento;
     this.usuarioAtual = usuarioAtual;
   }
 
@@ -36,12 +48,18 @@ class OportunidadeController {
     return "solicitacao/oportunidades";
   }
 
+  /** Coletas que esta coletora venceu (ACEITAS ou AGENDADAS). */
+  @GetMapping("/aceitas")
+  String aceitas(Model model) {
+    model.addAttribute("aceitas", agendamento.listarAceitas(coletoraLogada()));
+    return "solicitacao/aceitas";
+  }
+
   @GetMapping("/{id}")
   String detalhe(@PathVariable Long id, Model model) {
-    Long coletora = coletoraLogada();
-    model.addAttribute("o", oportunidades.buscar(id, coletora));
-    model.addAttribute("coletoraLogada", coletora);
-    return "solicitacao/oportunidade";
+    Oportunidade o = oportunidades.buscar(id, coletoraLogada());
+    model.addAttribute("agendamento", new AgendamentoForm(o.solicitacao().getAgendadaPara()));
+    return mostrarDetalhe(o, model);
   }
 
   /** Aceite atômico: o desfecho vira mensagem (flash) e redirect (PRG). */
@@ -61,6 +79,39 @@ class OportunidadeController {
         yield "redirect:/coletora/oportunidades/" + id;
       }
     };
+  }
+
+  /** ACEITA -> AGENDADA (ou reagendamento). Data inválida: volta ao detalhe com o erro no campo. */
+  @PostMapping("/{id}/agendar")
+  String agendar(
+      @PathVariable Long id,
+      @Valid @ModelAttribute("agendamento") AgendamentoForm form,
+      BindingResult erros,
+      Model model,
+      RedirectAttributes redirect) {
+    if (erros.hasErrors()) {
+      return mostrarDetalhe(oportunidades.buscar(id, coletoraLogada()), model);
+    }
+    try {
+      agendamento.agendar(id, coletoraLogada(), form.paraInstant());
+    } catch (TransicaoInvalidaException
+        | IllegalArgumentException
+        | OptimisticLockingFailureException e) {
+      // A coleta mudou enquanto a tela estava aberta (ex.: já foi coletada) ou outro envio
+      // simultâneo gravou antes (@Version). Sem @ControllerAdvice no projeto, isso viraria um 500.
+      redirect.addFlashAttribute(
+          "erro",
+          "Não foi possível agendar: esta coleta mudou de situação. Confira e tente de novo.");
+      return "redirect:/coletora/oportunidades/" + id;
+    }
+    redirect.addFlashAttribute("mensagem", "Retirada agendada.");
+    return "redirect:/coletora/oportunidades/" + id;
+  }
+
+  private String mostrarDetalhe(Oportunidade o, Model model) {
+    model.addAttribute("o", o);
+    model.addAttribute("coletoraLogada", coletoraLogada());
+    return "solicitacao/oportunidade";
   }
 
   private Long coletoraLogada() {

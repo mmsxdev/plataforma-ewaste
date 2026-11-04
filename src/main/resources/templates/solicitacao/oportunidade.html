@@ -53,6 +53,21 @@
     <p class="notice secao" th:if="${s.status.name() != 'ABERTA' and s.coletoraId != coletoraLogada}">
       Esta coleta não está mais disponível para aceite.
     </p>
+
+    <section class="card secao narrow"
+             th:if="${s.coletoraId == coletoraLogada and (s.status.name() == 'ACEITA' or s.status.name() == 'AGENDADA')}">
+      <h2 th:text="${s.status.name() == 'AGENDADA'} ? 'Reagendar a retirada' : 'Agendar a retirada'">Agendar a retirada</h2>
+      <p th:if="${s.agendadaPara}">
+        Retirada agendada para <strong th:text="${@datasSolicitacao.dataHora(s.agendadaPara)}">—</strong>.
+      </p>
+      <form th:action="@{/coletora/oportunidades/{id}/agendar(id=${s.id})}" th:object="${agendamento}" method="post">
+        <label for="agendadaPara">Data e hora (horário de Brasília)</label>
+        <input type="datetime-local" th:field="*{agendadaPara}" required>
+        <span class="erro" th:if="${#fields.hasErrors('agendadaPara')}" th:errors="*{agendadaPara}"></span>
+        <span class="erro" th:if="${#fields.hasErrors('noFuturo')}" th:errors="*{noFuturo}"></span>
+        <button type="submit">Salvar agendamento</button>
+      </form>
+    </section>
   </main>
   <footer th:replace="~{fragments/layout :: rodape}"></footer>
 </body>
