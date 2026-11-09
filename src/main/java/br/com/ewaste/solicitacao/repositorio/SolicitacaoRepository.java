@@ -1,6 +1,8 @@
 package br.com.ewaste.solicitacao.repositorio;
 
+import br.com.ewaste.solicitacao.api.StatusSolicitacao;
 import br.com.ewaste.solicitacao.dominio.Solicitacao;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +22,9 @@ public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long> 
       "select s from Solicitacao s left join fetch s.itens"
           + " where s.id = :id and s.geradoraId = :geradoraId")
   Optional<Solicitacao> findDaGeradoraComItens(Long id, Long geradoraId);
+
+  @Query("select s from Solicitacao s left join fetch s.itens where s.id = :id")
+  Optional<Solicitacao> findComItens(Long id);
+
+  List<Solicitacao> findByIdInAndStatus(Collection<Long> ids, StatusSolicitacao status);
 }
