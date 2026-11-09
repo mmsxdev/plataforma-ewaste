@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nova solicitação')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container form-page">
+    <h1>Nova solicitação de coleta</h1>
+
+    <form th:action="@{/geradora/solicitacoes}" th:object="${form}" method="post" novalidate>
+      <p class="error-box" th:if="${#fields.hasErrors('*')}">Revise os campos destacados abaixo.</p>
+
+      <h2>Resíduos</h2>
+      <label for="descricao">Descrição (opcional)</label>
+      <input type="text" th:field="*{descricao}" placeholder="Ex.: computadores e HDs do antigo datacenter">
+      <span class="erro" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></span>
+
+      <div class="form-grid">
+        <div>
+          <label for="pesoEstimadoKg">Peso total estimado (kg)</label>
+          <input type="number" step="0.01" min="0.01" th:field="*{pesoEstimadoKg}" required>
+          <span class="erro" th:if="${#fields.hasErrors('pesoEstimadoKg')}" th:errors="*{pesoEstimadoKg}"></span>
+        </div>
+        <div>
+          <div class="linha-check">
+            <input type="checkbox" th:field="*{contemMidias}">
+            <label th:for="${#ids.prev('contemMidias')}">Contém mídias com dados (HD, SSD, fita)</label>
+          </div>
+          <label for="qtdMidias">Quantidade de mídias</label>
+          <input type="number" min="1" th:field="*{qtdMidias}">
+          <span class="erro" th:if="${#fields.hasErrors('qtdMidiasValida')}" th:errors="*{qtdMidiasValida}"></span>
+        </div>
+      </div>
+
+      <h2 class="secao">Itens</h2>
+      <p class="dica">Preencha pelo menos um item. Linhas em branco são ignoradas.</p>
+      <div class="itens-form" th:each="item, st : *{itens}">
+        <div>
+          <label th:for="|itens${st.index}.tipoResiduo|">Tipo de resíduo</label>
+          <select th:field="*{itens[__${st.index}__].tipoResiduo}">
+            <option value="">Selecione</option>
+            <option th:each="t : ${tiposResiduo}" th:value="${t}" th:text="${t.descricao}">Informática</option>
+          </select>
+        </div>
+        <div>
+          <label th:for="|itens${st.index}.quantidade|">Quantidade</label>
+          <input type="number" min="1" th:field="*{itens[__${st.index}__].quantidade}">
+          <span class="erro" th:if="${#fields.hasErrors('itens[__${st.index}__].quantidade')}" th:errors="*{itens[__${st.index}__].quantidade}"></span>
+        </div>
+        <div>
+          <label th:for="|itens${st.index}.pesoKg|">Peso (kg)</label>
+          <input type="number" step="0.01" min="0.01" th:field="*{itens[__${st.index}__].pesoKg}">
+          <span class="erro" th:if="${#fields.hasErrors('itens[__${st.index}__].pesoKg')}" th:errors="*{itens[__${st.index}__].pesoKg}"></span>
+        </div>
+        <span class="erro" th:if="${#fields.hasErrors('itens[__${st.index}__].completo')}" th:errors="*{itens[__${st.index}__].completo}"></span>
+      </div>
+      <span class="erro" th:if="${#fields.hasErrors('itensPreenchidos')}" th:errors="*{itensPreenchidos}"></span>
+
+      <h2 class="secao">Local da coleta</h2>
+      <label for="endereco">Endereço</label>
+      <input type="text" th:field="*{endereco}" placeholder="Rua, número, complemento">
+      <span class="erro" th:if="${#fields.hasErrors('endereco')}" th:errors="*{endereco}"></span>
+      <div class="form-grid">
+        <div>
+          <label for="cidade">Cidade</label>
+          <input type="text" th:field="*{cidade}" required>
+          <span class="erro" th:if="${#fields.hasErrors('cidade')}" th:errors="*{cidade}"></span>
+        </div>
+        <div>
+          <label for="uf">UF</label>
+          <input type="text" maxlength="2" th:field="*{uf}" required>
+          <span class="erro" th:if="${#fields.hasErrors('uf')}" th:errors="*{uf}"></span>
+        </div>
+        <div>
+          <label for="latitude">Latitude</label>
+          <input type="number" step="any" th:field="*{latitude}" placeholder="-23.5614" required>
+          <span class="erro" th:if="${#fields.hasErrors('latitude')}" th:errors="*{latitude}"></span>
+        </div>
+        <div>
+          <label for="longitude">Longitude</label>
+          <input type="number" step="any" th:field="*{longitude}" placeholder="-46.6559" required>
+          <span class="erro" th:if="${#fields.hasErrors('longitude')}" th:errors="*{longitude}"></span>
+        </div>
+      </div>
+      <p class="dica">As coordenadas definem quais coletoras da região recebem o alerta.</p>
+
+      <button type="submit">Criar solicitação</button>
+    </form>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

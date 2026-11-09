@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Solicitação')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container">
+    <p><a th:href="@{/geradora/solicitacoes}">Voltar para minhas solicitações</a></p>
+    <div class="cabecalho-pagina">
+      <h1 th:text="|Solicitação nº ${s.id}|">Solicitação nº 1</h1>
+      <span th:class="|status status-${s.status}|" th:text="${s.status}">ABERTA</span>
+    </div>
+
+    <p class="notice" th:if="${mensagem}" th:text="${mensagem}">Mensagem</p>
+
+    <section class="card">
+      <h2>Dados</h2>
+      <dl class="dados">
+        <dt>Descrição</dt><dd th:text="${s.descricao ?: '—'}">—</dd>
+        <dt>Peso estimado</dt><dd th:text="|${#numbers.formatDecimal(s.pesoEstimadoKg, 1, 'POINT', 2, 'COMMA')} kg|">250,00 kg</dd>
+        <dt>Mídias com dados</dt><dd th:text="${s.contemMidias} ? |Sim, ${s.qtdMidias}| : 'Não'">Não</dd>
+        <dt>Local</dt><dd th:text="|${s.endereco != null ? s.endereco + ', ' : ''}${s.cidade}/${s.uf}|">São Paulo/SP</dd>
+        <dt>Criada em</dt><dd th:text="${@datasSolicitacao.dataHora(s.criadaEm)}">—</dd>
+        <dt>Aceita em</dt><dd th:text="${@datasSolicitacao.dataHora(s.aceitaEm)}">—</dd>
+        <dt>Coletora</dt><dd th:text="${coletoraNome ?: 'Aguardando o aceite de uma coletora'}">—</dd>
+        <dt>Coleta agendada para</dt><dd th:text="${@datasSolicitacao.dataHora(s.agendadaPara)}">—</dd>
+      </dl>
+    </section>
+
+    <section class="card secao">
+      <h2>Itens</h2>
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead><tr><th>Tipo</th><th>Quantidade</th><th>Peso</th></tr></thead>
+          <tbody>
+            <tr th:each="i : ${s.itens}">
+              <td th:text="${i.tipoResiduo.descricao}">Informática</td>
+              <td th:text="${i.quantidade}">1</td>
+              <td th:text="${i.pesoKg} ? |${#numbers.formatDecimal(i.pesoKg, 1, 'POINT', 2, 'COMMA')} kg| : '—'">10,00 kg</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Linha do tempo da coleta: preenchida pelo módulo rastreio (Dev 4) -->
+    <section id="linha-do-tempo" class="secao"></section>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>
