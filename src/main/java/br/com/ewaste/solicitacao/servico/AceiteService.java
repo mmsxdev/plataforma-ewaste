@@ -44,18 +44,42 @@ public class AceiteService {
     if (!alertas.foiAlertada(solicitacaoId, coletoraId)) {
       throw new SolicitacaoNaoEncontradaException(solicitacaoId);
     }
-    // RN02 de novo: a homologação pode ter sido suspensa depois do alerta
+    // RN02 de novo: a homologação pode ter sido suspensa depois do alerta. Se ela já é a dona
+    // (venceu antes da suspensão), a mensagem certa é "você já aceitou"
     if (!coletorasAptas.isApta(coletoraId)) {
-      return ResultadoAceite.HOMOLOGACAO_INATIVA;
+      return ehDona(buscar(solicitacaoId), coletoraId)
+          ? ResultadoAceite.JA_ERA_SUA
+          : ResultadoAceite.HOMOLOGACAO_INATIVA;
     }
     // A garantia está no WHERE status = 'ABERTA', executado pelo banco
-    if (solicitacoes.aceitarSeAberta(solicitacaoId, coletoraId) == 0) {
-      return ResultadoAceite.JA_ACEITA;
+    boolean venceu = solicitacoes.aceitarSeAberta(solicitacaoId, coletoraId) == 1;
+    Solicitacao s = buscar(solicitacaoId);
+    if (!venceu) {
+      return semAceite(s, coletoraId);
     }
     // Venceu: avisa rastreio (Dev 4) e notificação/cobrança (Dev 5) depois do commit
-    Long geradoraId =
-        solicitacoes.findById(solicitacaoId).map(Solicitacao::getGeradoraId).orElseThrow();
-    eventos.publishEvent(new SolicitacaoAceitaEvent(solicitacaoId, geradoraId, coletoraId));
+    eventos.publishEvent(new SolicitacaoAceitaEvent(solicitacaoId, s.getGeradoraId(), coletoraId));
     return ResultadoAceite.ACEITO;
+  }
+
+  /**
+   * 0 linhas alteradas: a solicitação não estava mais ABERTA. O dono decide a mensagem; o evento
+   * não se repete (já foi publicado por quem venceu).
+   */
+  private static ResultadoAceite semAceite(Solicitacao s, Long coletoraId) {
+    if (s.getColetoraId() == null) {
+      return ResultadoAceite.INDISPONIVEL; // cancelada ou expirada: ninguém aceitou
+    }
+    return ehDona(s, coletoraId) ? ResultadoAceite.JA_ERA_SUA : ResultadoAceite.JA_ACEITA;
+  }
+
+  private static boolean ehDona(Solicitacao s, Long coletoraId) {
+    return coletoraId.equals(s.getColetoraId());
+  }
+
+  private Solicitacao buscar(Long solicitacaoId) {
+    return solicitacoes
+        .findById(solicitacaoId)
+        .orElseThrow(() -> new SolicitacaoNaoEncontradaException(solicitacaoId));
   }
 }

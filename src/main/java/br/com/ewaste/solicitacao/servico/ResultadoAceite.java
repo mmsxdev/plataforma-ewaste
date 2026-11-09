@@ -6,6 +6,10 @@ public enum ResultadoAceite {
   ACEITO,
   /** Outra coletora aceitou antes (ou a solicitação não está mais ABERTA). */
   JA_ACEITA,
+  /** A própria coletora já tinha vencido (ex.: clique duplo no botão); nada muda. */
+  JA_ERA_SUA,
+  /** A solicitação não está mais ABERTA e ninguém a aceitou (ex.: cancelada ou expirada). */
+  INDISPONIVEL,
   /** A homologação da coletora não está ativa (ex.: suspensa depois do alerta). */
   HOMOLOGACAO_INATIVA
 }
