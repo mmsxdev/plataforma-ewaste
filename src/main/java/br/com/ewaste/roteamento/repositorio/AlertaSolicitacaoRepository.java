@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AlertaSolicitacaoRepository
     extends JpaRepository<AlertaSolicitacao, AlertaSolicitacao.Chave> {
 
-  boolean existsBySolicitacaoId(Long solicitacaoId);
-
   long countBySolicitacaoId(Long solicitacaoId);
 
   Optional<AlertaSolicitacao> findBySolicitacaoIdAndColetoraId(Long solicitacaoId, Long coletoraId);

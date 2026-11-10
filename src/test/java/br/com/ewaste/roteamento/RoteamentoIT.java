@@ -94,6 +94,20 @@ class RoteamentoIT {
   }
 
   @Test
+  void eventoRepetidoSemColetoraNoRaioSoAvisaAGeradoraUmaVez() {
+    when(aptas.listarAptas()).thenReturn(List.of(rio)); // a única apta está fora do raio
+    Long id = criarSolicitacaoNaPaulista();
+
+    publicarDentroDeTransacao(new SolicitacaoCriadaEvent(id, geradora));
+
+    // Zero destinatários não grava alerta; mesmo assim o roteamento fica registrado como feito
+    assertThat(alertas.contarAlertas(id)).isZero();
+    assertThat(eventos.doTipo(SemColetoraNaRegiaoEvent.class))
+        .containsExactly(new SemColetoraNaRegiaoEvent(id, geradora));
+    assertThat(eventos.doTipo(AlertasEnviadosEvent.class)).isEmpty();
+  }
+
+  @Test
   void solicitacaoQueNaoEstaAbertaNaoEhRoteada() {
     when(aptas.listarAptas()).thenReturn(List.of(mooca));
     Long id = inserirSolicitacao("CANCELADA");

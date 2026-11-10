@@ -5,6 +5,7 @@ import br.com.ewaste.roteamento.dominio.AlertaSolicitacao;
 import br.com.ewaste.roteamento.dominio.ColetoraNoRaio;
 import br.com.ewaste.roteamento.dominio.FiltroRegiao;
 import br.com.ewaste.roteamento.repositorio.AlertaSolicitacaoRepository;
+import br.com.ewaste.roteamento.repositorio.RoteamentoSolicitacaoRepository;
 import br.com.ewaste.shared.events.AlertasEnviadosEvent;
 import br.com.ewaste.shared.events.SemColetoraNaRegiaoEvent;
 import br.com.ewaste.shared.events.SolicitacaoCriadaEvent;
@@ -38,6 +39,7 @@ class RoteamentoListener {
   private final ColetorasAptas coletorasAptas;
   private final EmpresaConsulta empresas;
   private final AlertaSolicitacaoRepository alertas;
+  private final RoteamentoSolicitacaoRepository roteamentos;
   private final ApplicationEventPublisher eventos;
 
   RoteamentoListener(
@@ -45,11 +47,13 @@ class RoteamentoListener {
       ColetorasAptas coletorasAptas,
       EmpresaConsulta empresas,
       AlertaSolicitacaoRepository alertas,
+      RoteamentoSolicitacaoRepository roteamentos,
       ApplicationEventPublisher eventos) {
     this.solicitacoes = solicitacoes;
     this.coletorasAptas = coletorasAptas;
     this.empresas = empresas;
     this.alertas = alertas;
+    this.roteamentos = roteamentos;
     this.eventos = eventos;
   }
 
@@ -62,13 +66,14 @@ class RoteamentoListener {
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void aoCriarSolicitacao(SolicitacaoCriadaEvent evento) {
     Long id = evento.solicitacaoId();
-    // Idempotente: se o mesmo evento chegar duas vezes, não alerta de novo
-    if (alertas.existsBySolicitacaoId(id)) {
-      return;
-    }
     SolicitacaoResumo solicitacao = solicitacoes.buscar(id).orElse(null);
     if (solicitacao == null || solicitacao.status() != StatusSolicitacao.ABERTA) {
       log.warn("Roteamento ignorado: solicitação {} inexistente ou não está ABERTA", id);
+      return;
+    }
+    // Idempotente: o roteamento fica registrado mesmo sem coletora no raio (zero alertas). Se o
+    // mesmo evento chegar de novo, o registro já existe (0 linhas) e nada é alertado nem notificado
+    if (roteamentos.registrarSeNovo(id) == 0) {
       return;
     }
 
