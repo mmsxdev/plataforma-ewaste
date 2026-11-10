@@ -5,7 +5,10 @@
   <header th:replace="~{fragments/layout :: navbar}"></header>
   <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
   <main class="container">
-    <h1>Oportunidades de coleta</h1>
+    <div class="cabecalho-pagina">
+      <h1>Oportunidades de coleta</h1>
+      <a class="button secondary" th:href="@{/coletora/oportunidades/aceitas}">Coletas aceitas</a>
+    </div>
     <p>Solicitações abertas na sua região. A primeira coletora que aceitar fica com a coleta.</p>
 
     <p class="notice" th:if="${mensagem}" th:text="${mensagem}">Mensagem</p>
