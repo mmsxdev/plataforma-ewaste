@@ -166,6 +166,9 @@ class FluxoRastreioIT {
     mvc.perform(get("/verificar/{codigo}", certificado.codigoVerificacao()))
         .andExpect(status().isOk())
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Documento confirmado")));
+    mvc.perform(get("/verificar/{codigo}", "CODIGO-INEXISTENTE"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("não encontrado")));
     mvc.perform(
             get("/geradora/solicitacoes/{id}", solicitacao)
                 .with(user("geradora@teste.com").roles("GERADORA")))

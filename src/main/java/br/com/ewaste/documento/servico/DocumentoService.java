@@ -95,7 +95,7 @@ public class DocumentoService implements EmissorDocumentos {
 
   @Transactional(readOnly = true)
   public ArquivoDocumento baixar(Long id, Long geradoraId) {
-    List<String[]> encontrados =
+    List<ArquivoRegistrado> encontrados =
         jdbc.query(
             """
         SELECT d.numero, d.arquivo_ref, s.geradora_id FROM documento_emitido d
@@ -103,45 +103,41 @@ public class DocumentoService implements EmissorDocumentos {
          WHERE d.id = ?
         """,
             (rs, row) ->
-                new String[] {
-                  rs.getString("numero"), rs.getString("arquivo_ref"), rs.getString("geradora_id")
-                },
+                new ArquivoRegistrado(
+                    rs.getString("numero"), rs.getString("arquivo_ref"), rs.getLong("geradora_id")),
             id);
     if (encontrados.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Documento não encontrado.");
     }
-    String[] encontrado = encontrados.getFirst();
-    if (!geradoraId.toString().equals(encontrado[2])) {
+    ArquivoRegistrado encontrado = encontrados.getFirst();
+    if (!geradoraId.equals(encontrado.geradoraId())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Documento de outra empresa.");
     }
-    return new ArquivoDocumento(encontrado[0] + ".pdf", armazenamento.carregar(encontrado[1]));
+    return new ArquivoDocumento(
+        encontrado.numero() + ".pdf", armazenamento.carregar(encontrado.caminho()));
   }
 
   @Transactional(readOnly = true)
   public Optional<Verificacao> verificar(String codigo) {
-    List<String[]> encontrados =
+    List<DocumentoVerificacao> encontrados =
         jdbc.query(
             "SELECT numero, tipo, arquivo_ref, hash_sha256 FROM documento_emitido WHERE codigo_verificacao = ?",
             (rs, row) ->
-                new String[] {
-                  rs.getString("numero"),
-                  rs.getString("tipo"),
-                  rs.getString("arquivo_ref"),
-                  rs.getString("hash_sha256")
-                },
+                new DocumentoVerificacao(
+                    rs.getString("numero"), TipoDocumento.valueOf(rs.getString("tipo")),
+                    rs.getString("arquivo_ref"), rs.getString("hash_sha256")),
             codigo);
     if (encontrados.isEmpty()) {
       return Optional.empty();
     }
-    String[] encontrado = encontrados.getFirst();
+    DocumentoVerificacao encontrado = encontrados.getFirst();
     boolean valido;
     try {
-      valido = hash(armazenamento.carregar(encontrado[2])).equals(encontrado[3]);
+      valido = hash(armazenamento.carregar(encontrado.caminho())).equals(encontrado.hash());
     } catch (IllegalArgumentException | IOException e) {
       valido = false;
     }
-    return Optional.of(
-        new Verificacao(encontrado[0], TipoDocumento.valueOf(encontrado[1]), valido));
+    return Optional.of(new Verificacao(encontrado.numero(), encontrado.tipo(), valido));
   }
 
   private static String hash(byte[] dados) {
@@ -163,4 +159,9 @@ public class DocumentoService implements EmissorDocumentos {
       throw new IllegalStateException(e);
     }
   }
+
+  private record ArquivoRegistrado(String numero, String caminho, Long geradoraId) {}
+
+  private record DocumentoVerificacao(
+      String numero, TipoDocumento tipo, String caminho, String hash) {}
 }
