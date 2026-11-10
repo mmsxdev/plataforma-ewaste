@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Minhas coletas')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container">
+    <h1>Minhas coletas</h1>
+    <p>Registre a retirada, a destruição das mídias e a destinação final.</p>
+    <p class="card" th:if="${#lists.isEmpty(coletas)}">Você ainda não tem coletas aceitas.</p>
+    <div class="tabela-rolagem" th:unless="${#lists.isEmpty(coletas)}">
+      <table class="tabela">
+        <thead><tr><th>Nº</th><th>Local</th><th>Peso estimado</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr th:each="c : ${coletas}">
+            <td th:text="${c.id}">1</td>
+            <td th:text="|${c.cidade}/${c.uf}|">São Paulo/SP</td>
+            <td th:text="|${c.pesoEstimadoKg} kg|">250 kg</td>
+            <td th:text="${c.status}">AGENDADA</td>
+            <td><a th:href="@{/coletora/coletas/{id}(id=${c.id})}">Abrir coleta</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

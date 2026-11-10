@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Coleta')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container">
+    <p><a th:href="@{/coletora/coletas}">Voltar para minhas coletas</a></p>
+    <h1 th:text="|Coleta nº ${s.id}|">Coleta nº 1</h1>
+    <p class="notice" th:if="${mensagem}" th:text="${mensagem}">Mensagem</p>
+    <p class="error-box" th:if="${erro}" th:text="${erro}">Erro</p>
+    <section class="card">
+      <h2>Solicitação</h2>
+      <p th:text="|${s.cidade}/${s.uf} · ${s.pesoEstimadoKg} kg estimados · ${s.status}|">Dados</p>
+      <p th:if="${s.contemMidias}" th:text="|Mídias declaradas: ${s.qtdMidias}|">Mídias</p>
+      <p th:if="${s.status.name() == 'ACEITA'}">Agende a retirada na tela de oportunidades antes de registrar a coleta.</p>
+      <a th:if="${s.status.name() == 'ACEITA'}" th:href="@{/coletora/oportunidades/{id}(id=${s.id})}">Agendar retirada</a>
+    </section>
+
+    <section class="card secao" th:if="${s.status.name() == 'AGENDADA'}">
+      <h2>Registrar retirada</h2>
+      <form th:action="@{/coletora/coletas/{id}/coletar(id=${s.id})}" method="post" enctype="multipart/form-data">
+        <label for="pesoRealKg">Peso real (kg)</label>
+        <input id="pesoRealKg" name="pesoRealKg" type="number" step="0.01" min="0.01" required>
+        <label for="fotoColeta">Foto de evidência (JPG ou PNG)</label>
+        <input id="fotoColeta" name="foto" type="file" accept="image/jpeg,image/png">
+        <button type="submit">Registrar coleta</button>
+      </form>
+    </section>
+
+    <section class="card secao" th:if="${s.status.name() == 'COLETADA' and s.contemMidias}">
+      <h2>Mídias destruídas</h2>
+      <p th:text="|${#lists.size(midias)} de ${s.qtdMidias} registradas|">0 de 5</p>
+      <ul>
+        <li th:each="m : ${midias}">
+          <span th:text="|${m.numeroSerie} · ${m.tipo} · ${m.metodo} · ${m.nivel}|"></span>
+          <a th:if="${m.evidenciaRef}" th:href="@{/coletora/coletas/{id}/midias/{midiaId}/evidencia(id=${s.id},midiaId=${m.id})}">Foto</a>
+        </li>
+      </ul>
+      <form th:if="${#lists.size(midias) < s.qtdMidias}" th:action="@{/coletora/coletas/{id}/midias(id=${s.id})}" method="post" enctype="multipart/form-data">
+        <label for="numeroSerie">Número de série</label>
+        <input id="numeroSerie" name="numeroSerie" maxlength="100" required>
+        <label for="tipo">Tipo</label>
+        <select id="tipo" name="tipo"><option>HDD</option><option>SSD</option><option>FITA</option><option>OUTRO</option></select>
+        <label for="metodo">Método</label>
+        <select id="metodo" name="metodo"><option value="TRITURACAO">Trituração</option><option value="DESMAGNETIZACAO">Desmagnetização</option></select>
+        <label for="nivel">Nível</label>
+        <input id="nivel" name="nivel" maxlength="10" placeholder="H-4" required>
+        <label for="fotoMidia">Foto de evidência (JPG ou PNG)</label>
+        <input id="fotoMidia" name="foto" type="file" accept="image/jpeg,image/png">
+        <button type="submit">Registrar mídia</button>
+      </form>
+    </section>
+
+    <section class="card secao" th:if="${s.status.name() == 'COLETADA' and !destinada}">
+      <h2>Destinação final</h2>
+      <form th:action="@{/coletora/coletas/{id}/destinar(id=${s.id})}" method="post">
+        <label for="destinacao">Descreva para onde os resíduos foram enviados</label>
+        <input id="destinacao" name="destinacao" maxlength="500" required>
+        <button type="submit">Registrar destinação</button>
+      </form>
+    </section>
+
+    <section class="card secao" th:if="${s.status.name() == 'COLETADA' and destinada}">
+      <h2>Concluir</h2>
+      <p>Os documentos serão emitidos quando a coleta estiver completa.</p>
+      <form th:action="@{/coletora/coletas/{id}/concluir(id=${s.id})}" method="post">
+        <button type="submit">Concluir e emitir documentos</button>
+      </form>
+    </section>
+
+    <section class="card secao">
+      <h2>Linha do tempo</h2>
+      <p th:if="${#lists.isEmpty(historico)}">Nenhum evento registrado.</p>
+      <ol th:unless="${#lists.isEmpty(historico)}">
+        <li th:each="e : ${historico}">
+          <strong th:text="${e.tipo}">COLETADA</strong>
+          <span th:text="${e.descricao}">Descrição</span>
+          <small th:text="${@datasSolicitacao.dataHora(e.registradoEm)}">Data</small>
+          <span th:text="|· ${e.autor}|"></span>
+          <a th:if="${e.evidenciaRef}" th:href="@{/coletora/coletas/{id}/evidencias/{eventoId}(id=${s.id},eventoId=${e.id})}">Foto</a>
+        </li>
+      </ol>
+    </section>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

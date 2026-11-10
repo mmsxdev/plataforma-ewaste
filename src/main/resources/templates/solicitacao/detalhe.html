@@ -47,8 +47,19 @@
       </div>
     </section>
 
-    <!-- Linha do tempo da coleta: preenchida pelo módulo rastreio (Dev 4) -->
-    <section id="linha-do-tempo" class="secao"></section>
+    <section id="linha-do-tempo" class="card secao">
+      <h2>Linha do tempo</h2>
+      <p th:if="${#lists.isEmpty(historico)}">Nenhum evento registrado.</p>
+      <ol th:unless="${#lists.isEmpty(historico)}">
+        <li th:each="e : ${historico}">
+          <strong th:text="${e.tipo}">COLETADA</strong>
+          <span th:text="${e.descricao}">Descrição</span>
+          <small th:text="${@datasSolicitacao.dataHora(e.registradoEm)}">Data</small>
+          <span th:text="|· ${e.autor}|"></span>
+        </li>
+      </ol>
+      <p th:if="${s.status.name() == 'CONCLUIDA'}"><a th:href="@{/geradora/documentos}">Ver meus documentos</a></p>
+    </section>
   </main>
   <footer th:replace="~{fragments/layout :: rodape}"></footer>
 </body>

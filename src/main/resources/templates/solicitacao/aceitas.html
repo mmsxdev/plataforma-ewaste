@@ -24,7 +24,10 @@
             <td th:text="|${s.cidade}/${s.uf}|">São Paulo/SP</td>
             <td th:text="${s.agendadaPara} ? ${@datasSolicitacao.dataHora(s.agendadaPara)} : 'A agendar'">A agendar</td>
             <td><span th:class="|status status-${s.status}|" th:text="${s.status}">ACEITA</span></td>
-            <td><a th:href="@{/coletora/oportunidades/{id}(id=${s.id})}" th:text="${s.agendadaPara} ? 'Reagendar' : 'Agendar'">Agendar</a></td>
+            <td>
+              <a th:href="@{/coletora/oportunidades/{id}(id=${s.id})}" th:text="${s.agendadaPara} ? 'Reagendar' : 'Agendar'">Agendar</a>
+              <a th:if="${s.agendadaPara}" th:href="@{/coletora/coletas/{id}(id=${s.id})}">Registrar coleta</a>
+            </td>
           </tr>
         </tbody>
       </table>

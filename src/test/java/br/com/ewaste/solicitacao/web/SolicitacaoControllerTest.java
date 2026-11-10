@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import br.com.ewaste.rastreio.api.RastreioConsulta;
 import br.com.ewaste.roteamento.api.AlertaConsulta;
 import br.com.ewaste.shared.security.SecurityConfig;
 import br.com.ewaste.solicitacao.dominio.Solicitacao;
@@ -56,6 +57,7 @@ class SolicitacaoControllerTest {
   @MockitoBean UsuarioAtual usuarioAtual;
   @MockitoBean EmpresaConsulta empresas;
   @MockitoBean AlertaConsulta alertas;
+  @MockitoBean RastreioConsulta rastreio;
 
   static final String SEM_COLETORA = "Nenhuma coletora apta na sua região no momento.";
 

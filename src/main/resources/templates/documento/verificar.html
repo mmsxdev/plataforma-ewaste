@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Verificar documento')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <main class="container narrow">
+    <h1>Verificar documento</h1>
+    <p class="error-box" th:if="${resultado == null}">Código de verificação não encontrado.</p>
+    <section class="card" th:if="${resultado != null}">
+      <h2 th:text="${resultado.valido} ? 'Documento confirmado' : 'Arquivo alterado ou indisponível'">Resultado</h2>
+      <p th:text="|Número: ${resultado.numero}|">Número</p>
+      <p th:text="|Tipo: ${resultado.tipo}|">Tipo</p>
+      <p>Documento simulado para fins acadêmicos. Sem validade legal.</p>
+    </section>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>
