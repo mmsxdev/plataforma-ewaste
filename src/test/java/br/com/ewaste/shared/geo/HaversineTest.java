@@ -20,6 +20,19 @@ class HaversineTest {
   }
 
   @Test
+  void centrosDeSaoPauloERioTemCercaDe361Km() {
+    // Coordenadas de referência das cidades (spec da frente do Dev 3)
+    double km = Haversine.distanciaKm(-23.5505, -46.6333, -22.9068, -43.1729);
+    assertThat(km).isCloseTo(361, within(3.0));
+  }
+
+  @Test
+  void saoPauloABeloHorizonteTemCercaDe491Km() {
+    double km = Haversine.distanciaKm(-23.5505, -46.6333, -19.9167, -43.9345);
+    assertThat(km).isCloseTo(491, within(3.0));
+  }
+
+  @Test
   void distanciaEhSimetrica() {
     double ida = Haversine.distanciaKm(-23.5, -46.6, -22.9, -43.2);
     double volta = Haversine.distanciaKm(-22.9, -43.2, -23.5, -46.6);

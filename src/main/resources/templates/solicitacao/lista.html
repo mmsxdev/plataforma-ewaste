@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Minhas solicitações')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container">
+    <div class="cabecalho-pagina">
+      <h1>Minhas solicitações</h1>
+      <a class="button" th:href="@{/geradora/solicitacoes/nova}">Nova solicitação</a>
+    </div>
+
+    <p class="notice" th:if="${mensagem}" th:text="${mensagem}">Mensagem</p>
+
+    <p th:if="${#lists.isEmpty(solicitacoes)}" class="card">
+      Você ainda não pediu nenhuma coleta. Clique em <strong>Nova solicitação</strong> para começar.
+    </p>
+
+    <div class="tabela-rolagem" th:unless="${#lists.isEmpty(solicitacoes)}">
+      <table class="tabela">
+        <thead>
+          <tr><th>Nº</th><th>Criada em</th><th>Peso estimado</th><th>Local</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="s : ${solicitacoes}">
+            <td th:text="${s.id}">1</td>
+            <td th:text="${@datasSolicitacao.dataHora(s.criadaEm)}">01/11/2026 10:00</td>
+            <td th:text="|${#numbers.formatDecimal(s.pesoEstimadoKg, 1, 'POINT', 2, 'COMMA')} kg|">250,00 kg</td>
+            <td th:text="|${s.cidade}/${s.uf}|">São Paulo/SP</td>
+            <td><span th:class="|status status-${s.status}|" th:text="${s.status}">ABERTA</span></td>
+            <td><a th:href="@{/geradora/solicitacoes/{id}(id=${s.id})}">Ver detalhe</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

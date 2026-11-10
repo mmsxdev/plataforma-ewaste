@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Oportunidade')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container" th:with="s=${o.solicitacao}">
+    <p><a th:href="@{/coletora/oportunidades}">Voltar para as oportunidades</a></p>
+    <div class="cabecalho-pagina">
+      <h1 th:text="|Coleta nº ${s.id}|">Coleta nº 1</h1>
+      <span th:class="|status status-${s.status}|" th:text="${s.status}">ABERTA</span>
+    </div>
+
+    <p class="notice" th:if="${mensagem}" th:text="${mensagem}">Mensagem</p>
+    <p class="error-box" th:if="${erro}" th:text="${erro}">Erro</p>
+
+    <section class="card">
+      <h2>Dados da coleta</h2>
+      <dl class="dados">
+        <dt>Distância</dt><dd th:text="|${#numbers.formatDecimal(o.distanciaKm, 1, 'POINT', 1, 'COMMA')} km em linha reta|">5,8 km</dd>
+        <dt>Peso estimado</dt><dd th:text="|${#numbers.formatDecimal(s.pesoEstimadoKg, 1, 'POINT', 2, 'COMMA')} kg|">250,00 kg</dd>
+        <dt>Mídias com dados</dt><dd th:text="${s.contemMidias} ? |Sim, ${s.qtdMidias}| : 'Não'">Não</dd>
+        <dt>Descrição</dt><dd th:text="${s.descricao ?: '—'}">—</dd>
+        <dt>Local</dt><dd th:text="|${s.endereco != null ? s.endereco + ', ' : ''}${s.cidade}/${s.uf}|">São Paulo/SP</dd>
+        <dt>Criada em</dt><dd th:text="${@datasSolicitacao.dataHora(s.criadaEm)}">—</dd>
+      </dl>
+    </section>
+
+    <section class="card secao">
+      <h2>Itens</h2>
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead><tr><th>Tipo</th><th>Quantidade</th><th>Peso</th></tr></thead>
+          <tbody>
+            <tr th:each="i : ${s.itens}">
+              <td th:text="${i.tipoResiduo.descricao}">Informática</td>
+              <td th:text="${i.quantidade}">1</td>
+              <td th:text="${i.pesoKg} ? |${#numbers.formatDecimal(i.pesoKg, 1, 'POINT', 2, 'COMMA')} kg| : '—'">10,00 kg</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="secao" th:if="${s.status.name() == 'ABERTA'}">
+      <form th:action="@{/coletora/oportunidades/{id}/aceitar(id=${s.id})}" method="post">
+        <button type="submit">Aceitar esta coleta</button>
+      </form>
+    </section>
+    <p class="notice secao" th:unless="${s.status.name() == 'ABERTA'}">
+      Esta coleta não está mais disponível para aceite.
+    </p>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>
