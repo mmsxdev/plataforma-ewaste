@@ -5,7 +5,7 @@
 1. A solicitação guarda o estado da coleta. O módulo `rastreio` guarda o histórico de cada ação.
 2. A coletora vencedora registra peso real, fotos, mídias destruídas e destinação. Só ela pode alterar essa coleta.
 3. A conclusão exige retirada e destinação. Se houver mídias declaradas, todas precisam estar registradas. A mudança de estado usa `TransicaoSolicitacao`, do módulo do Davi.
-4. Ao concluir, o módulo `documento` gera os PDFs simulados, salva os arquivos fora da pasta pública e registra o hash SHA-256 e um código de verificação.
+4. Ao concluir, o módulo `documento` lê um dos três modelos em `src/main/resources/pdf`, adiciona o logotipo e os dados da coleta, gera o PDF simulado, salva o arquivo fora da pasta pública e registra o hash SHA-256 e um código de verificação.
 5. A geradora baixa apenas os próprios documentos. A página pública de verificação compara o arquivo guardado com o hash original, sem oferecer download.
 
 O CDF e o laudo são emitidos em toda coleta concluída. O certificado de destruição é emitido quando a solicitação contém mídias.

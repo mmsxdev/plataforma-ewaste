@@ -13,6 +13,7 @@ import br.com.ewaste.documento.servico.DocumentoService;
 import br.com.ewaste.rastreio.servico.RastreioService;
 import br.com.ewaste.shared.events.SolicitacaoAceitaEvent;
 import br.com.ewaste.shared.events.SolicitacaoCriadaEvent;
+import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.parser.PdfTextExtractor;
 import java.math.BigDecimal;
@@ -167,6 +168,22 @@ class FluxoRastreioIT {
     assertThat(rastreio.listar(solicitacao))
         .extracting("tipo")
         .contains("COLETADA", "MIDIAS_DESTRUIDAS", "DESTINADA", "CONCLUIDA");
+
+    for (var documento : documentos.listarDaGeradora(geradora)) {
+      var pdfArquivo = documentos.baixar(documento.id(), geradora).arquivo();
+      try (PdfReader pdf = new PdfReader(pdfArquivo.getInputStream())) {
+        String texto = new PdfTextExtractor(pdf).getTextFromPage(1);
+        String modelo =
+            switch (documento.tipo()) {
+              case CDF -> "Comprovante de destinação final";
+              case LAUDO_TECNICO -> "Laudo técnico da coleta";
+              case CERTIFICADO_DESTRUICAO -> "Mídias destruídas";
+            };
+        assertThat(texto).contains(modelo);
+        assertThat(pdf.getPageN(1).getAsDict(PdfName.RESOURCES).getAsDict(PdfName.XOBJECT))
+            .isNotNull();
+      }
+    }
 
     var certificado =
         documentos.listarDaGeradora(geradora).stream()
