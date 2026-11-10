@@ -98,6 +98,19 @@ class FluxoRastreioIT {
   }
 
   @Test
+  void pesoComMaisDeDuasCasasNaoRegistraColeta() {
+    assertThatThrownBy(
+            () ->
+                rastreio.registrarColeta(
+                    solicitacao, coletora, usuario, new BigDecimal("0.001"), null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("duas casas decimais");
+
+    assertThat(statusSolicitacao()).isEqualTo("AGENDADA");
+    assertThat(rastreio.listar(solicitacao)).isEmpty();
+  }
+
+  @Test
   void eventosAutomaticosEntramNaLinhaDoTempoUmaVez() {
     transacao.executeWithoutResult(
         status -> {

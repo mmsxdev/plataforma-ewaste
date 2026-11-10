@@ -11,6 +11,7 @@ import br.com.ewaste.solicitacao.api.SolicitacaoResumo;
 import br.com.ewaste.solicitacao.api.StatusSolicitacao;
 import br.com.ewaste.solicitacao.api.TransicaoSolicitacao;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -110,16 +111,14 @@ public class RastreioService implements RastreioConsulta {
   public void registrarColeta(
       Long id, Long coletoraId, Long usuarioId, BigDecimal pesoRealKg, MultipartFile foto) {
     SolicitacaoResumo s = buscarDaColetora(id, coletoraId);
-    if (pesoRealKg == null || pesoRealKg.signum() <= 0) {
-      throw new IllegalArgumentException("Informe um peso real maior que zero.");
-    }
+    BigDecimal peso = validarPeso(pesoRealKg);
     exigirStatus(s, StatusSolicitacao.AGENDADA);
     transicoes.marcarColetada(id);
     String evidencia = guardarFoto(foto, id);
     jdbc.update(
         "INSERT INTO evento_rastreio (solicitacao_id, tipo, descricao, peso_real_kg, evidencia_ref, registrado_por) VALUES (?, 'COLETADA', 'Coleta registrada', ?, ?, ?)",
         id,
-        pesoRealKg,
+        peso,
         evidencia,
         usuarioId);
     eventos.publishEvent(new ColetaRegistradaEvent(id, s.geradoraId()));
@@ -275,6 +274,25 @@ public class RastreioService implements RastreioConsulta {
       throw new IllegalArgumentException(
           "Esta operação não está disponível no estado atual da coleta.");
     }
+  }
+
+  private static BigDecimal validarPeso(BigDecimal valor) {
+    if (valor == null) {
+      throw new IllegalArgumentException(
+          "Informe um peso real maior que zero, com até duas casas decimais.");
+    }
+    BigDecimal peso;
+    try {
+      peso = valor.setScale(2, RoundingMode.UNNECESSARY);
+    } catch (ArithmeticException e) {
+      throw new IllegalArgumentException(
+          "Informe um peso real maior que zero, com até duas casas decimais.");
+    }
+    if (peso.signum() <= 0 || peso.precision() > 10) {
+      throw new IllegalArgumentException(
+          "Informe um peso real maior que zero, com até duas casas decimais.");
+    }
+    return peso;
   }
 
   private SolicitacaoResumo buscar(Long id) {
