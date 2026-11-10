@@ -30,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class RastreioService implements RastreioConsulta {
   private static final Set<String> TIPOS = Set.of("HDD", "SSD", "FITA", "OUTRO");
   private static final Set<String> METODOS = Set.of("TRITURACAO", "DESMAGNETIZACAO");
+  private static final Set<String> NIVEIS = Set.of("H-4", "H-5");
 
   private final JdbcTemplate jdbc;
   private final SolicitacaoConsulta solicitacoes;
@@ -143,9 +144,7 @@ public class RastreioService implements RastreioConsulta {
         || numeroSerie.length() > 100
         || !TIPOS.contains(tipo)
         || !METODOS.contains(metodo)
-        || nivel == null
-        || nivel.isBlank()
-        || nivel.length() > 10) {
+        || !NIVEIS.contains(nivel)) {
       throw new IllegalArgumentException("Confira os dados da mídia destruída.");
     }
     travarSeColetada(id);

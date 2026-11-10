@@ -111,6 +111,19 @@ class FluxoRastreioIT {
   }
 
   @Test
+  void nivelDeDestruicaoDeveSerH4OuH5() {
+    rastreio.registrarColeta(solicitacao, coletora, usuario, new BigDecimal("247.50"), null);
+
+    assertThatThrownBy(
+            () ->
+                rastreio.registrarMidia(
+                    solicitacao, coletora, usuario, "HD-001", "HDD", "TRITURACAO", "H-3", null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("dados da mídia");
+    assertThat(rastreio.listarMidias(solicitacao)).isEmpty();
+  }
+
+  @Test
   void eventosAutomaticosEntramNaLinhaDoTempoUmaVez() {
     transacao.executeWithoutResult(
         status -> {
