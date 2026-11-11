@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Meus documentos')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container">
+    <h1>Meus documentos</h1>
+    <p>Documentos simulados emitidos após a conclusão da coleta.</p>
+    <p class="card" th:if="${#lists.isEmpty(documentos)}">Nenhum documento disponível.</p>
+    <div class="tabela-rolagem" th:unless="${#lists.isEmpty(documentos)}">
+      <table class="tabela">
+        <thead><tr><th>Solicitação</th><th>Tipo</th><th>Número</th><th>Emissão</th><th></th></tr></thead>
+        <tbody>
+          <tr th:each="d : ${documentos}">
+            <td th:text="${d.solicitacaoId}">1</td>
+            <td th:text="${d.tipo}">CDF</td>
+            <td th:text="${d.numero}">CDF-1</td>
+            <td th:text="${@datasSolicitacao.dataHora(d.emitidoEm)}">Data</td>
+            <td><a th:href="@{/geradora/documentos/{id}/baixar(id=${d.id})}">Baixar PDF</a> ·
+                <a th:href="@{/verificar/{codigo}(codigo=${d.codigoVerificacao})}">Verificar</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

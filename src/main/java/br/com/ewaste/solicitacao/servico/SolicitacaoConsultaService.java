@@ -4,6 +4,7 @@ import br.com.ewaste.solicitacao.api.SolicitacaoConsulta;
 import br.com.ewaste.solicitacao.api.SolicitacaoResumo;
 import br.com.ewaste.solicitacao.dominio.Solicitacao;
 import br.com.ewaste.solicitacao.repositorio.SolicitacaoRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,13 @@ class SolicitacaoConsultaService implements SolicitacaoConsulta {
   @Override
   public Optional<SolicitacaoResumo> buscar(Long id) {
     return solicitacoes.findById(id).map(SolicitacaoConsultaService::resumir);
+  }
+
+  @Override
+  public List<SolicitacaoResumo> listarDaColetora(Long coletoraId) {
+    return solicitacoes.findByColetoraIdOrderByAceitaEmDesc(coletoraId).stream()
+        .map(SolicitacaoConsultaService::resumir)
+        .toList();
   }
 
   static SolicitacaoResumo resumir(Solicitacao s) {

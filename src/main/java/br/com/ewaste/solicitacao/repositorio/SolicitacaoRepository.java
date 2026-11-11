@@ -33,6 +33,8 @@ public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long> 
   /** Solicitação só se esta coletora venceu o aceite. */
   Optional<Solicitacao> findByIdAndColetoraId(Long id, Long coletoraId);
 
+  List<Solicitacao> findByColetoraIdOrderByAceitaEmDesc(Long coletoraId);
+
   List<Solicitacao> findByColetoraIdAndStatusInOrderByAceitaEmDesc(
       Long coletoraId, Collection<StatusSolicitacao> status);
 

@@ -29,10 +29,12 @@ Só o módulo `solicitacao` altera o status. O Dev 4 pede `marcarColetada` e `ma
 | --- | --- | --- | --- |
 | `usuario.api.UsuarioAtual` | Dev 1 | todos | Real: `IdentidadeService` (usuário autenticado, persistido e ativo) |
 | `usuario.api.EmpresaConsulta` | Dev 1 | Dev 2, 3, 4, 5 | Real: `EmpresaConsultaService` (repositório JPA) |
-| `homologacao.api.ColetorasAptas` | Dev 2 | Dev 3 | `ColetorasAptasProvisoria` (todas as coletoras são aptas) |
-| `armazenamento.api.Armazenamento` | Dev 2 | Dev 2, Dev 4 | `ArmazenamentoProvisorio` (só em memória) |
-| `solicitacao.api.SolicitacaoConsulta` | Dev 3 | Dev 4, Dev 5 | `SolicitacaoProvisoria` (não encontra nada) |
-| `solicitacao.api.TransicaoSolicitacao` | Dev 3 | Dev 4 | `SolicitacaoProvisoria` (só registra no log) |
+| `homologacao.api.ColetorasAptas` | Dev 2 | Dev 3 | Real: `ColetorasAptasService` |
+| `armazenamento.api.Armazenamento` | Dev 2 | Dev 2, Dev 4 | Real: `ArmazenamentoEmDisco` |
+| `solicitacao.api.SolicitacaoConsulta` | Dev 3 | Dev 4, Dev 5 | Real: busca por id e lista da coletora |
+| `solicitacao.api.TransicaoSolicitacao` | Dev 3 | Dev 4 | Real: transições para coletada e concluída |
+| `rastreio.api.RastreioConsulta` | Dev 4 | Dev 3 | Linha do tempo da solicitação |
+| `documento.api.EmissorDocumentos` | Dev 4 | Dev 4 | Emissão após a conclusão do rastreio |
 
 O login usa a implementação real `IdentidadeService`, com consulta por e-mail sem distinção de maiúsculas, BCrypt e bloqueio de contas inativas. As três classes provisórias de `usuario/servico` foram substituídas; as interfaces e os DTOs de `usuario/api` permanecem compatíveis. A tela de login continua sendo a padrão do Spring Security nesta etapa.
 
