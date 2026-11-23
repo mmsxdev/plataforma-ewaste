@@ -24,7 +24,8 @@ Você **não** precisa instalar o Maven: use o `mvnw` do projeto.
 git clone https://github.com/NOME-DA-ORG/plataforma-ewaste.git
 cd plataforma-ewaste
 cp .env.example .env            # Windows (cmd): copy .env.example .env
-docker compose up -d            # sobe o PostgreSQL
+# Preencha DB_PASSWORD no .env antes de subir o banco
+docker compose up -d db         # cria/reutiliza PostgreSQL e volume local
 ./mvnw verify                   # compila e roda todos os testes (Windows: mvnw.cmd verify)
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
@@ -50,7 +51,7 @@ $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 .\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=dev'
 ```
 
-**DBeaver:** nova conexão PostgreSQL em `localhost:5432`, banco `ewaste`, usuário `ewaste`, senha `ewaste`.
+**DBeaver/pgAdmin:** na máquina anfitriã, conecte em `localhost:5432`; nas outras, use o IP privado da anfitriã. Banco `ewaste`, usuário definido em `DB_USER` e senha definida em `DB_PASSWORD`. Para o desenvolvimento da equipe com **os mesmos dados**, siga [banco compartilhado na rede local](docs/banco-compartilhado-local.md). Os uploads e PDFs exigem pasta compartilhada além do PostgreSQL.
 
 **Usuários de exemplo** (perfil dev, senha `senha123`): `admin@teste.com`, `geradora@teste.com`, `coletora@teste.com` e `coletora2@teste.com`. Detalhes em [docs/contratos.md](docs/contratos.md).
 
@@ -60,7 +61,7 @@ $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 | --- | --- | --- |
 | Subir o banco | `docker compose up -d` | igual |
 | Parar o banco | `docker compose down` | igual |
-| Apagar o banco e recomeçar do zero | `docker compose down -v` | igual |
+| Inspecionar containers e volumes antes de qualquer limpeza | `docker compose ps -a` / `docker volume ls` | igual |
 | Formatar o código | `./mvnw spotless:apply` | `mvnw.cmd spotless:apply` |
 | Build + todos os testes | `./mvnw verify` | `mvnw.cmd verify` |
 | Só testes unitários | `./mvnw test` | `mvnw.cmd test` |
