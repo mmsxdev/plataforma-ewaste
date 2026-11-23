@@ -51,7 +51,7 @@ $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 .\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=dev'
 ```
 
-**DBeaver/pgAdmin:** na máquina anfitriã, conecte em `localhost:5432`; nas outras, use o IP privado da anfitriã. Banco `ewaste`, usuário definido em `DB_USER` e senha definida em `DB_PASSWORD`. Para o desenvolvimento da equipe com **os mesmos dados**, siga [banco compartilhado na rede local](docs/banco-compartilhado-local.md). Os uploads e PDFs exigem pasta compartilhada além do PostgreSQL.
+**DBeaver/pgAdmin:** no modo individual, conecte em `localhost:5432`; no modo compartilhado, use o IP privado da anfitriã em todas as máquinas, inclusive nela. Banco `ewaste`, usuário definido em `DB_USER` e senha definida em `DB_PASSWORD`. Para o desenvolvimento da equipe com **os mesmos dados**, siga [banco compartilhado na rede local](docs/banco-compartilhado-local.md). Os uploads e PDFs exigem pasta compartilhada além do PostgreSQL.
 
 **Usuários de exemplo** (perfil dev, senha `senha123`): `admin@teste.com`, `geradora@teste.com`, `coletora@teste.com` e `coletora2@teste.com`. Detalhes em [docs/contratos.md](docs/contratos.md).
 
