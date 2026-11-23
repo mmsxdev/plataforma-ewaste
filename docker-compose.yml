@@ -6,9 +6,9 @@ services:
       POSTGRES_USER: ${DB_USER:-ewaste}
       POSTGRES_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}
     ports:
-      # A aplicação Java e o cliente SQL da máquina anfitriã acessam localhost.
-      # Os demais integrantes usam a aplicação pela rede local, não a porta do banco.
-      - "127.0.0.1:${DB_PORT:-5432}:5432"
+      # Padrão: somente nesta máquina. Para compartilhar, configure DB_BIND_IP
+      # com o IPv4 da máquina anfitriã na rede confiável.
+      - "${DB_BIND_IP:-127.0.0.1}:${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
