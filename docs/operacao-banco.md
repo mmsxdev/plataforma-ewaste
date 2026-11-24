@@ -51,3 +51,9 @@ Ver [testes e resultados](testes.md) e `docs/evidencias/`. Foi restaurada uma c�
 ## Referências
 
 POSTGRESQL GLOBAL DEVELOPMENT GROUP. **PostgreSQL 16 Documentation: Backup and Restore; Database Roles; Transaction Isolation**. Disponível em: https://www.postgresql.org/docs/16/backup.html; https://www.postgresql.org/docs/16/user-manag.html; https://www.postgresql.org/docs/16/transaction-iso.html. Acesso em: 24 nov. 2026.
+
+## Conferência do operador nesta execução
+
+O script Migrate-Team.ps1 foi executado na revisão commitada com sucesso, sem recarregar seeds. Uma tentativa explícita de importação encontrou cinco referências fictícias do seed de homologação sem arquivos locais e interrompeu corretamente o lote; não foram inventados documentos nem removidas referências. Os três arquivos reais do ensaio team continuam disponíveis no banco. A importação com arquivo local válido, preservação da origem e idempotência foi aprovada em ArmazenamentoCompartilhadoIT.
+
+No Windows, encerrar instâncias do aplicativo que estejam executando o mesmo target/*.jar antes de empacotar: o arquivo aberto pode impedir o repackage. A falha de empacotamento interrompe o script antes de tocar no banco. Não encerrar processos de outros projetos.
