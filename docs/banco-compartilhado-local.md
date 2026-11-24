@@ -1,46 +1,60 @@
-# Banco e arquivos compartilhados na rede local
+# PostgreSQL e arquivos compartilhados da equipe
 
-## Decisão para o Projeto Integrador
+## Decisão e justificativa acadêmica
 
-Uma máquina da equipe será a **anfitriã**: nela, Docker Desktop executa uma única instância do PostgreSQL 16. Cada integrante pode executar sua própria cópia do Spring Boot e conectar ao mesmo endereço IP do PostgreSQL. O Git compartilha o código; o PostgreSQL compartilha os registros. Não há necessidade de contratar hospedagem para esta entrega educacional.
+Uma única máquina anfitriã executa PostgreSQL 16 pelo Compose. Cada integrante roda o Spring Boot na própria máquina com o perfil `team` e a URL do MESMO servidor. Docker fixa a versão principal, torna a configuração reproduzível e mantém os dados no volume persistente `ewaste-team-pg16`. O compartilhamento decorre da conexão à mesma instância; Docker/Git não sincronizam cinco bancos.
 
-| Na máquina anfitriã | Nas máquinas dos integrantes |
-| --- | --- |
-| Docker Desktop, serviço `db`, volume `pgdata` e cópia de segurança | Código do mesmo repositório, Java 21 e `.env` local com `DB_URL` da anfitriã |
-| IP privado estável ou reserva DHCP e porta 5432 liberada só para os IPs dos colegas | DBeaver ou pgAdmin opcional para inspeção SQL; aplicação Spring rodando localmente |
-| Pasta de arquivos compartilhada para anexos e PDFs, se todas as instâncias executarem funções com arquivos | Acesso à mesma pasta de arquivos e permissões de leitura/gravação quando necessário |
+No perfil `team`, anexos e PDFs de até 10 MB são persistidos como BYTEA em `arquivo_compartilhado`, pela implementação `ArmazenamentoCompartilhado`. As referências continuam nas tabelas de negócio e os controllers continuam verificando o proprietário antes do download. Todas as aplicações recuperam os mesmos bytes, sem SMB nem cinco pastas `uploads` diferentes. Um backup lógico inclui esses arquivos e suas referências no mesmo snapshot. A opção é adequada ao protótipo pequeno; aumenta volume/WAL e tempo de recuperação e não é uma proposta de storage para grande escala.
 
-Exemplo: anfitriã `192.168.1.50` e banco `ewaste`. Na máquina de cada integrante: `DB_URL=jdbc:postgresql://192.168.1.50:5432/ewaste`. O endereço é ilustrativo: descubra o IPv4 real no dia do ensaio. `localhost` sempre significa a própria máquina de quem está executando o comando. Logo, `localhost` em cinco computadores criaria cinco acessos distintos, não um banco compartilhado.
+Fora de `team`, `ArmazenamentoEmDisco` preserva `uploads`. Nada é importado ou apagado automaticamente. DBeaver/pgAdmin são clientes opcionais; nenhum deles cria sincronização entre servidores.
 
-**Justificativa de Docker:** o Compose já fixa PostgreSQL 16, nome do banco, credenciais configuráveis, porta e volume persistente. `docker compose up -d db` cria container, banco inicial e volume quando faltarem, sem exigir instalação individual do servidor PostgreSQL. Flyway cria e atualiza o esquema ao iniciar a aplicação. Docker não sincroniza bancos em computadores diferentes: o compartilhamento vem da conexão de todos à **mesma instância**. DBeaver e pgAdmin são clientes administrativos dessa instância, não servidores nem meios de sincronização. Também seria possível instalar PostgreSQL diretamente na anfitriã, mas isso exigiria configuração e manutenção manual do serviço.
+## Preparação da anfitriã
 
-## Preparação da anfitriã (PowerShell, na raiz do repositório)
+1. Inspecionar `docker context show`, `docker ps -a`, `docker volume ls` e os rótulos dos volumes antes de iniciar. Não apagar/reutilizar volume desconhecido e não usar `down -v`. Volume anônimo preservado não comprova que dados antigos não existam.
+2. Somente se não houver `.env`, copiar `.env.example` e preencher senhas fortes distintas de operador e aplicação. `.env`, backups e uploads estão ignorados no Git. Não publicar `docker compose config` completo: ele expande senhas.
+3. O Compose tem projeto `ewaste-team` e volume explícito `ewaste-team-pg16`. Se esse nome já pertencer a outro projeto, interromper. `POSTGRES_*` e o init de roles só inicializam volume vazio; não redefinem senhas de volume existente.
+4. Inicialmente manter `DB_BIND_IP=127.0.0.1`, `DB_URL=jdbc:postgresql://127.0.0.1:5432/ewaste`. Executar `docker compose config --quiet` e `docker compose up -d db`. Conferir saúde. Essa etapa não libera acesso a colegas.
+5. Aplicar somente a revisão combinada e testada pelo operador: `.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=migrate'`. O perfil usa credencial `DB_USER/DB_PASSWORD`, aplica Flyway e encerra. Para uma instância NOVA de demonstração, o operador pode usar `migrate,dev` após revisar os seeds fictícios. Não usar `dev` no banco comum como rotina de cada integrante.
+6. A role `DB_APP_USER` é criada sem SUPERUSER, CREATEDB ou CREATEROLE, com operações de dados e sem CREATE no schema. O operador retira acesso ao histórico Flyway depois de migrar. Os quatro recursos SQL são invoker; a conta técnica não equivale a uma identidade humana. Auditoria acadêmica não é trilha imutável contra quem tem CRUD.
 
-1. Confirme que Docker Desktop está ativo e examine `docker compose ps -a` e `docker volume ls` antes de criar ou reutilizar qualquer volume. A ausência do banco na tela do Docker Desktop não comprova a ausência de um volume antigo. Não execute `docker compose down -v`.
-2. Copie `.env.example` para `.env` se ainda não houver `.env`. Defina `DB_PASSWORD` como uma senha forte, ajuste `DB_BIND_IP` para o IPv4 privado da anfitriã, por exemplo `192.168.1.50`, e ajuste também `DB_URL=jdbc:postgresql://192.168.1.50:5432/ewaste` nessa máquina (substitua o IP ilustrativo pelo endereço real). A publicação restrita ao IPv4 escolhido não atende conexões em `localhost`. Preserve qualquer `.env` existente até conferir seus valores; não o envie ao Git.
-3. Execute `docker compose up -d db` e confira `docker compose ps`. A primeira inicialização do volume cria o banco `ewaste`; as migrations Flyway rodam quando a aplicação inicia. Se o volume já contiver um banco, suas variáveis `POSTGRES_*` não redefinem usuários, senhas ou dados existentes.
-4. Permita conexões de entrada TCP 5432 **somente** dos IPs dos integrantes na rede privada do firewall do Windows. Não encaminhe a porta no roteador e não exponha o banco à internet. A anfitriã deve continuar ligada enquanto os demais estiverem trabalhando.
-5. Inicie uma versão combinada da aplicação para aplicar as migrations previstas; não execute cada branch de desenvolvimento com migrations novas sobre o banco compartilhado.
+## Publicação somente para os colegas
 
-A configuração `DB_BIND_IP` publica a porta apenas no endereço escolhido; por padrão, ela permanece em `127.0.0.1` para desenvolvimento individual. Se o IPv4 mudar, atualize a variável e recrie o serviço com `docker compose up -d db` depois de confirmar a situação do volume.
+Reservar IP privado/DHCP para a anfitriã. `localhost` na máquina do colega aponta para ela mesma. Antes de alterar o bind, no **PowerShell Administrador**, definir apenas IPs privados individuais autorizados:
 
-## Preparação dos integrantes
+```powershell
+.\infra\Set-TeamAccess.ps1 -HostAddress '<IP_PRIVADO_ANFITRIA>' -TeamAddresses @('<IP_PRIVADO_COLEGA>')
+```
 
-1. Atualize o código até a revisão combinada pela equipe. Copie `.env.example` para `.env`, preencha `DB_USER` e `DB_PASSWORD` conforme a anfitriã e altere **apenas a URL da conexão** para `jdbc:postgresql://IP_DA_ANFITRIA:5432/ewaste`. O arquivo fica local e fora do Git.
-2. Confirme a conexão com DBeaver ou pgAdmin usando host = IP da anfitriã, porta = 5432, database = ewaste e as credenciais acordadas.
-3. Rode `.\mvnw.cmd spring-boot:run` localmente. Não precisa executar `docker compose up` na própria máquina para usar o banco compartilhado. Acesse a sua aplicação em `http://localhost:8080`.
-4. Crie um registro fictício na aplicação de um integrante e consulte o mesmo registro a partir da aplicação de outro. É o teste de aceite para os dados relacionais compartilhados.
+O script não muda a categoria da rede. Cria permissão para os IPs informados e bloqueios IPv4 complementares para a porta 5432, incluindo quando há regras anteriores permissivas. Não abre roteador, internet ou todos os endereços da LAN. Se regras E-Waste já existirem, o script interrompe para conferência; não apaga regras de terceiros. Docker Desktop/WSL pode exigir conferência adicional de firewall; a prova é testar origem autorizada e outra não autorizada.
 
-Conexões por VPN privada podem cumprir o mesmo papel quando os integrantes não estão na mesma rede, desde que a anfitriã e a regra de acesso sejam configuradas para essa rede. Sem LAN ou VPN e sem hospedar a aplicação/banco, não há sincronização simultânea entre máquinas.
+Só depois da proteção, ajustar no `.env` da anfitriã `DB_BIND_IP=<IP_PRIVADO_ANFITRIA>` e o host de `DB_URL` para esse mesmo IP; executar `docker compose up -d db`. Confirmar o IP ATUAL com `Get-NetIPAddress`; ele mudou durante esta execução, portanto não copiar um IP antigo de um log. Se Docker não puder vincular o endereço, conferir a interface e voltar ao bind local sem apagar o volume. Esta sessão não tinha privilégio de administrador e não executou a liberação da rede.
 
-## Migrations, testes e arquivos
+## Configuração de cada integrante
 
-- O esquema compartilhado deve acompanhar uma revisão única do código. Branches com migrations incompatíveis não devem apontar ao mesmo banco. Para alterações de esquema em elaboração e testes destrutivos, cada integrante pode usar um banco local descartável e voltar ao banco comum após a integração.
-- O perfil `dev` inclui seeds e `out-of-order`; use-o no banco comum somente se a equipe decidir carregar dados fictícios e tiver revisado essas seeds. O comando de execução acima não ativa esse perfil.
-- Os testes `*IT.java` usam Testcontainers: executá-los não é a forma de popular nem validar o banco comum.
-- Os anexos e PDFs são gravados em `STORAGE_DIR` no disco e o banco guarda a referência. Cada aplicação em outra máquina apontando a `./uploads` diferente verá os mesmos registros, **mas não os mesmos arquivos**. Para testar uploads e downloads em todas as instâncias, disponibilize uma pasta de rede com permissões para a equipe, mapeie-a em todas as máquinas no mesmo caminho, por exemplo `Z:/ewaste-uploads`, e configure `STORAGE_DIR` com esse caminho. Teste escrita em uma máquina e leitura em outra. Alternativamente, centralize a execução dos fluxos de arquivos em uma única instância da aplicação até montar a pasta compartilhada.
-- Faça backup periódico do banco com `pg_dump` e da pasta de uploads; volume persistente não substitui backup. Antes da apresentação, ensaie a restauração com dados fictícios e registre tempo e resultado.
+Copiar `.env.team.example` para `.env` sem sobrescrever configuração existente, receber por canal privado somente `DB_APP_USER/DB_APP_PASSWORD` e configurar `DB_URL=jdbc:postgresql://IP_PRIVADO_ANFITRIA:5432/ewaste`. Nunca distribuir a senha do operador. Rodar:
 
-## Limites e aceite
+```powershell
+.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=team'
+```
 
-A solução depende da anfitriã ligada, conectividade entre as máquinas e endereço conhecido. O aceite exige: conexão de dois integrantes ao mesmo banco, criação/consulta cruzada, aplicação das migrations da revisão combinada, acesso cruzado a um arquivo quando esse fluxo for demonstrado, e cópia restaurável do banco e dos arquivos.
+Não executar Compose nas máquinas clientes para o trabalho em equipe. Não combinar `team` com `dev` ou `migrate`. `team` desliga Flyway e usa Hibernate apenas para validar o esquema. Branches com migrations novas/incompatíveis usam Testcontainers ou banco descartável isolado; somente a versão combinada é promovida pelo operador. Não executar testes destrutivos sobre o banco comum.
+
+DBeaver/pgAdmin: host privado da anfitriã, porta 5432, banco `ewaste`, usuário limitado e senha local. Em redes diferentes, uma VPN privada com roteamento e regras para os IPs da equipe é necessária antes de assumir acesso. Sem LAN/VPN não há conexão simultânea. A anfitriã precisa permanecer ligada.
+
+## Importação explícita de uploads legados
+
+Primeiro executar backup e conferir qual pasta contém os arquivos antigos. Não há `uploads` prévio no clone; Git não recupera arquivos ignorados nem volumes Docker antigos. Se existirem referências antigas não importadas, o modo team recusa o download, sem buscar silenciosamente uma pasta diferente por máquina.
+
+Com `STORAGE_DIR` apontando à pasta original e a credencial do operador:
+
+```powershell
+.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=migrate,import-uploads'
+```
+
+A rotina lê referências existentes de documentos/evidências, verifica caminho dentro da raiz e assinatura, preserva o identificador, grava os bytes sem substituir registros existentes e mantém os arquivos originais. Referência sem arquivo seguro interrompe a importação; o lote é transacional. Não atribui dados novos a arquivos perdidos.
+
+## Backup, recuperação e aceite
+
+Ver [operação do banco](operacao-banco.md). `infra/Backup-Team.ps1` exporta snapshot e manifesto SHA-256; `infra/Test-Restore.ps1` restaura somente em banco novo GUID, compara tabelas/assinaturas/bytes e preserva a cópia. Dump inclui BYTEA; uploads legados precisam cópia separada. Copiar o backup para destino protegido fora do host é uma ação operacional ainda necessária, não um resultado garantido pelo volume Docker.
+
+O ensaio automatizado `tools/validar-fluxo.mjs` usa dois processos Spring locais: criação em A/consulta em B e upload em A/download em B. Isso não substitui teste em dois computadores. Quando houver outro computador: liberar seu IP, verificar conexão/autenticação, criar registro em uma máquina, consultar na outra, enviar imagem e recuperar o PDF com a conta autorizada. Registrar hora, máquinas, resultado e hash; testar também uma conta não autorizada. Não declarar a rede validada antes desse ensaio.
