@@ -1,0 +1,202 @@
+@startuml
+!pragma layout smetana
+title Modelo lógico - 18 tabelas versionadas
+hide methods
+entity empresa {
+  id : BIGINT <<PK>>
+  tipo : VARCHAR(20)
+  razao_social : VARCHAR(150)
+  cnpj : VARCHAR(14)
+  telefone : VARCHAR(20)
+  endereco : VARCHAR(200)
+  cidade : VARCHAR(100)
+  uf : CHAR(2)
+  latitude : DOUBLE PRECISION
+  longitude : DOUBLE PRECISION
+  raio_atendimento_km : INTEGER
+  criado_em : TIMESTAMPTZ
+}
+entity usuario {
+  id : BIGINT <<PK>>
+  empresa_id : BIGINT <<FK>>
+  nome : VARCHAR(120)
+  email : VARCHAR(150)
+  senha_hash : VARCHAR(100)
+  perfil : VARCHAR(20)
+  ativo : BOOLEAN
+  criado_em : TIMESTAMPTZ
+}
+entity homologacao {
+  id : BIGINT <<PK>>
+  empresa_id : BIGINT <<FK>>
+  status : VARCHAR(20)
+  motivo : VARCHAR(500)
+  analisado_por : BIGINT <<FK>>
+  analisado_em : TIMESTAMPTZ
+  criado_em : TIMESTAMPTZ
+}
+entity documento_homologacao {
+  id : BIGINT <<PK>>
+  homologacao_id : BIGINT <<FK>>
+  tipo : VARCHAR(30)
+  arquivo_ref : VARCHAR(300)
+  nome_original : VARCHAR(200)
+  validade : DATE
+  enviado_em : TIMESTAMPTZ
+}
+entity solicitacao {
+  id : BIGINT <<PK>>
+  geradora_id : BIGINT <<FK>>
+  descricao : VARCHAR(1000)
+  peso_estimado_kg : NUMERIC(10,
+  contem_midias : BOOLEAN
+  qtd_midias : INTEGER
+  endereco : VARCHAR(200)
+  cidade : VARCHAR(100)
+  uf : CHAR(2)
+  latitude : DOUBLE PRECISION
+  longitude : DOUBLE PRECISION
+  status : VARCHAR(20)
+  coletora_id : BIGINT <<FK>>
+  aceita_em : TIMESTAMPTZ
+  agendada_para : TIMESTAMPTZ
+  criada_em : TIMESTAMPTZ
+  version : BIGINT
+  ponto_descarte_id : BIGINT <<FK>>
+}
+entity solicitacao_item {
+  id : BIGINT <<PK>>
+  solicitacao_id : BIGINT <<FK>>
+  tipo_residuo : VARCHAR(30)
+  quantidade : INTEGER
+  peso_kg : NUMERIC(10,
+  identificacao : VARCHAR(150)
+}
+entity alerta_solicitacao {
+  solicitacao_id : BIGINT <<PK,FK>>
+  coletora_id : BIGINT <<PK,FK>>
+  distancia_km : NUMERIC(8,
+  enviado_em : TIMESTAMPTZ
+}
+entity evento_rastreio {
+  id : BIGINT <<PK>>
+  solicitacao_id : BIGINT <<FK>>
+  tipo : VARCHAR(30)
+  descricao : VARCHAR(500)
+  peso_real_kg : NUMERIC(10,
+  evidencia_ref : VARCHAR(300)
+  registrado_por : BIGINT <<FK>>
+  registrado_em : TIMESTAMPTZ
+}
+entity midia_destruida {
+  id : BIGINT <<PK>>
+  solicitacao_id : BIGINT <<FK>>
+  numero_serie : VARCHAR(100)
+  tipo : VARCHAR(10)
+  metodo : VARCHAR(20)
+  nivel : VARCHAR(10)
+  destruida_em : TIMESTAMPTZ
+  evidencia_ref : VARCHAR(300)
+}
+entity documento_emitido {
+  id : BIGINT <<PK>>
+  solicitacao_id : BIGINT <<FK>>
+  tipo : VARCHAR(30)
+  numero : VARCHAR(40)
+  arquivo_ref : VARCHAR(300)
+  hash_sha256 : CHAR(64)
+  codigo_verificacao : VARCHAR(40)
+  emitido_em : TIMESTAMPTZ
+}
+entity notificacao {
+  id : BIGINT <<PK>>
+  empresa_id : BIGINT <<FK>>
+  tipo : VARCHAR(40)
+  titulo : VARCHAR(150)
+  mensagem : VARCHAR(500)
+  link : VARCHAR(300)
+  lida : BOOLEAN
+  criada_em : TIMESTAMPTZ
+}
+entity ponto_descarte {
+  id : BIGINT <<PK>>
+  nome : VARCHAR(150)
+  endereco : VARCHAR(200)
+  cidade : VARCHAR(100)
+  uf : CHAR(2)
+  latitude : DOUBLE PRECISION
+  longitude : DOUBLE PRECISION
+  tipos_aceitos : VARCHAR(300)
+  horario : VARCHAR(150)
+  ativo : BOOLEAN
+}
+entity plano {
+  id : BIGINT <<PK>>
+  nome : VARCHAR(60)
+  valor_mensal : NUMERIC(10,
+}
+entity assinatura {
+  id : BIGINT <<PK>>
+  empresa_id : BIGINT <<FK>>
+  plano_id : BIGINT <<FK>>
+  status : VARCHAR(20)
+  inicio : DATE
+}
+entity lancamento {
+  id : BIGINT <<PK>>
+  empresa_id : BIGINT <<FK>>
+  tipo : VARCHAR(20)
+  solicitacao_id : BIGINT <<FK>>
+  documento_id : BIGINT <<FK>>
+  valor : NUMERIC(10,
+  competencia : DATE
+  criado_em : TIMESTAMPTZ
+}
+entity arquivo_compartilhado {
+  caminho : VARCHAR(300) <<PK>>
+  nome_original : TEXT
+  content_type : VARCHAR(100)
+  tamanho : BIGINT
+  conteudo : BYTEA
+  criado_em : TIMESTAMPTZ
+}
+entity roteamento_solicitacao {
+  solicitacao_id : BIGINT <<PK>>
+  processado_em : TIMESTAMPTZ
+}
+entity solicitacao_auditoria {
+  id : BIGINT <<PK>>
+  solicitacao_id : BIGINT <<FK>>
+  status_anterior : VARCHAR(20)
+  status_novo : VARCHAR(20)
+  usuario_banco : TEXT
+  transacao_id : BIGINT
+  registrado_em : TIMESTAMPTZ
+}
+empresa |o--o{ usuario : empresa_id
+empresa ||--o| homologacao : empresa_id
+usuario |o--o{ homologacao : analisado_por
+homologacao ||--o{ documento_homologacao : homologacao_id
+empresa ||--o{ solicitacao : geradora_id
+empresa |o--o{ solicitacao : coletora_id
+ponto_descarte |o--o{ solicitacao : ponto_descarte_id
+solicitacao ||--o{ solicitacao_item : solicitacao_id
+solicitacao ||--o{ alerta_solicitacao : solicitacao_id
+empresa ||--o{ alerta_solicitacao : coletora_id
+solicitacao ||--o{ evento_rastreio : solicitacao_id
+usuario |o--o{ evento_rastreio : registrado_por
+solicitacao ||--o{ midia_destruida : solicitacao_id
+solicitacao ||--o{ documento_emitido : solicitacao_id
+empresa |o--o{ notificacao : empresa_id
+empresa ||--o{ assinatura : empresa_id
+plano ||--o{ assinatura : plano_id
+empresa ||--o{ lancamento : empresa_id
+solicitacao |o--o{ lancamento : solicitacao_id
+documento_emitido |o--o{ lancamento : documento_id
+solicitacao ||--o| roteamento_solicitacao : solicitacao_id
+solicitacao ||--o{ solicitacao_auditoria : solicitacao_id
+note bottom of arquivo_compartilhado
+*_ref/caminho têm relação lógica, sem FK.
+Entidades entre módulos referenciadas por ID.
+end note
+@enduml

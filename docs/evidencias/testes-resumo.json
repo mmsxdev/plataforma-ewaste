@@ -1,0 +1,15 @@
+{
+  "unitarios": {
+    "tests": 229,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "integracao": {
+    "tests": 91,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "ambiente": "Java 21.0.9; PostgreSQL Testcontainers isolado; verify final 24/11/2026"
+}

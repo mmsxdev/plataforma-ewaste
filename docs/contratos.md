@@ -36,7 +36,13 @@ Só o módulo `solicitacao` altera o status. O Dev 4 pede `marcarColetada` e `ma
 | `rastreio.api.RastreioConsulta` | Dev 4 | Dev 3 | Linha do tempo da solicitação |
 | `documento.api.EmissorDocumentos` | Dev 4 | Dev 4 | Emissão após a conclusão do rastreio |
 
-O login usa a implementação real `IdentidadeService`, com consulta por e-mail sem distinção de maiúsculas, BCrypt e bloqueio de contas inativas. As três classes provisórias de `usuario/servico` foram substituídas; as interfaces e os DTOs de `usuario/api` permanecem compatíveis. A tela de login continua sendo a padrão do Spring Security nesta etapa.
+O login usa a implementação real `IdentidadeService`, com consulta por e-mail sem distinção de maiúsculas, BCrypt e bloqueio de contas inativas. As três classes provisórias de `usuario/servico` foram substituídas; as interfaces e os DTOs de `usuario/api` permanecem compatíveis. A tela customizada `templates/usuario/login.html` é servida por `UsuarioController`; Spring Security processa a autenticação.
+
+## Consulta de pontos e adequação PI
+
+`mapa.api.PontosColeta` expõe `consultar(cidade,tipo)`, `buscar(id)` e `validar(id,tipos)` com projeções `PontoResumo`. `PontosColetaService` carrega registros JDBC ativos numa `ArvoreAvl` própria antes da busca/percurso e filtros. `solicitacao` usa apenas esse contrato público para validar seleção, não acessa implementação interna de mapa. `ponto_descarte_id` e `solicitacao_item.identificacao` são adições nullable da V600 para manter registros antigos sem preenchimento inventado. Novos itens com ponto selecionado precisam identificação; coleta no endereço sem ponto continua válida.
+
+`Armazenamento` mantém o contrato: `ArmazenamentoEmDisco` fora de team; `ArmazenamentoCompartilhado` em team grava bytes em PostgreSQL V200. Não há SMB obrigatório. Referências antigas não são apagadas nem importadas automaticamente. Clientes team não rodam Flyway; operador separado aplica migrations. `RastreioService` usa a Procedure `registrar_destinacao_pi` da V601 na transação de destinação; detalhes em [sql-recursos.md](sql-recursos.md).
 
 **Como funcionam as provisórias:** todas têm `@Fallback`. Quando o dono cria a implementação real, uma classe `@Service` comum que implementa a mesma interface, o Spring passa a injetar a real automaticamente. O dono então **apaga a provisória no mesmo PR**.
 

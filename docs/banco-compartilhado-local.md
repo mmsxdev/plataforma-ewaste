@@ -14,7 +14,7 @@ Fora de `team`, `ArmazenamentoEmDisco` preserva `uploads`. Nada é importado ou 
 2. Somente se não houver `.env`, copiar `.env.example` e preencher senhas fortes distintas de operador e aplicação. `.env`, backups e uploads estão ignorados no Git. Não publicar `docker compose config` completo: ele expande senhas.
 3. O Compose tem projeto `ewaste-team` e volume explícito `ewaste-team-pg16`. Se esse nome já pertencer a outro projeto, interromper. `POSTGRES_*` e o init de roles só inicializam volume vazio; não redefinem senhas de volume existente.
 4. Inicialmente manter `DB_BIND_IP=127.0.0.1`, `DB_URL=jdbc:postgresql://127.0.0.1:5432/ewaste`. Executar `docker compose config --quiet` e `docker compose up -d db`. Conferir saúde. Essa etapa não libera acesso a colegas.
-5. Aplicar somente a revisão combinada e testada pelo operador: `.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=migrate'`. O perfil usa credencial `DB_USER/DB_PASSWORD`, aplica Flyway e encerra. Para uma instância NOVA de demonstração, o operador pode usar `migrate,dev` após revisar os seeds fictícios. Não usar `dev` no banco comum como rotina de cada integrante.
+5. Aplicar somente a revisão combinada e testada pelo operador: `.\infra\Migrate-Team.ps1 -ApprovedRevision '<SHA_COMBINADO_40_HEX>'`. O perfil usa credencial `DB_USER/DB_PASSWORD`, aplica Flyway e encerra. Para uma instância NOVA de demonstração, o operador pode usar `migrate,dev` após revisar os seeds fictícios. Não usar `dev` no banco comum como rotina de cada integrante.
 6. A role `DB_APP_USER` é criada sem SUPERUSER, CREATEDB ou CREATEROLE, com operações de dados e sem CREATE no schema. O operador retira acesso ao histórico Flyway depois de migrar. Os quatro recursos SQL são invoker; a conta técnica não equivale a uma identidade humana. Auditoria acadêmica não é trilha imutável contra quem tem CRUD.
 
 ## Publicação somente para os colegas
@@ -48,7 +48,7 @@ Primeiro executar backup e conferir qual pasta contém os arquivos antigos. Não
 Com `STORAGE_DIR` apontando à pasta original e a credencial do operador:
 
 ```powershell
-.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=migrate,import-uploads'
+.\infra\Migrate-Team.ps1 -ApprovedRevision '<SHA_COMBINADO_40_HEX>' -ImportLegacyUploads
 ```
 
 A rotina lê referências existentes de documentos/evidências, verifica caminho dentro da raiz e assinatura, preserva o identificador, grava os bytes sem substituir registros existentes e mantém os arquivos originais. Referência sem arquivo seguro interrompe a importação; o lote é transacional. Não atribui dados novos a arquivos perdidos.
@@ -58,3 +58,4 @@ A rotina lê referências existentes de documentos/evidências, verifica caminho
 Ver [operação do banco](operacao-banco.md). `infra/Backup-Team.ps1` exporta snapshot e manifesto SHA-256; `infra/Test-Restore.ps1` restaura somente em banco novo GUID, compara tabelas/assinaturas/bytes e preserva a cópia. Dump inclui BYTEA; uploads legados precisam cópia separada. Copiar o backup para destino protegido fora do host é uma ação operacional ainda necessária, não um resultado garantido pelo volume Docker.
 
 O ensaio automatizado `tools/validar-fluxo.mjs` usa dois processos Spring locais: criação em A/consulta em B e upload em A/download em B. Isso não substitui teste em dois computadores. Quando houver outro computador: liberar seu IP, verificar conexão/autenticação, criar registro em uma máquina, consultar na outra, enviar imagem e recuperar o PDF com a conta autorizada. Registrar hora, máquinas, resultado e hash; testar também uma conta não autorizada. Não declarar a rede validada antes desse ensaio.
+O script do operador confere HEAD e fontes limpas, empacota e executa o JAR sem DevTools. Isso evita interpretar o exit code do Maven como prova de inicialização: no modo de desenvolvimento uma falha em restartedMain pode coexistir com BUILD SUCCESS. Seeds repetíveis ausentes no perfil de operação são ignorados na resolução, sem ignorar migrations versionadas ausentes nem executar repair.
