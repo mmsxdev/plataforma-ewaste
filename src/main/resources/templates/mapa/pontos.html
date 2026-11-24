@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Pontos de coleta')}"></head>
+<body><header th:replace="~{fragments/layout :: navbar}"></header>
+<main class="container">
+  <h1>Pontos de coleta</h1>
+  <p>Classifique seu material e consulte os locais que o recebem. Os pontos de demonstração são fictícios.</p>
+  <form th:action="@{/mapa}" method="get">
+    <label for="cidade">Cidade</label><input id="cidade" name="cidade" th:value="${cidade}" maxlength="100">
+    <label for="tipo">Categoria do resíduo</label>
+    <select id="tipo" name="tipo"><option value="">Todas as categorias</option><option th:each="t : ${categorias}" th:value="${t}" th:text="${t}" th:selected="${t == tipo}"></option></select>
+    <button type="submit">Consultar pontos</button>
+  </form>
+  <p th:if="${#lists.isEmpty(pontos)}" role="status">Nenhum ponto ativo encontrado para os filtros.</p>
+  <section class="card secao" th:each="p : ${pontos}">
+    <h2 th:text="${p.nome}"></h2><p th:text="|${p.endereco ?: ''} · ${p.cidade}/${p.uf}|"></p>
+    <p>Horário: <span th:text="${p.horario ?: 'Não informado'}"></span></p>
+    <p>Categorias aceitas: <span th:text="${p.tiposAceitos}"></span></p>
+    <a sec:authorize="hasRole('GERADORA')" th:href="@{/geradora/solicitacoes/nova(pontoDescarteId=${p.id},tipoResiduo=${tipo})}">Registrar solicitação para este ponto</a>
+    <a sec:authorize="isAnonymous()" th:href="@{/login}">Entre para solicitar</a>
+  </section>
+  <p><a sec:authorize="hasRole('GERADORA')" th:href="@{/geradora/solicitacoes}">Acompanhar minhas solicitações</a></p>
+</main><footer th:replace="~{fragments/layout :: rodape}"></footer></body></html>

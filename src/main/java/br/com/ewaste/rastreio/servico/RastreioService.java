@@ -178,11 +178,8 @@ public class RastreioService implements RastreioConsulta {
     if (existeEvento(id, "DESTINADA")) {
       throw new IllegalArgumentException("A destinação já foi registrada.");
     }
-    jdbc.update(
-        "INSERT INTO evento_rastreio (solicitacao_id, tipo, descricao, registrado_por) VALUES (?, 'DESTINADA', ?, ?)",
-        id,
-        destinacao.strip(),
-        usuarioId);
+    // A procedure mantém a mesma operação dentro da transação atual, sem commit próprio.
+    jdbc.update("CALL registrar_destinacao_pi(?, ?, ?)", id, usuarioId, destinacao.strip());
   }
 
   public void concluir(Long id, Long coletoraId, Long usuarioId) {

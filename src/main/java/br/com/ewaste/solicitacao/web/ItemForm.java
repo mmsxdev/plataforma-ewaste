@@ -9,6 +9,17 @@ import java.math.BigDecimal;
 /** Uma linha de item no formulário. Linha toda vazia é ignorada. */
 public class ItemForm {
 
+  @jakarta.validation.constraints.Size(max = 150)
+  private String identificacao;
+
+  public String getIdentificacao() {
+    return identificacao;
+  }
+
+  public void setIdentificacao(String valor) {
+    identificacao = valor;
+  }
+
   private TipoResiduo tipoResiduo;
 
   @Positive(message = "A quantidade deve ser maior que zero.")
@@ -20,7 +31,10 @@ public class ItemForm {
 
   /** Alguma coluna da linha foi preenchida. */
   public boolean isPreenchido() {
-    return tipoResiduo != null || quantidade != null || pesoKg != null;
+    return (identificacao != null && !identificacao.isBlank())
+        || tipoResiduo != null
+        || quantidade != null
+        || pesoKg != null;
   }
 
   /** Linha começada precisa ter as três colunas. */

@@ -58,6 +58,7 @@ class SolicitacaoControllerTest {
   @MockitoBean EmpresaConsulta empresas;
   @MockitoBean AlertaConsulta alertas;
   @MockitoBean RastreioConsulta rastreio;
+  @MockitoBean br.com.ewaste.mapa.api.PontosColeta pontos;
 
   static final String SEM_COLETORA = "Nenhuma coletora apta na sua região no momento.";
 

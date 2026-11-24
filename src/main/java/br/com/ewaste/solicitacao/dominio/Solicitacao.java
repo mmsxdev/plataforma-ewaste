@@ -44,6 +44,27 @@ public class Solicitacao {
   @Column(name = "geradora_id", nullable = false)
   private Long geradoraId;
 
+  @Column(name = "ponto_descarte_id")
+  private Long pontoDescarteId;
+
+  public Long getPontoDescarteId() {
+    return pontoDescarteId;
+  }
+
+  public void definirPonto(Long id) {
+    if (status != StatusSolicitacao.ABERTA)
+      throw new IllegalArgumentException("Somente solicitações abertas podem ser alteradas.");
+    pontoDescarteId = id;
+  }
+
+  public void editarDescricao(String valor) {
+    if (status != StatusSolicitacao.ABERTA)
+      throw new IllegalArgumentException("Somente solicitações abertas podem ser alteradas.");
+    if (valor != null && valor.length() > 1000)
+      throw new IllegalArgumentException("Use até 1000 caracteres.");
+    descricao = valor == null || valor.isBlank() ? null : valor.strip();
+  }
+
   @Column(length = 1000)
   private String descricao;
 
