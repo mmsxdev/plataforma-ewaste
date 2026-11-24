@@ -10,7 +10,7 @@
   <nav class="container navbar" aria-label="Navegação principal">
     <a class="brand" th:href="@{/}">E-Waste<span> / resíduos com destino</span></a>
     <div class="nav-links">
-      <a th:href="@{/mapa}">Mapa de descarte</a>
+      <a th:href="@{/mapa}">Pontos de coleta</a>
       <a sec:authorize="isAnonymous()" th:href="@{/login}">Entrar</a>
       <a sec:authorize="isAuthenticated()" th:href="@{/painel}">Meu painel</a>
       <a sec:authorize="hasRole('GERADORA')" th:href="@{/geradora/solicitacoes}">Solicitações</a>

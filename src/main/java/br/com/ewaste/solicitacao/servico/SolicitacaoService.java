@@ -1,10 +1,13 @@
 package br.com.ewaste.solicitacao.servico;
 
+import br.com.ewaste.mapa.api.PontosColeta;
 import br.com.ewaste.shared.events.SolicitacaoCriadaEvent;
+import br.com.ewaste.solicitacao.api.StatusSolicitacao;
 import br.com.ewaste.solicitacao.dominio.Solicitacao;
 import br.com.ewaste.solicitacao.dominio.SolicitacaoNaoEncontradaException;
 import br.com.ewaste.solicitacao.repositorio.SolicitacaoRepository;
 import java.util.List;
+import java.util.Map;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +19,11 @@ public class SolicitacaoService {
 
   private final SolicitacaoRepository solicitacoes;
   private final ApplicationEventPublisher eventos;
+  private final PontosColeta pontos;
 
-  SolicitacaoService(SolicitacaoRepository solicitacoes, ApplicationEventPublisher eventos) {
+  SolicitacaoService(
+      SolicitacaoRepository solicitacoes, ApplicationEventPublisher eventos, PontosColeta pontos) {
+    this.pontos = pontos;
     this.solicitacoes = solicitacoes;
     this.eventos = eventos;
   }
@@ -28,9 +34,40 @@ public class SolicitacaoService {
    * rollback.
    */
   public Long criar(Solicitacao nova) {
+    pontos.validar(
+        nova.getPontoDescarteId(),
+        nova.getItens().stream().map(i -> i.getTipoResiduo().name()).toList());
+    if (nova.getPontoDescarteId() != null
+        && nova.getItens().stream().anyMatch(i -> i.getIdentificacao() == null))
+      throw new IllegalArgumentException("Identifique os resíduos destinados ao ponto de coleta.");
     Solicitacao salva = solicitacoes.save(nova);
     eventos.publishEvent(new SolicitacaoCriadaEvent(salva.getId(), salva.getGeradoraId()));
     return salva.getId();
+  }
+
+  /**
+   * Edição textual: não muda local/categorias já usados no roteamento. Lock serializa com aceite.
+   */
+  public void editar(Long id, Long geradoraId, String descricao, Map<Long, String> identificacoes) {
+    Solicitacao s =
+        solicitacoes
+            .findParaEdicao(id, geradoraId)
+            .orElseThrow(() -> new SolicitacaoNaoEncontradaException(id));
+    if (s.getStatus() != StatusSolicitacao.ABERTA)
+      throw new IllegalArgumentException("Somente solicitações abertas podem ser alteradas.");
+    if (identificacoes.keySet().stream()
+        .anyMatch(itemId -> s.getItens().stream().noneMatch(i -> i.getId().equals(itemId))))
+      throw new IllegalArgumentException("Item não pertence à solicitação.");
+    if (s.getPontoDescarteId() != null
+        && identificacoes.values().stream().anyMatch(v -> v == null || v.isBlank()))
+      throw new IllegalArgumentException("Identifique os resíduos destinados ao ponto de coleta.");
+    s.editarDescricao(descricao);
+    s.getItens()
+        .forEach(
+            i -> {
+              if (identificacoes.containsKey(i.getId()))
+                i.identificar(identificacoes.get(i.getId()));
+            });
   }
 
   @Transactional(readOnly = true)
