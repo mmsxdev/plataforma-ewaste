@@ -104,7 +104,8 @@ for name,files in bundles.items():
         source=DOCS/filename
         if not source.exists():raise FileNotFoundError(source)
         story+=parse(source)+[PageBreak()]
-        manifest[filename]=hashlib.sha256(source.read_bytes()).hexdigest()
+        # Hash de UTF-8 com LF: compara conteúdo das fontes em Windows/Linux após checkout.
+        manifest[filename]=hashlib.sha256(source.read_text(encoding='utf8').encode('utf8')).hexdigest()
     if name in ['design-software','banco-dados','administracao']:
         patterns=['*.png'] if name=='design-software' else ['der-*.png'] if name=='banco-dados' else ['organograma.png']
         for pattern in patterns:
