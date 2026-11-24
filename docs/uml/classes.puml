@@ -1,0 +1,70 @@
+@startuml
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+class Empresa {
+  id : Long
+  tipo : TipoEmpresa
+  cnpj : String
+}
+class Usuario {
+  empresaId : Long
+  perfil : PerfilUsuario
+  senhaHash : String
+}
+class Solicitacao {
+  id : Long
+  geradoraId : Long
+  coletoraId : Long
+  pontoDescarteId : Long
+  status : StatusSolicitacao
+  version : Long
+}
+class SolicitacaoItem {
+  identificacao : String
+  tipoResiduo : TipoResiduo
+  quantidade : int
+  pesoKg : BigDecimal
+}
+enum TipoResiduo {
+  INFORMATICA
+  TELEFONIA
+  ELETRODOMESTICO
+  MIDIA_ARMAZENAMENTO
+  BATERIA
+  OUTRO
+}
+interface PontosColeta {
+  consultar(cidade, tipo)
+  buscar(id)
+  validar(id, tipos)
+}
+class PontoResumo <<record>>
+class PontosColetaService
+class PontoColetaRepository
+class ArvoreAvl {
+  inserir(chave, valor)
+  buscar(chave)
+  emOrdem()
+  altura()
+}
+class SolicitacaoService
+class RastreioService
+interface EmissorDocumentos
+class DocumentoService
+Empresa "1" -- "0..*" Usuario : empresaId
+Empresa "1" -- "0..*" Solicitacao : geradoraId
+Solicitacao "1" *-- "0..*" SolicitacaoItem
+SolicitacaoItem --> TipoResiduo
+SolicitacaoService --> PontosColeta
+PontosColetaService ..|> PontosColeta
+PontosColetaService --> PontoColetaRepository
+PontosColetaService --> ArvoreAvl : constrói por consulta
+ArvoreAvl --> PontoResumo : valores
+RastreioService --> EmissorDocumentos
+DocumentoService ..|> EmissorDocumentos
+note bottom of Solicitacao
+Associações entre módulos por ID,
+sem entidades JPA cruzadas.
+PontoResumo é projeção JDBC, não entidade JPA.
+end note
+@enduml

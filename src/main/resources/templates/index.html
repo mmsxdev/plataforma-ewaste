@@ -4,11 +4,19 @@
 <body>
   <header th:replace="~{fragments/layout :: navbar}"></header>
   <main class="container">
-    <section class="hero"><p class="eyebrow">Conectando empresas. Transformando destinos.</p>
+    <section class="hero"><img th:src="@{/img/logo-ewaste.png}" alt="E-Waste — resíduos com destino" width="150" height="42"><p class="eyebrow">Conectando empresas. Transformando destinos.</p>
     <h1>O próximo ciclo dos seus eletrônicos começa aqui.</h1>
     <p>Conecte sua empresa a coletoras da região e acompanhe a coleta e a destinação dos resíduos em um só lugar.</p>
-    <div class="nav-links"><a class="button" th:href="@{/cadastro/geradora}">Quero destinar resíduos</a><a class="button secondary" th:href="@{/cadastro/coletora}">Sou uma coletora</a></div></section>
+    <div class="nav-links"><a class="button" th:href="@{/cadastro/geradora}">Quero destinar resíduos</a><a class="button secondary" th:href="@{/cadastro/coletora}">Sou uma coletora</a><a class="button secondary" th:href="@{/mapa}">Consultar pontos de coleta</a></div></section>
     <div class="cards"><section class="card"><p class="eyebrow">01 / Conexão</p><h2>Cadastre sua empresa</h2><p>Geradoras e coletoras com acessos próprios para cada etapa.</p></section><section class="card"><p class="eyebrow">02 / Operação</p><h2>Acompanhe a coleta</h2><p>Da solicitação ao registro da execução, tudo no painel.</p></section><section class="card"><p class="eyebrow">03 / Destino</p><h2>Consulte os documentos</h2><p>Documentos simulados para demonstrar o fluxo acadêmico.</p></section></div>
+    <section class="secao" aria-labelledby="nosso-proposito">
+      <h2 id="nosso-proposito">Nosso propósito</h2>
+      <div class="cards">
+        <section class="card"><h3>Missão</h3><p>Facilitar o descarte responsável de eletrônicos, conectando empresas a pontos de recebimento e coletoras e tornando cada solicitação acompanhável.</p></section>
+        <section class="card"><h3>Visão</h3><p>Ser uma referência acadêmica de solução simples e rastreável para organizar o descarte eletrônico na comunidade atendida.</p></section>
+        <section class="card"><h3>Valores</h3><p>Responsabilidade ambiental, clareza das informações, proteção de dados, acessibilidade, colaboração e compromisso com evidências.</p></section>
+      </div>
+    </section>
   </main>
   <footer th:replace="~{fragments/layout :: rodape}"></footer>
 </body>

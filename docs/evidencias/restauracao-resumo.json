@@ -1,0 +1,9 @@
+{
+  "date_utc": "2026-11-24T03:18:23.7641534Z",
+  "passed": true,
+  "elapsed_seconds": 6.233,
+  "tables": 19,
+  "files": 3,
+  "file_bytes": 19422,
+  "note": "Copia ficticia restaurada em banco novo preservado; ensaio local nao comprova RTO futuro nem copia fora do host."
+}

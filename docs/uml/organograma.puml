@@ -1,0 +1,19 @@
+@startuml
+!pragma layout smetana
+title Organograma proposto - atribuições dependem da equipe
+top to bottom direction
+rectangle "Coordenação do projeto\nResponsável: PENDENTE\nEscopo e dependências" as Coord
+rectangle "Produto e requisitos\nResponsável: PENDENTE\nHistórias, critérios e validação" as Produto
+rectangle "Engenharia e dados\nResponsável: PENDENTE\nArquitetura, código e banco" as Eng
+rectangle "Qualidade e operação\nResponsável: PENDENTE\nTestes, implantação e recuperação" as QA
+rectangle "Administração e identidade\nResponsável: PENDENTE\nMarca, estratégia e custos" as Admin
+Coord --> Produto
+Coord --> Eng
+Coord --> QA
+Coord --> Admin
+note bottom of Coord
+Papéis propostos, não cargos atribuídos a integrantes.
+Acúmulo de funções/hierarquia dependem de acordo.
+Não presumir vínculo trabalhista.
+end note
+@enduml

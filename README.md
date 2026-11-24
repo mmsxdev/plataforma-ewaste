@@ -1,8 +1,8 @@
 # Plataforma E-Waste
 
-Plataforma B2B que conecta empresas geradoras de lixo eletrônico a coletoras homologadas da mesma região. A primeira coletora que aceitar assume a coleta. Depois que a coleta é registrada, a plataforma libera o CDF, o laudo técnico e o certificado de destruição de mídias. Também há um mapa público de pontos de descarte.
+Protótipo acadêmico B2B para o Projeto Integrador do 4º período de Engenharia de Software da Faculdade SENAI FATESG, 2026-2. Conecta empresas geradoras a pontos de recebimento e coletoras homologadas. Permite identificar/classificar materiais, consultar pontos por cidade/categoria, solicitar coleta e acompanhar histórico. A primeira coletora apta que aceitar assume a operação. Ao concluir coleta, destinação e mídias previstas, emite CDF, laudo e certificado simulados. O recorte B2B é preservado da base e sua aceitação acadêmica ainda depende de confirmação.
 
-> Projeto acadêmico. Integrações externas (SINIR/IBAMA, pagamentos) são **simuladas**, e os documentos gerados levam a marca "documento simulado".
+> Projeto acadêmico. Não há integração SINIR/IBAMA ou cobrança implementada, e os documentos gerados levam a marca "documento simulado".
 
 ## Stack
 
@@ -12,7 +12,7 @@ Java 21 · Spring Boot 3.5 (Web, Thymeleaf, Security, Data JPA, Validation) · P
 
 - Git
 - JDK 21 (ex.: [Temurin](https://adoptium.net/))
-- Docker Desktop (aberto e rodando)
+- Docker Desktop na anfitriã e para Testcontainers; clientes da aplicação não precisam subir PostgreSQL
 - IntelliJ IDEA Community ou VS Code com Extension Pack for Java
 - DBeaver (opcional, para consultar o banco)
 
@@ -20,17 +20,47 @@ Você **não** precisa instalar o Maven: use o `mvnw` do projeto.
 
 ## Como rodar
 
-```bash
-git clone https://github.com/NOME-DA-ORG/plataforma-ewaste.git
+A equipe utiliza um único PostgreSQL na anfitriã. Os clientes precisam de Java 21 e conexão LAN/VPN; Docker é necessário na anfitriã e para executar os testes de integração isolados.
+
+```powershell
+git clone https://github.com/mmsxdev/plataforma-ewaste.git
 cd plataforma-ewaste
-cp .env.example .env            # Windows (cmd): copy .env.example .env
-# Preencha DB_PASSWORD no .env antes de subir o banco
-docker compose up -d db         # cria/reutiliza PostgreSQL e volume local
-./mvnw verify                   # compila e roda todos os testes (Windows: mvnw.cmd verify)
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+# Somente se ainda não existir .env:
+Copy-Item .env.team.example .env
+# Preencha DB_URL da anfitriã e DB_APP_USER/DB_APP_PASSWORD recebidos por canal privado.
+.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=team'
 ```
 
-Abra http://localhost:8080. A verificação de saúde fica em http://localhost:8080/actuator/health e deve responder `{"status":"UP"}`.
+O cliente não sobe outro banco. A preparação da anfitriã, inspeção dos volumes, migrations e firewall estão no [guia de banco compartilhado](docs/banco-compartilhado-local.md). Para ensaios de schema, use Testcontainers ou banco descartável isolado; não a instância comum.
+
+Abra http://localhost:8080 e confira `/actuator/health`. Na execução registrada, foram usadas portas locais 18080/18081 para duas aplicações no mesmo computador. Isso não comprova acesso de outra máquina.
+
+## Equipe: PostgreSQL e arquivos compartilhados
+
+Guia vigente: [docs/banco-compartilhado-local.md](docs/banco-compartilhado-local.md). Cada cliente recebe configuração privada baseada em `.env.team.example` e usa `DB_URL`, `DB_APP_USER`, `DB_APP_PASSWORD`. O perfil team desliga Flyway e usa armazenamento binário PostgreSQL; o mesmo banco compartilha referências e bytes dos arquivos. Dados legados/arquivos de disco são preservados e só importados explicitamente. Não publicar segredos, dump ou `.env`.
+
+```powershell
+# Cliente, após receber .env privado e o operador preparar o esquema:
+.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=team'
+# Somente operador, com DB_URL, DB_USER e DB_PASSWORD privados de migração:
+.\infra\Migrate-Team.ps1 -ApprovedRevision '<SHA_COMBINADO_40_HEX>'
+```
+
+O script confere a revisão, empacota sem DevTools, executa o perfil migrate e encerra; não é o perfil de uso cotidiano. Endereço definitivo, regras de rede e ensaio em duas máquinas permanecem pendentes. O bootstrap em loopback comprova somente a máquina anfitriã; não autoriza declarar conectividade de toda a equipe.
+
+## Documentação do PI e demonstração
+
+- [Requisitos, histórias, critérios e dúvidas do PDF](docs/requisitos.md)
+- [Matriz de rastreabilidade e estados de comprovação](docs/rastreabilidade.md)
+- [Arquitetura e privacidade](docs/arquitetura.md) e [contratos](docs/contratos.md)
+- [UML e DER — fontes](docs/uml/) e [banco/dicionário de 18 tabelas](docs/banco-dados.md)
+- [Estrutura de Dados II — AVL integrada](docs/estrutura-dados.md)
+- [Teoria da Computação — lógica e criptografia didática](docs/teoria-computacao.md)
+- [Administração e identidade](docs/administracao.md), [premissas de custos](docs/custos-premissas.csv)
+- [Testes e resultados](docs/testes.md) e [implantação/demonstração](docs/implantacao.md)
+- [PDFs acadêmicos](docs/pdf/) — fontes Markdown acima; não confundir com PDFs simulados gerados pelo aplicativo.
+
+Fluxo de demonstração: consultar `/mapa` → selecionar ponto/categoria → cadastrar solicitação identificando materiais → consultar situação/histórico → corrigir descrição/identificação em ABERTA. Rejeição demonstrável: ponto incompatível ou edição após aceite. A árvore AVL recebe dados do banco antes dos filtros/busca; `V601` agrega View, Function, Procedure e Trigger aplicados ao fluxo. Executar os casos e conferir resultados antes de declarar entrega concluída. Divergências de datas/grupos do documento oficial estão preservadas em requisitos.md.
 
 ## Entrega Dev 1 (P1)
 
@@ -40,7 +70,7 @@ Cadastro em `/cadastro/geradora` e `/cadastro/coletora`, login em `/login` e pai
 
 O layout reutilizável está em `templates/fragments/layout.html`, com os fragmentos `head(titulo)`, `navbar` e `rodape`. A navbar reserva `#aviso-notificacoes` para o Dev 5. O seletor compartilhado `static/js/shared/seletor-localizacao.js` usa `#mapa-localizacao`, `#latitude` e `#longitude`; o mapa requer internet para Leaflet/OpenStreetMap e oferece preenchimento manual das coordenadas.
 
-Roteiro completo de revisão e apresentação: [docs/entrega-dev1.md](docs/entrega-dev1.md). A tela “Minha empresa”, acabamento extra das páginas de erro e E2E automatizado são P2 no plano.
+Roteiro completo de revisão e apresentação: [docs/entrega-dev1.md](docs/entrega-dev1.md). A tela “Minha empresa”, acabamento extra das páginas de erro eram P2 no plano anterior; o E2E desta adequação está registrado em docs/testes.md.
 
 No PowerShell, se o `java` padrão apontar para uma versão antiga, configure o JDK 21 antes do Maven:
 
@@ -48,10 +78,10 @@ No PowerShell, se o `java` padrão apontar para uma versão antiga, configure o 
 $env:JAVA_HOME = 'C:\Program Files\Java\jdk-21' # ajuste para sua instalação
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 .\mvnw.cmd verify
-.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=dev'
+.\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=team'
 ```
 
-**DBeaver/pgAdmin:** no modo individual, conecte em `localhost:5432`; no modo compartilhado, use o IP privado da anfitriã em todas as máquinas, inclusive nela. Banco `ewaste`, usuário definido em `DB_USER` e senha definida em `DB_PASSWORD`. Para o desenvolvimento da equipe com **os mesmos dados**, siga [banco compartilhado na rede local](docs/banco-compartilhado-local.md). Os uploads e PDFs exigem pasta compartilhada além do PostgreSQL.
+**DBeaver/pgAdmin:** no modo individual, conecte em `localhost:5432`; no modo compartilhado, use o IP privado da anfitriã em todas as máquinas, inclusive nela. Banco `ewaste`, usuário limitado definido em `DB_APP_USER` e senha definida em `DB_APP_PASSWORD`. Para o desenvolvimento da equipe com **os mesmos dados**, siga [banco compartilhado na rede local](docs/banco-compartilhado-local.md). No perfil team, uploads e PDFs ficam em BYTEA no PostgreSQL, sem exigir pasta SMB.
 
 **Usuários de exemplo** (perfil dev, senha `senha123`): `admin@teste.com`, `geradora@teste.com`, `coletora@teste.com` e `coletora2@teste.com`. Detalhes em [docs/contratos.md](docs/contratos.md).
 
@@ -59,13 +89,13 @@ $env:Path = "$env:JAVA_HOME\bin;$env:Path"
 
 | Objetivo | Linux/Mac | Windows |
 | --- | --- | --- |
-| Subir o banco | `docker compose up -d` | igual |
-| Parar o banco | `docker compose down` | igual |
+| Subir o banco (somente anfitriã) | `docker compose up -d` | igual |
+| Parar o banco (manutenção combinada) | `docker compose down` | igual |
 | Inspecionar containers e volumes antes de qualquer limpeza | `docker compose ps -a` / `docker volume ls` | igual |
 | Formatar o código | `./mvnw spotless:apply` | `mvnw.cmd spotless:apply` |
 | Build + todos os testes | `./mvnw verify` | `mvnw.cmd verify` |
 | Só testes unitários | `./mvnw test` | `mvnw.cmd test` |
-| Rodar a aplicação | `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev` | `mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev` |
+| Rodar a aplicação | `./mvnw spring-boot:run -Dspring-boot.run.profiles=team` | `mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=team` |
 
 O build formata o código automaticamente (Spotless). No CI, código fora do formato reprova o PR.
 

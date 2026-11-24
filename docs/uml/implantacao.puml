@@ -1,0 +1,37 @@
+@startuml
+!pragma layout smetana
+title Ambiente de equipe proposto - endereços e pares a confirmar
+node "Computador integrante A" as A {
+  artifact "Navegador A" as BA
+  node "JVM Java 21 A" {
+    artifact "E-Waste / profile team" as AppA
+  }
+}
+node "Computador integrante B\nENSAIO PENDENTE" as B {
+  artifact "Navegador B" as BB
+  node "JVM Java 21 B" {
+    artifact "E-Waste / profile team" as AppB
+  }
+}
+node "Anfitrião autorizado\nIP e firewall a confirmar" as Host {
+  node "Docker / PostgreSQL 16" {
+    database "ewaste\nesquema + arquivo_compartilhado BYTEA" as Banco
+  }
+  artifact "Operador de migração\ncredencial separada" as Op
+}
+node "Destino protegido fora do anfitrião" {
+  artifact "Backup lógico + configuração privada\nrestauração a medir" as Backup
+}
+BA --> AppA : HTTP localhost:8080
+BB --> AppB : HTTP localhost:8080
+AppA --> Banco : JDBC / papel app mínimo
+AppB --> Banco : JDBC / papel app mínimo
+Op --> Banco : Flyway / perfil migrate
+Banco --> Backup : pg_dump inclui arquivos team
+note bottom of Banco
+Aplicações team não executam Flyway.
+HTTP é local; TLS da conexão DB deve ser
+decidido/configurado conforme rede.
+Não demonstra implantação pública/HA.
+end note
+@enduml
