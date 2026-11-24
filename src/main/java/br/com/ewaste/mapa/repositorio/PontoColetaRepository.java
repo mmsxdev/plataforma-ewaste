@@ -27,6 +27,21 @@ public class PontoColetaRepository {
                 rs.getString("horario")));
   }
 
+  public List<PontoResumo> listarPorIdIncluindoInativos(Long id) {
+    return jdbc.query(
+        "SELECT id,nome,endereco,cidade,uf,tipos_aceitos,horario FROM ponto_descarte WHERE id = ?",
+        (rs, row) ->
+            new PontoResumo(
+                rs.getLong("id"),
+                rs.getString("nome"),
+                rs.getString("endereco"),
+                rs.getString("cidade"),
+                rs.getString("uf"),
+                rs.getString("tipos_aceitos"),
+                rs.getString("horario")),
+        id);
+  }
+
   public boolean aceita(Long id, String tipo) {
     return Boolean.TRUE.equals(
         jdbc.queryForObject("SELECT ponto_aceita_tipo(?, ?)", Boolean.class, id, tipo));

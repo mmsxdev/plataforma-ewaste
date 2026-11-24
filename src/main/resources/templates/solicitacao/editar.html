@@ -7,7 +7,7 @@
 <div th:if="${#fields.hasAnyErrors()}" class="error-box" role="alert"><p th:each="e : ${#fields.allErrors()}" th:text="${e}"></p></div>
 <label for="descricao">Descrição geral</label><input th:field="*{descricao}" maxlength="1000">
 <div th:each="i : ${s.itens}"><label th:for="|item-${i.id}|" th:text="|Identificação — ${i.tipoResiduo.descricao}|"></label>
-<input th:id="|item-${i.id}|" th:name="|identificacoes[${i.id}]|" th:value="${form.identificacoes[i.id]}" maxlength="150"></div>
+<input th:id="|item-${i.id}|" th:name="|identificacoes[${i.id}]|" th:value="${form.identificacoes[i.id]}" th:required="${i.identificacao != null or s.pontoDescarteId != null}" maxlength="150"></div>
 <button type="submit">Salvar alterações</button></form>
 <p><a th:href="@{/geradora/solicitacoes/{id}(id=${s.id})}">Voltar ao acompanhamento</a></p>
 </main><footer th:replace="~{fragments/layout :: rodape}"></footer></body></html>

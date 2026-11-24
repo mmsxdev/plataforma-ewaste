@@ -8,5 +8,8 @@ public interface PontosColeta {
 
   Optional<PontoResumo> buscar(Long id);
 
+  /** Consulta de referência histórica: inclui pontos que deixaram de aceitar novos pedidos. */
+  Optional<PontoResumo> buscarParaHistorico(Long id);
+
   void validar(Long id, List<String> tipos);
 }

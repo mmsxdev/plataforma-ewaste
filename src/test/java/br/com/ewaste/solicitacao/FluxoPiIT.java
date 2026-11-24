@@ -152,23 +152,19 @@ class FluxoPiIT {
 
   @Test
   void cadastroAnteriorSemPontoOuIdentificacaoPermaneceValido() {
-    var antiga =
-        br.com.ewaste.solicitacao.dominio.Solicitacao.abrir(
-            empresa,
-            "Legado",
-            new java.math.BigDecimal("2.50"),
-            false,
-            0,
-            null,
-            "Goiânia",
-            "GO",
-            -16,
-            -49);
-    antiga.adicionarItem(
-        br.com.ewaste.solicitacao.dominio.TipoResiduo.INFORMATICA,
-        1,
-        new java.math.BigDecimal("2.50"));
-    Long id = solicitacoes.criar(antiga);
+    // Fixture de registro preexistente: não abre exceção à validação de novos cadastros.
+    Long id =
+        jdbc.queryForObject(
+            "INSERT INTO solicitacao(geradora_id,descricao,peso_estimado_kg,cidade,uf,latitude,longitude) VALUES (?,'Legado',2.50,'Goiânia','GO',-16,-49) RETURNING id",
+            Long.class,
+            empresa);
+    jdbc.update(
+        "INSERT INTO solicitacao_item(solicitacao_id,tipo_residuo,quantidade,peso_kg) VALUES (?,'INFORMATICA',1,2.50)",
+        id);
+    var antiga = solicitacoes.buscarDaGeradora(id, empresa);
+    assertThat(antiga.getItens()).hasSize(1);
+    assertThat(antiga.getItens().getFirst().getIdentificacao()).isNull();
+    solicitacoes.editar(id, empresa, "Descrição do legado revisada", Map.of());
     assertThat(
             jdbc.queryForObject(
                 "SELECT ponto_descarte_id FROM solicitacao WHERE id=?", Long.class, id))
@@ -181,20 +177,140 @@ class FluxoPiIT {
         .isNull();
   }
 
+  @Test
+  void novosItensSemIdentificacaoSaoRejeitadosComESemPonto() throws Exception {
+    for (boolean comPonto : new boolean[] {false, true}) {
+      for (String identificacao : new String[] {null, "", "   "}) {
+        mvc.perform(nova("INFORMATICA", comPonto, identificacao))
+            .andExpect(status().isOk())
+            .andExpect(model().attributeHasFieldErrors("form", "itens[0].completo"));
+      }
+      var direta = novaEntidade(comPonto);
+      assertThatThrownBy(() -> solicitacoes.criar(direta))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("Identifique todos");
+    }
+    assertThat(jdbc.queryForObject("SELECT count(*) FROM solicitacao", Integer.class)).isZero();
+    assertThat(jdbc.queryForObject("SELECT count(*) FROM solicitacao_item", Integer.class))
+        .isZero();
+  }
+
+  @Test
+  void novoItemIdentificadoSemPontoEhAceito() throws Exception {
+    mvc.perform(nova("INFORMATICA", false, "Notebook fictício"))
+        .andExpect(status().is3xxRedirection());
+    var salva = solicitacoes.listarDaGeradora(empresa).getFirst();
+    assertThat(salva.getPontoDescarteId()).isNull();
+    assertThat(
+            solicitacoes
+                .buscarDaGeradora(salva.getId(), empresa)
+                .getItens()
+                .getFirst()
+                .getIdentificacao())
+        .isEqualTo("Notebook fictício");
+  }
+
+  @Test
+  void identificacaoExistenteNaoPodeSerApagadaNemSemPonto() throws Exception {
+    for (boolean comPonto : new boolean[] {false, true}) {
+      mvc.perform(nova("INFORMATICA", comPonto, "Notebook fictício"))
+          .andExpect(status().is3xxRedirection());
+      Long id = jdbc.queryForObject("SELECT max(id) FROM solicitacao", Long.class);
+      Long item =
+          jdbc.queryForObject(
+              "SELECT id FROM solicitacao_item WHERE solicitacao_id=?", Long.class, id);
+      assertThatThrownBy(
+              () -> solicitacoes.editar(id, empresa, "Não deve gravar", Map.of(item, "  ")))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("não pode ser apagada");
+      mvc.perform(
+              post("/geradora/solicitacoes/{id}/editar", id)
+                  .with(user("pi@teste.com").roles("GERADORA"))
+                  .with(csrf())
+                  .param("descricao", "Não deve gravar")
+                  .param("identificacoes[" + item + "]", ""))
+          .andExpect(status().isOk())
+          .andExpect(model().hasErrors());
+      assertThat(
+              jdbc.queryForObject(
+                  "SELECT identificacao FROM solicitacao_item WHERE id=?", String.class, item))
+          .isEqualTo("Notebook fictício");
+      assertThat(
+              jdbc.queryForObject("SELECT descricao FROM solicitacao WHERE id=?", String.class, id))
+          .isEqualTo("Descarte fictício");
+    }
+  }
+
+  @Test
+  void pontoDesativadoPermaneceNoHistoricoMasNaoAceitaNovasSolicitacoes() throws Exception {
+    mvc.perform(nova("INFORMATICA")).andExpect(status().is3xxRedirection());
+    Long id = jdbc.queryForObject("SELECT id FROM solicitacao", Long.class);
+    jdbc.update("UPDATE ponto_descarte SET ativo=false WHERE id=?", ponto);
+    assertThat(pontos.buscar(ponto)).isEmpty();
+    assertThat(pontos.consultar("", "")).isEmpty();
+    assertThat(pontos.buscarParaHistorico(ponto))
+        .get()
+        .extracting(p -> p.nome())
+        .isEqualTo("Ponto fictício");
+    assertThat(pontos.buscarParaHistorico(null)).isEmpty();
+    assertThat(pontos.buscarParaHistorico(999L)).isEmpty();
+    mvc.perform(get("/geradora/solicitacoes/{id}", id).with(user("pi@teste.com").roles("GERADORA")))
+        .andExpect(status().isOk())
+        .andExpect(
+            content()
+                .string(
+                    org.hamcrest.Matchers.containsString(
+                        "Ponto de destino: <span>Ponto fictício</span>")));
+    mvc.perform(
+            get("/geradora/solicitacoes/nova")
+                .param("pontoDescarteId", ponto.toString())
+                .with(user("pi@teste.com").roles("GERADORA")))
+        .andExpect(status().isNotFound());
+    mvc.perform(nova("INFORMATICA")).andExpect(status().isOk()).andExpect(model().hasErrors());
+    assertThat(jdbc.queryForObject("SELECT count(*) FROM solicitacao", Integer.class)).isEqualTo(1);
+  }
+
+  private br.com.ewaste.solicitacao.dominio.Solicitacao novaEntidade(boolean comPonto) {
+    var nova =
+        br.com.ewaste.solicitacao.dominio.Solicitacao.abrir(
+            empresa,
+            "Nova",
+            new java.math.BigDecimal("2.50"),
+            false,
+            0,
+            null,
+            "Goiânia",
+            "GO",
+            -16,
+            -49);
+    nova.adicionarItem(
+        br.com.ewaste.solicitacao.dominio.TipoResiduo.INFORMATICA,
+        1,
+        new java.math.BigDecimal("2.50"));
+    nova.definirPonto(comPonto ? ponto : null);
+    return nova;
+  }
+
   private MockHttpServletRequestBuilder nova(String tipo) {
-    return post("/geradora/solicitacoes")
-        .with(user("pi@teste.com").roles("GERADORA"))
-        .with(csrf())
-        .param("pontoDescarteId", ponto.toString())
-        .param("descricao", "Descarte fictício")
-        .param("pesoEstimadoKg", "2.50")
-        .param("cidade", "Goiânia")
-        .param("uf", "GO")
-        .param("latitude", "-16")
-        .param("longitude", "-49")
-        .param("itens[0].identificacao", "Notebook fictício")
-        .param("itens[0].tipoResiduo", tipo)
-        .param("itens[0].quantidade", "1")
-        .param("itens[0].pesoKg", "2.50");
+    return nova(tipo, true, "Notebook fictício");
+  }
+
+  private MockHttpServletRequestBuilder nova(String tipo, boolean comPonto, String identificacao) {
+    var requisicao =
+        post("/geradora/solicitacoes")
+            .with(user("pi@teste.com").roles("GERADORA"))
+            .with(csrf())
+            .param("descricao", "Descarte fictício")
+            .param("pesoEstimadoKg", "2.50")
+            .param("cidade", "Goiânia")
+            .param("uf", "GO")
+            .param("latitude", "-16")
+            .param("longitude", "-49")
+            .param("itens[0].tipoResiduo", tipo)
+            .param("itens[0].quantidade", "1")
+            .param("itens[0].pesoKg", "2.50");
+    if (comPonto) requisicao.param("pontoDescarteId", ponto.toString());
+    if (identificacao != null) requisicao.param("itens[0].identificacao", identificacao);
+    return requisicao;
   }
 }

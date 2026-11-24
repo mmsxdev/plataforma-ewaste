@@ -141,7 +141,7 @@ class SolicitacaoController {
   String detalhe(@PathVariable Long id, Model model) {
     Solicitacao s = servico.buscarDaGeradora(id, geradoraLogada());
     model.addAttribute("s", s);
-    model.addAttribute("ponto", pontos.buscar(s.getPontoDescarteId()).orElse(null));
+    model.addAttribute("ponto", pontos.buscarParaHistorico(s.getPontoDescarteId()).orElse(null));
     // O roteamento roda logo após o commit da criação, na mesma thread: aqui os alertas já existem
     model.addAttribute("alertas", alertas.contarAlertas(id));
     model.addAttribute("historico", rastreio.listar(id));

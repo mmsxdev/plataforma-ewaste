@@ -45,7 +45,7 @@ class AcessoIT {
   @CsvSource({
     "GERADORA,/geradora/solicitacoes",
     "COLETORA,/coletora/oportunidades",
-    "ADMIN,/admin/homologacoes"
+    "ADMIN,/painel"
   })
   void loginAbrePainelDoPerfilELogoutEncerraSessao(String perfil, String atalho) throws Exception {
     Long empresaId = null;

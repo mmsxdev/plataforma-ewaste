@@ -37,9 +37,9 @@ public class SolicitacaoService {
     pontos.validar(
         nova.getPontoDescarteId(),
         nova.getItens().stream().map(i -> i.getTipoResiduo().name()).toList());
-    if (nova.getPontoDescarteId() != null
-        && nova.getItens().stream().anyMatch(i -> i.getIdentificacao() == null))
-      throw new IllegalArgumentException("Identifique os resíduos destinados ao ponto de coleta.");
+    if (nova.getItens().stream()
+        .anyMatch(i -> i.getIdentificacao() == null || i.getIdentificacao().isBlank()))
+      throw new IllegalArgumentException("Identifique todos os resíduos da nova solicitação.");
     Solicitacao salva = solicitacoes.save(nova);
     eventos.publishEvent(new SolicitacaoCriadaEvent(salva.getId(), salva.getGeradoraId()));
     return salva.getId();
@@ -58,9 +58,14 @@ public class SolicitacaoService {
     if (identificacoes.keySet().stream()
         .anyMatch(itemId -> s.getItens().stream().noneMatch(i -> i.getId().equals(itemId))))
       throw new IllegalArgumentException("Item não pertence à solicitação.");
-    if (s.getPontoDescarteId() != null
-        && identificacoes.values().stream().anyMatch(v -> v == null || v.isBlank()))
-      throw new IllegalArgumentException("Identifique os resíduos destinados ao ponto de coleta.");
+    if (s.getItens().stream()
+        .anyMatch(
+            i ->
+                identificacoes.containsKey(i.getId())
+                    && (identificacoes.get(i.getId()) == null
+                        || identificacoes.get(i.getId()).isBlank())
+                    && (s.getPontoDescarteId() != null || i.getIdentificacao() != null)))
+      throw new IllegalArgumentException("Uma identificação existente não pode ser apagada.");
     s.editarDescricao(descricao);
     s.getItens()
         .forEach(

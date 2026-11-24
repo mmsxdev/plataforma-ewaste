@@ -144,7 +144,15 @@ class SolicitacaoControllerTest {
   @Test
   void semItensERecusado() throws Exception {
     mvc.perform(
-            valido("itens[0].tipoResiduo", "", "itens[0].quantidade", "", "itens[0].pesoKg", ""))
+            valido(
+                "itens[0].identificacao",
+                "",
+                "itens[0].tipoResiduo",
+                "",
+                "itens[0].quantidade",
+                "",
+                "itens[0].pesoKg",
+                ""))
         .andExpect(status().isOk())
         .andExpect(model().attributeHasFieldErrors("form", "itensPreenchidos"))
         .andExpect(content().string(containsString("Informe pelo menos um item.")));
@@ -155,6 +163,15 @@ class SolicitacaoControllerTest {
   void itemIncompletoERecusado() throws Exception {
     mvc.perform(valido("itens[0].pesoKg", ""))
         .andExpect(model().attributeHasFieldErrors("form", "itens[0].completo"));
+    verify(servico, never()).criar(any());
+  }
+
+  @Test
+  void itemSemIdentificacaoERecusadoAntesDeChamarServico() throws Exception {
+    mvc.perform(valido("itens[0].identificacao", "   "))
+        .andExpect(status().isOk())
+        .andExpect(model().attributeHasFieldErrors("form", "itens[0].completo"))
+        .andExpect(content().string(containsString("Preencha identificação")));
     verify(servico, never()).criar(any());
   }
 
@@ -244,6 +261,7 @@ class SolicitacaoControllerTest {
     campos.put("uf", "sp");
     campos.put("latitude", "-23.5614");
     campos.put("longitude", "-46.6559");
+    campos.put("itens[0].identificacao", "Computadores fictícios");
     campos.put("itens[0].tipoResiduo", "INFORMATICA");
     campos.put("itens[0].quantidade", "10");
     campos.put("itens[0].pesoKg", "250");

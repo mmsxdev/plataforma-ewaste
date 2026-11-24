@@ -37,10 +37,15 @@ public class ItemForm {
         || pesoKg != null;
   }
 
-  /** Linha começada precisa ter as três colunas. */
-  @AssertTrue(message = "Preencha tipo, quantidade e peso do item.")
+  /** Linhas vazias continuam opcionais; cada material informado precisa ser identificado. */
+  @AssertTrue(message = "Preencha identificação, tipo, quantidade e peso do item.")
   public boolean isCompleto() {
-    return !isPreenchido() || (tipoResiduo != null && quantidade != null && pesoKg != null);
+    return !isPreenchido()
+        || (identificacao != null
+            && !identificacao.isBlank()
+            && tipoResiduo != null
+            && quantidade != null
+            && pesoKg != null);
   }
 
   public TipoResiduo getTipoResiduo() {

@@ -41,6 +41,15 @@ public class PontosColetaService implements PontosColeta {
   }
 
   @Override
+  public Optional<PontoResumo> buscarParaHistorico(Long id) {
+    if (id == null) return Optional.empty();
+    ArvoreAvl<Long, PontoResumo> arvore = new ArvoreAvl<>();
+    for (PontoResumo ponto : pontos.listarPorIdIncluindoInativos(id))
+      arvore.inserir(ponto.id(), ponto);
+    return arvore.buscar(id);
+  }
+
+  @Override
   @Transactional
   public void validar(Long id, List<String> tipos) {
     if (id == null) return; // solicitações legadas e coleta no endereço continuam válidas
