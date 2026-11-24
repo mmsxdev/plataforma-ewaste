@@ -4,6 +4,10 @@ title Modelo conceitual - negócio B2B e extensões existentes
 hide methods
 entity Empresa
 entity Usuario
+note right of Usuario
+ADMIN não tem empresa; vínculo opcional.
+Responsáveis GERADORA/COLETORA são vinculados.
+end note
 entity Homologacao
 entity DocumentoHomologacao
 entity Solicitacao
@@ -20,7 +24,7 @@ entity Assinatura
 entity Lancamento
 entity ArquivoCompartilhado
 entity AuditoriaEstado
-Empresa ||--o{ Usuario : representa
+Empresa |o--o{ Usuario : representa
 Empresa ||--o| Homologacao : tem
 Homologacao ||--o{ DocumentoHomologacao : comprova
 Empresa ||--o{ Solicitacao : solicita

@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-24",
+  "pdfs_atualizados": {
+    "banco-dados": {
+      "paginas": 21,
+      "sha256": "76dc4b5e0d9fe51f4a6495cf78310d2e87d6ba79ad209585b25ee7a65ef3c330"
+    },
+    "design-software": {
+      "paginas": 32,
+      "sha256": "c314659d07a98b9795eda733a32a1ff859e0d87f5453681c916ae1dbf7732d01"
+    }
+  },
+  "preservados": {
+    "docs/pdf/estrutura-dados.pdf": "96edfe51159f2c66f9071cbea4962410ebe9536409f9b86843437ad076d90be5",
+    "docs/pdf/teoria-computacao.pdf": "717b6180a5eebb590ea097e03d8f03e500431d29e89cc6ff23fc9886d4c1d1ea",
+    "docs/pdf/administracao.pdf": "0d55ea39eeb0c406935a795b1dcedaad0137fab579134ab4abafc5540554bdc3",
+    "docs/custos.xlsx": "1fb0f492df33267b95618fc76ad18755fcda0f74dca0320c612e35fbdb03c821"
+  },
+  "diagramas_conferidos": [
+    "classes",
+    "sequencia",
+    "der-conceitual",
+    "der-logico"
+  ],
+  "limite": "Diagramas em visão geral no PDF; leitura detalhada por zoom e PNG de resolução original, com dicionário textual."
+}

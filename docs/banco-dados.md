@@ -335,7 +335,7 @@ Fonte: `V601__recursos_academicos.sql`.
 
 Atomicidade: empresa/usuário e solicitação/itens em transação; no team bytes e referências participam do mesmo banco. Consistência: validações de domínio e PK/FK/check/unique. Isolamento: locks de solicitação, @Version e testes concorrentes em operações críticas; não alegar serialização de toda a aplicação. Durabilidade: commit/WAL do PostgreSQL; backup e recuperação continuam necessários contra falha do host. Fora do team, arquivos de disco não integram rollback SQL automaticamente.
 
-As provas executadas em 24/11/2026 incluem testes de rollback/concorrência, Function/View/Procedure/Trigger no verify aprovado (229 unitários + 90 IT, zero falhas/erros/pulos). A destinação pela Procedure também foi exercitada no navegador; a restauração isolada foi executada. Detalhes em [testes](testes.md); não inferimos aprovação só pela presença de @Transactional.
+As provas históricas anteriores ao fechamento de 24/11/2026 incluem testes de rollback/concorrência, Function/View/Procedure/Trigger no verify aprovado (229 unitários + 91 IT, zero falhas/erros/pulos). A destinação pela Procedure também foi exercitada no navegador; a restauração isolada foi executada. Detalhes em [testes](testes.md); não inferimos aprovação só pela presença de @Transactional.
 
 ## Administração, permissões e recuperação
 
@@ -356,3 +356,5 @@ E-WASTE. **Migrations V1–V601 e contratos entre módulos**. Código-fonte dest
 [restauracao-resumo.json](evidencias/restauracao-resumo.json) registra restauração local aprovada em 6,233 s, banco novo com identificador isolado preservado para conferência: 19 tabelas incluindo flyway_schema_history, 3 arquivos/19422 bytes. Os modelos/dicionário descrevem 18 tabelas de aplicação/infra; a tabela Flyway é técnica. Os quatro recursos SQL foram validados em testes; E2E [duas instâncias](evidencias/e2e-duas-instancias.json) comprovou dados/arquivos comuns em duas JVMs no mesmo Windows.
 
 Não foi criada cópia fora do host; retenção e metas RPO24h/RTO2h seguem propostas. O tempo do ensaio não prevê recuperação de falha real nem comprova durabilidade contra perda do anfitrião. Sem segunda máquina e sem mudança administrativa de firewall, conectividade dos colegas permanece pendente; nenhum endereço de rede detectado é configuração final aprovada.
+
+No fechamento de 24/11/2026, `verify spotless:check` passou com 236 unitários + 95 IT e o E2E Chromium passou em 12/12. Evidências atuais: [resumo Java](evidencias/fechamento-20261124/testes-resumo.json) e [ensaio entre instâncias locais](evidencias/fechamento-20261124/resultado.json). Rede entre dois computadores continua pendente.

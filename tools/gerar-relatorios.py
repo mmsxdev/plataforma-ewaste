@@ -1,5 +1,6 @@
 """Gera PDFs acadêmicos das fontes Markdown e diagramas locais; requer reportlab e Pillow."""
 from pathlib import Path
+import argparse
 import hashlib
 import html
 import json
@@ -97,8 +98,16 @@ bundles={
  'design-software':['requisitos.md','arquitetura.md','rastreabilidade.md','testes.md','implantacao.md'],
  'administracao':['administracao.md']
 }
-manifest={}
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--only', nargs='+', help='Relatórios selecionados, separados por espaço ou vírgula; omitir gera todos.')
+args = parser.parse_args()
+selected = set(bundles) if not args.only else {name for item in args.only for name in item.split(',')}
+unknown = selected - set(bundles)
+if unknown: parser.error('Relatórios desconhecidos: ' + ', '.join(sorted(unknown)))
+manifest_path = OUT/'fontes-sha256.json'
+manifest = json.loads(manifest_path.read_text(encoding='utf8')) if manifest_path.exists() else {}
 for name,files in bundles.items():
+    if name not in selected: continue
     story=[Paragraph('FACULDADE SENAI FATESG',styles['Title']),Spacer(1,15),Paragraph('Projeto Integrador — Engenharia de Software / 4º período / 2026-2',styles['BodyText']),Spacer(1,20),Paragraph(name.replace('-',' ').title(),styles['Title']),Spacer(1,20),Paragraph('E-Waste — gestão de descarte e reciclagem de resíduos eletrônicos',styles['BodyText']),Spacer(1,15),Paragraph('Equipe: integrantes e atribuições a confirmar. Artefato técnico com pendências explicitadas; não declara aprovação docente ou conformidade integral.',styles['BodyText']),PageBreak()]
     for filename in files:
         source=DOCS/filename
@@ -110,12 +119,19 @@ for name,files in bundles.items():
         patterns=['*.png'] if name=='design-software' else ['der-*.png'] if name=='banco-dados' else ['organograma.png']
         for pattern in patterns:
             for image in sorted((DOCS/'uml').glob(pattern)):
+                manifest['uml/'+image.name] = hashlib.sha256(image.read_bytes()).hexdigest()
+                diagram = image.with_suffix('.puml')
+                if diagram.exists():
+                    manifest['uml/'+diagram.name] = hashlib.sha256(diagram.read_text(encoding='utf8').encode('utf8')).hexdigest()
                 from PIL import Image as PILImage
                 w,h=PILImage.open(image).size
-                factor=min((A4[0]-142)/w,(A4[1]-190)/h)
-                story += [Paragraph(image.stem.replace('-',' ').title(),styles['Heading1']),Image(str(image),width=w*factor,height=h*factor),PageBreak()]
+                factor=min((A4[0]-142)/w,(A4[1]-240)/h)
+                caption = 'Fonte em resolução original: docs/uml/' + image.name + '. Amplie o PDF ou consulte o PNG para leitura detalhada.'
+                if image.stem == 'der-logico':
+                    caption += ' Visão geral das 18 tabelas; atributos, tipos e restrições também estão no dicionário legível em docs/banco-dados.md e no relatório de Banco de Dados.'
+                story += [Paragraph(image.stem.replace('-',' ').title(),styles['Heading1']),Paragraph(caption,styles['Rodape']),Spacer(1,8),Image(str(image),width=w*factor,height=h*factor),PageBreak()]
     if isinstance(story[-1],PageBreak):story.pop()
     pdf=OUT/(name+'.pdf')
     SimpleDocTemplate(str(pdf),pagesize=A4,rightMargin=57,leftMargin=85,topMargin=85,bottomMargin=57,title='E-Waste — '+name,author='Equipe E-Waste — atribuições pendentes').build(story,onFirstPage=footer,onLaterPages=footer)
     print(pdf.name,pdf.stat().st_size)
-(OUT/'fontes-sha256.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding='utf8')
+manifest_path.write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding='utf8')

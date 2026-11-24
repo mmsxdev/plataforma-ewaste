@@ -1,29 +1,45 @@
 // Ensaio com dados inteiramente fictícios em DUAS aplicações locais, não em duas máquinas.
-// Requer operador ter aplicado migrate,dev em banco de demonstração e duas apps profile team.
+// Requer banco de demonstração isolado com seeds e duas apps profile team.
+// Bootstrap: npm ci --prefix tools; npm run browser:install --prefix tools.
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
-import {createRequire} from 'node:module';
-const root=process.cwd();
-const req=createRequire(path.join(root,'target/academic/loader.cjs'));
-const {chromium}=req('playwright');
-const out=path.join(root,'target/evidencias');await fs.mkdir(out,{recursive:true});
+import {fileURLToPath} from 'node:url';
+import {chromium} from 'playwright';
+import {scheduleForDemo, validateDemoUrls} from './demo-config.mjs';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+if (process.env.PI_DEMO_CONFIRM !== 'FICTICIO') throw new Error('Defina PI_DEMO_CONFIRM=FICTICIO somente para instâncias ligadas ao banco isolado de demonstração.');
+const runId=process.env.PI_RUN_ID || new Date().toISOString().replace(/[:.]/g,'-')+'-'+crypto.randomBytes(3).toString('hex');
+if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,99}$/.test(runId)) throw new Error('PI_RUN_ID inválido.');
+const out=path.join(root,'target/evidencias',runId);
+await fs.mkdir(path.dirname(out),{recursive:true});
+await fs.mkdir(out); // Falha se já existe: nunca sobrescrever evidências anteriores.
+const schedule=scheduleForDemo(process.env.PI_AGENDAMENTO);
 const A=process.env.PI_APP_A || 'http://127.0.0.1:18080';
 const B=process.env.PI_APP_B || 'http://127.0.0.1:18081';
-if(![A,B].every(u=>/^http:\/\/127\.0\.0\.1:\d+$/.test(u))) throw Error('Ensaio automático restrito a aplicações locais de demonstração.');
+validateDemoUrls(A,B);
 const tag='PI-'+Date.now();
 const email=tag.toLowerCase()+'@teste.invalid';
 const password='Ficticia-PI-2026';
 const cnpj=()=>{let n=String(Date.now()).slice(-8)+'0001';for(const w of [[5,4,3,2,9,8,7,6,5,4,3,2],[6,5,4,3,2,9,8,7,6,5,4,3,2]]){let r=[...n].reduce((a,c,i)=>a+Number(c)*w[i],0)%11;n+=r<2?0:11-r;}return n;};
-const chrome='C:/Program Files/Google/Chrome/Application/chrome.exe';
-const browser=await chromium.launch({executablePath:chrome,headless:true});
-const results={started:new Date().toISOString(),scope:'Duas JVMs no mesmo Windows; teste entre duas máquinas permanece pendente',tag,checks:[]};
+const browserOptions={headless:true};
+if (process.env.PI_BROWSER_EXECUTABLE && process.env.PI_BROWSER_CHANNEL) throw new Error('Use somente PI_BROWSER_EXECUTABLE ou PI_BROWSER_CHANNEL.');
+if (process.env.PI_BROWSER_EXECUTABLE) { await fs.access(process.env.PI_BROWSER_EXECUTABLE); browserOptions.executablePath=process.env.PI_BROWSER_EXECUTABLE; }
+if (process.env.PI_BROWSER_CHANNEL) {
+  if (!['chrome','msedge'].includes(process.env.PI_BROWSER_CHANNEL)) throw new Error('PI_BROWSER_CHANNEL deve ser chrome ou msedge.');
+  browserOptions.channel=process.env.PI_BROWSER_CHANNEL;
+}
+let browser;
+const results={started:new Date().toISOString(),scope:'Duas JVMs locais no mesmo computador; teste entre duas máquinas permanece pendente',run_id:runId,tag,apps:{A,B},schedule,node:process.version,checks:[]};
 const contexts=[];
 async function context(){let c=await browser.newContext({viewport:{width:1440,height:1000}});contexts.push(c);return c;}
 async function login(p,base,user,pass){await p.goto(base+'/login');await p.locator('#username').fill(user);await p.locator('#password').fill(pass);await p.locator('form[action="/login"] button').click();await p.waitForURL('**/painel');}
 async function check(name,action){await action();results.checks.push({name,passed:true});console.log('OK',name);}
 try{
+ browser=await chromium.launch(browserOptions);
+ results.browser=browser.version();
+ console.log('Evidências:',out);
  const ca=await context(),cb=await context(),cc=await context();
  const a=await ca.newPage(),b=await cb.newPage(),c=await cc.newPage();
  await check('home e identidade visíveis',async()=>{await a.goto(A);assert.match(await a.locator('body').innerText(),/Missão/);await a.screenshot({path:path.join(out,'01-home.png'),fullPage:true});});
@@ -42,7 +58,7 @@ try{
  await check('edição autorizada enquanto aberta',async()=>{await a.goto(A+`/geradora/solicitacoes/${id}/editar`);await a.locator('#descricao').fill(tag+' atualizado');await a.getByRole('button',{name:'Salvar alterações'}).click();await b.reload();assert.match(await b.locator('body').innerText(),/atualizado/);});
  await check('coletora aceita e agenda pelo navegador',async()=>{
    await login(c,A,'coletora@teste.com','senha123');await c.goto(A+`/coletora/oportunidades/${id}`);await c.getByRole('button',{name:'Aceitar esta coleta'}).click();
-   await c.locator('#agendadaPara').fill('2026-12-01T14:00');await c.getByRole('button',{name:'Salvar agendamento'}).click();assert.match(await c.locator('body').innerText(),/AGENDADA/);
+   await c.locator('#agendadaPara').fill(schedule.value);await c.getByRole('button',{name:'Salvar agendamento'}).click();assert.match(await c.locator('body').innerText(),/AGENDADA/);
  });
  await check('edição rejeitada após aceite',async()=>{const r=await a.goto(A+`/geradora/solicitacoes/${id}/editar`);assert.equal(r.status(),409);});
  const photo=path.join(root,'src/main/resources/static/img/logo-ewaste.png');
@@ -58,4 +74,4 @@ try{
  await check('interface móvel e navegação por teclado',async()=>{await a.setViewportSize({width:390,height:844});await a.goto(A+'/mapa');await a.keyboard.press('Tab');assert.ok(await a.locator(':focus').count());await a.screenshot({path:path.join(out,'06-mobile.png'),fullPage:true});});
  results.passed=true;
 }catch(e){results.passed=false;results.error=String(e);for(const c of contexts){const p=c.pages()[0];if(p)await p.screenshot({path:path.join(out,'falha-'+contexts.indexOf(c)+'.png'),fullPage:true}).catch(()=>{});}throw e;
-}finally{results.finished=new Date().toISOString();await fs.writeFile(path.join(out,'resultado.json'),JSON.stringify(results,null,2));await browser.close();}
+}finally{results.finished=new Date().toISOString();await fs.writeFile(path.join(out,'resultado.json'),JSON.stringify(results,null,2));await browser?.close();}

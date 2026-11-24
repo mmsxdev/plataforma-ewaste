@@ -1,177 +1,176 @@
 @startuml
 !pragma layout smetana
 title Modelo lógico - 18 tabelas versionadas
-hide methods
 entity empresa {
-  id : BIGINT <<PK>>
-  tipo : VARCHAR(20)
-  razao_social : VARCHAR(150)
-  cnpj : VARCHAR(14)
-  telefone : VARCHAR(20)
-  endereco : VARCHAR(200)
-  cidade : VARCHAR(100)
-  uf : CHAR(2)
-  latitude : DOUBLE PRECISION
-  longitude : DOUBLE PRECISION
-  raio_atendimento_km : INTEGER
-  criado_em : TIMESTAMPTZ
+  {field} id : BIGINT <<PK>>
+  {field} tipo : VARCHAR(20)
+  {field} razao_social : VARCHAR(150)
+  {field} cnpj : VARCHAR(14)
+  {field} telefone : VARCHAR(20)
+  {field} endereco : VARCHAR(200)
+  {field} cidade : VARCHAR(100)
+  {field} uf : CHAR(2)
+  {field} latitude : DOUBLE PRECISION
+  {field} longitude : DOUBLE PRECISION
+  {field} raio_atendimento_km : INTEGER
+  {field} criado_em : TIMESTAMPTZ
 }
 entity usuario {
-  id : BIGINT <<PK>>
-  empresa_id : BIGINT <<FK>>
-  nome : VARCHAR(120)
-  email : VARCHAR(150)
-  senha_hash : VARCHAR(100)
-  perfil : VARCHAR(20)
-  ativo : BOOLEAN
-  criado_em : TIMESTAMPTZ
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} nome : VARCHAR(120)
+  {field} email : VARCHAR(150)
+  {field} senha_hash : VARCHAR(100)
+  {field} perfil : VARCHAR(20)
+  {field} ativo : BOOLEAN
+  {field} criado_em : TIMESTAMPTZ
 }
 entity homologacao {
-  id : BIGINT <<PK>>
-  empresa_id : BIGINT <<FK>>
-  status : VARCHAR(20)
-  motivo : VARCHAR(500)
-  analisado_por : BIGINT <<FK>>
-  analisado_em : TIMESTAMPTZ
-  criado_em : TIMESTAMPTZ
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} status : VARCHAR(20)
+  {field} motivo : VARCHAR(500)
+  {field} analisado_por : BIGINT <<FK>>
+  {field} analisado_em : TIMESTAMPTZ
+  {field} criado_em : TIMESTAMPTZ
 }
 entity documento_homologacao {
-  id : BIGINT <<PK>>
-  homologacao_id : BIGINT <<FK>>
-  tipo : VARCHAR(30)
-  arquivo_ref : VARCHAR(300)
-  nome_original : VARCHAR(200)
-  validade : DATE
-  enviado_em : TIMESTAMPTZ
+  {field} id : BIGINT <<PK>>
+  {field} homologacao_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(30)
+  {field} arquivo_ref : VARCHAR(300)
+  {field} nome_original : VARCHAR(200)
+  {field} validade : DATE
+  {field} enviado_em : TIMESTAMPTZ
 }
 entity solicitacao {
-  id : BIGINT <<PK>>
-  geradora_id : BIGINT <<FK>>
-  descricao : VARCHAR(1000)
-  peso_estimado_kg : NUMERIC(10,
-  contem_midias : BOOLEAN
-  qtd_midias : INTEGER
-  endereco : VARCHAR(200)
-  cidade : VARCHAR(100)
-  uf : CHAR(2)
-  latitude : DOUBLE PRECISION
-  longitude : DOUBLE PRECISION
-  status : VARCHAR(20)
-  coletora_id : BIGINT <<FK>>
-  aceita_em : TIMESTAMPTZ
-  agendada_para : TIMESTAMPTZ
-  criada_em : TIMESTAMPTZ
-  version : BIGINT
-  ponto_descarte_id : BIGINT <<FK>>
+  {field} id : BIGINT <<PK>>
+  {field} geradora_id : BIGINT <<FK>>
+  {field} descricao : VARCHAR(1000)
+  {field} peso_estimado_kg : NUMERIC(10, 2)
+  {field} contem_midias : BOOLEAN
+  {field} qtd_midias : INTEGER
+  {field} endereco : VARCHAR(200)
+  {field} cidade : VARCHAR(100)
+  {field} uf : CHAR(2)
+  {field} latitude : DOUBLE PRECISION
+  {field} longitude : DOUBLE PRECISION
+  {field} status : VARCHAR(20)
+  {field} coletora_id : BIGINT <<FK>>
+  {field} aceita_em : TIMESTAMPTZ
+  {field} agendada_para : TIMESTAMPTZ
+  {field} criada_em : TIMESTAMPTZ
+  {field} version : BIGINT
+  {field} ponto_descarte_id : BIGINT <<FK>>
 }
 entity solicitacao_item {
-  id : BIGINT <<PK>>
-  solicitacao_id : BIGINT <<FK>>
-  tipo_residuo : VARCHAR(30)
-  quantidade : INTEGER
-  peso_kg : NUMERIC(10,
-  identificacao : VARCHAR(150)
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} tipo_residuo : VARCHAR(30)
+  {field} quantidade : INTEGER
+  {field} peso_kg : NUMERIC(10, 2)
+  {field} identificacao : VARCHAR(150)
 }
 entity alerta_solicitacao {
-  solicitacao_id : BIGINT <<PK,FK>>
-  coletora_id : BIGINT <<PK,FK>>
-  distancia_km : NUMERIC(8,
-  enviado_em : TIMESTAMPTZ
+  {field} solicitacao_id : BIGINT <<PK,FK>>
+  {field} coletora_id : BIGINT <<PK,FK>>
+  {field} distancia_km : NUMERIC(8, 2)
+  {field} enviado_em : TIMESTAMPTZ
 }
 entity evento_rastreio {
-  id : BIGINT <<PK>>
-  solicitacao_id : BIGINT <<FK>>
-  tipo : VARCHAR(30)
-  descricao : VARCHAR(500)
-  peso_real_kg : NUMERIC(10,
-  evidencia_ref : VARCHAR(300)
-  registrado_por : BIGINT <<FK>>
-  registrado_em : TIMESTAMPTZ
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(30)
+  {field} descricao : VARCHAR(500)
+  {field} peso_real_kg : NUMERIC(10, 2)
+  {field} evidencia_ref : VARCHAR(300)
+  {field} registrado_por : BIGINT <<FK>>
+  {field} registrado_em : TIMESTAMPTZ
 }
 entity midia_destruida {
-  id : BIGINT <<PK>>
-  solicitacao_id : BIGINT <<FK>>
-  numero_serie : VARCHAR(100)
-  tipo : VARCHAR(10)
-  metodo : VARCHAR(20)
-  nivel : VARCHAR(10)
-  destruida_em : TIMESTAMPTZ
-  evidencia_ref : VARCHAR(300)
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} numero_serie : VARCHAR(100)
+  {field} tipo : VARCHAR(10)
+  {field} metodo : VARCHAR(20)
+  {field} nivel : VARCHAR(10)
+  {field} destruida_em : TIMESTAMPTZ
+  {field} evidencia_ref : VARCHAR(300)
 }
 entity documento_emitido {
-  id : BIGINT <<PK>>
-  solicitacao_id : BIGINT <<FK>>
-  tipo : VARCHAR(30)
-  numero : VARCHAR(40)
-  arquivo_ref : VARCHAR(300)
-  hash_sha256 : CHAR(64)
-  codigo_verificacao : VARCHAR(40)
-  emitido_em : TIMESTAMPTZ
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(30)
+  {field} numero : VARCHAR(40)
+  {field} arquivo_ref : VARCHAR(300)
+  {field} hash_sha256 : CHAR(64)
+  {field} codigo_verificacao : VARCHAR(40)
+  {field} emitido_em : TIMESTAMPTZ
 }
 entity notificacao {
-  id : BIGINT <<PK>>
-  empresa_id : BIGINT <<FK>>
-  tipo : VARCHAR(40)
-  titulo : VARCHAR(150)
-  mensagem : VARCHAR(500)
-  link : VARCHAR(300)
-  lida : BOOLEAN
-  criada_em : TIMESTAMPTZ
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(40)
+  {field} titulo : VARCHAR(150)
+  {field} mensagem : VARCHAR(500)
+  {field} link : VARCHAR(300)
+  {field} lida : BOOLEAN
+  {field} criada_em : TIMESTAMPTZ
 }
 entity ponto_descarte {
-  id : BIGINT <<PK>>
-  nome : VARCHAR(150)
-  endereco : VARCHAR(200)
-  cidade : VARCHAR(100)
-  uf : CHAR(2)
-  latitude : DOUBLE PRECISION
-  longitude : DOUBLE PRECISION
-  tipos_aceitos : VARCHAR(300)
-  horario : VARCHAR(150)
-  ativo : BOOLEAN
+  {field} id : BIGINT <<PK>>
+  {field} nome : VARCHAR(150)
+  {field} endereco : VARCHAR(200)
+  {field} cidade : VARCHAR(100)
+  {field} uf : CHAR(2)
+  {field} latitude : DOUBLE PRECISION
+  {field} longitude : DOUBLE PRECISION
+  {field} tipos_aceitos : VARCHAR(300)
+  {field} horario : VARCHAR(150)
+  {field} ativo : BOOLEAN
 }
 entity plano {
-  id : BIGINT <<PK>>
-  nome : VARCHAR(60)
-  valor_mensal : NUMERIC(10,
+  {field} id : BIGINT <<PK>>
+  {field} nome : VARCHAR(60)
+  {field} valor_mensal : NUMERIC(10, 2)
 }
 entity assinatura {
-  id : BIGINT <<PK>>
-  empresa_id : BIGINT <<FK>>
-  plano_id : BIGINT <<FK>>
-  status : VARCHAR(20)
-  inicio : DATE
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} plano_id : BIGINT <<FK>>
+  {field} status : VARCHAR(20)
+  {field} inicio : DATE
 }
 entity lancamento {
-  id : BIGINT <<PK>>
-  empresa_id : BIGINT <<FK>>
-  tipo : VARCHAR(20)
-  solicitacao_id : BIGINT <<FK>>
-  documento_id : BIGINT <<FK>>
-  valor : NUMERIC(10,
-  competencia : DATE
-  criado_em : TIMESTAMPTZ
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(20)
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} documento_id : BIGINT <<FK>>
+  {field} valor : NUMERIC(10, 2)
+  {field} competencia : DATE
+  {field} criado_em : TIMESTAMPTZ
 }
 entity arquivo_compartilhado {
-  caminho : VARCHAR(300) <<PK>>
-  nome_original : TEXT
-  content_type : VARCHAR(100)
-  tamanho : BIGINT
-  conteudo : BYTEA
-  criado_em : TIMESTAMPTZ
+  {field} caminho : VARCHAR(300) <<PK>>
+  {field} nome_original : TEXT
+  {field} content_type : VARCHAR(100)
+  {field} tamanho : BIGINT
+  {field} conteudo : BYTEA
+  {field} criado_em : TIMESTAMPTZ
 }
 entity roteamento_solicitacao {
-  solicitacao_id : BIGINT <<PK>>
-  processado_em : TIMESTAMPTZ
+  {field} solicitacao_id : BIGINT <<PK,FK>>
+  {field} processado_em : TIMESTAMPTZ
 }
 entity solicitacao_auditoria {
-  id : BIGINT <<PK>>
-  solicitacao_id : BIGINT <<FK>>
-  status_anterior : VARCHAR(20)
-  status_novo : VARCHAR(20)
-  usuario_banco : TEXT
-  transacao_id : BIGINT
-  registrado_em : TIMESTAMPTZ
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} status_anterior : VARCHAR(20)
+  {field} status_novo : VARCHAR(20)
+  {field} usuario_banco : TEXT
+  {field} transacao_id : BIGINT
+  {field} registrado_em : TIMESTAMPTZ
 }
 empresa |o--o{ usuario : empresa_id
 empresa ||--o| homologacao : empresa_id

@@ -40,7 +40,7 @@ O login usa a implementação real `IdentidadeService`, com consulta por e-mail 
 
 ## Consulta de pontos e adequação PI
 
-`mapa.api.PontosColeta` expõe `consultar(cidade,tipo)`, `buscar(id)` e `validar(id,tipos)` com projeções `PontoResumo`. `PontosColetaService` carrega registros JDBC ativos numa `ArvoreAvl` própria antes da busca/percurso e filtros. `solicitacao` usa apenas esse contrato público para validar seleção, não acessa implementação interna de mapa. `ponto_descarte_id` e `solicitacao_item.identificacao` são adições nullable da V600 para manter registros antigos sem preenchimento inventado. Novos itens com ponto selecionado precisam identificação; coleta no endereço sem ponto continua válida.
+`mapa.api.PontosColeta` expõe `consultar(cidade,tipo)`, `buscar(id)`, `buscarParaHistorico(id)` e `validar(id,tipos)` com projeções `PontoResumo`. `PontosColetaService` carrega registros JDBC ativos numa `ArvoreAvl` própria antes da busca/percurso e filtros. `solicitacao` usa apenas esse contrato público para validar seleção, não acessa implementação interna de mapa. `ponto_descarte_id` e `solicitacao_item.identificacao` são adições nullable da V600 para manter registros antigos sem preenchimento inventado. Todos os itens de nova solicitação precisam identificação, com ou sem ponto; coleta no endereço sem ponto continua válida. `buscarParaHistorico` inclui pontos que deixaram de receber novos pedidos, preservando a consulta da referência antiga.
 
 `Armazenamento` mantém o contrato: `ArmazenamentoEmDisco` fora de team; `ArmazenamentoCompartilhado` em team grava bytes em PostgreSQL V200. Não há SMB obrigatório. Referências antigas não são apagadas nem importadas automaticamente. Clientes team não rodam Flyway; operador separado aplica migrations. `RastreioService` usa a Procedure `registrar_destinacao_pi` da V601 na transação de destinação; detalhes em [sql-recursos.md](sql-recursos.md).
 
@@ -66,6 +66,8 @@ Ouvir: `@TransactionalEventListener` (roda depois do commit). Se o listener grav
 
 ## Rotas
 
+A tabela registra contratos de prefixo/acesso, não prova endpoints completos. `/coletora/homologacao`, `/admin/homologacoes`, `/admin/financeiro`, `/admin/pontos-descarte`, `/coletora/assinatura`, `/notificacoes` e `/api/notificacoes/**` não têm fluxo de interface completo nesta entrega. Os links indisponíveis foram retirados da navegação. Eventos citados como consumidos por Dev 5 são contratos futuros, não confirmação de listener implementado.
+
 | Prefixo | Acesso | Módulos |
 | --- | --- | --- |
 | `/`, `/login`, `/cadastro/**`, `/mapa`, `/api/public/**`, `/verificar/**` | público | Dev 1, Dev 5, Dev 4 |
@@ -76,7 +78,7 @@ Ouvir: `@TransactionalEventListener` (roda depois do commit). Se o listener grav
 
 ## Cobrança
 
-Os valores das tarifas ficam em `application.yml` (`app.tarifas.*`, criado pelo Dev 5). A `TAXA_MATCH` é paga pela coletora e a `TAXA_DOCUMENTO`, pela geradora. Índices únicos no banco impedem cobrança em dobro do mesmo evento.
+Contrato futuro, não implementado no fluxo atual: os valores das tarifas seriam configurados em `application.yml` (`app.tarifas.*`). A `TAXA_MATCH` é paga pela coletora e a `TAXA_DOCUMENTO`, pela geradora. Índices únicos no banco impedem cobrança em dobro do mesmo evento.
 
 ## Usuários de exemplo (perfil dev)
 

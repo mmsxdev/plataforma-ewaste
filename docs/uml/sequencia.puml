@@ -8,6 +8,10 @@ entity "PontoColetaRepository" as Repo
 collections "ArvoreAvl" as AVL
 boundary "SolicitacaoController" as WebS
 control "SolicitacaoService" as Sol
+control "ApplicationEventPublisher" as Publisher
+control "Spring / proxy transacional" as Tx
+control "RoteamentoListener" as Routing
+control "EventosAutomaticos" as Timeline
 database PostgreSQL as DB
 Geradora -> WebP : GET /mapa?cidade=...&tipo=...
 WebP -> Pontos : consultar(cidade, tipo)
@@ -25,21 +29,34 @@ WebP --> Geradora : ponto e ação de solicitar
 Geradora -> WebS : GET nova?pontoDescarteId=...&tipoResiduo=...
 WebS --> Geradora : formulário com ponto/categoria
 Geradora -> WebS : POST identificação/itens/ponto
-WebS -> Sol : criar(dados, empresa autenticada)
+WebS -> WebS : form.paraSolicitacao(geradoraLogada())
+WebS -> Tx : criar(nova : Solicitacao) : Long
+Tx -> Sol : criar(nova)
 Sol -> Pontos : validar(ponto, tipos)
 Pontos -> Repo : compatibilidade pela Function SQL
 Repo -> DB : ponto_aceita_tipo(id, tipo)
 alt dados e ponto válidos
   Sol -> DB : transação INSERT solicitacao + itens
-  Sol -> Sol : publicar evento dentro da transação
-  DB --> Sol : commit pela fronteira transacional
-  Sol -> Sol : listeners AFTER_COMMIT de criação/roteamento
-  Sol --> WebS : solicitação criada
+  Sol -> Publisher : publishEvent(SolicitacaoCriadaEvent)
+  note right of Publisher : Evento publicado dentro da transação.
+  Sol --> Tx : retornar id / finalizar método
+  Tx -> DB : COMMIT
+  Tx -> Routing : AFTER_COMMIT aoCriarSolicitacao(evento)
+  Routing -> DB : REQUIRES_NEW: marcador e alertas
+  Tx -> Timeline : AFTER_COMMIT criada(evento)
+  Timeline -> DB : REQUIRES_NEW: evento CRIADA
+  Tx --> WebS : id da solicitação criada
   WebS --> Geradora : redirecionar ao detalhe/histórico
 else incompatível/inativo/inválido
-  Sol --> WebS : erro de negócio / rollback
+  Sol --> Tx : erro de negócio
+  Tx -> DB : ROLLBACK (sem AFTER_COMMIT)
+  Tx --> WebS : erro de negócio
   WebS --> Geradora : mensagem sem gravação parcial
 end
+note over Routing, Timeline
+O diagrama não fixa ordem entre listeners.
+Alertas geram eventos próprios na sua transação.
+end note
 note over Pontos, AVL
 Também buscar(id) consulta árvore reconstruída
 a partir do banco; sem cache global.

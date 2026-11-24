@@ -36,6 +36,7 @@ enum TipoResiduo {
 interface PontosColeta {
   consultar(cidade, tipo)
   buscar(id)
+  buscarParaHistorico(id)
   validar(id, tipos)
 }
 class PontoResumo <<record>>
@@ -47,11 +48,13 @@ class ArvoreAvl {
   emOrdem()
   altura()
 }
-class SolicitacaoService
+class SolicitacaoService {
+  criar(nova : Solicitacao) : Long
+}
 class RastreioService
 interface EmissorDocumentos
 class DocumentoService
-Empresa "1" -- "0..*" Usuario : empresaId
+Empresa "0..1" -- "0..*" Usuario : empresaId
 Empresa "1" -- "0..*" Solicitacao : geradoraId
 Solicitacao "1" *-- "0..*" SolicitacaoItem
 SolicitacaoItem --> TipoResiduo
@@ -62,6 +65,10 @@ PontosColetaService --> ArvoreAvl : constrói por consulta
 ArvoreAvl --> PontoResumo : valores
 RastreioService --> EmissorDocumentos
 DocumentoService ..|> EmissorDocumentos
+note right of Usuario
+ADMIN: empresaId nullable.
+Demais perfis são vinculados à empresa.
+end note
 note bottom of Solicitacao
 Associações entre módulos por ID,
 sem entidades JPA cruzadas.

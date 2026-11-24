@@ -1,6 +1,6 @@
 # Testes, critérios de aceitação e evidências
 
-**Validação executada em 24/11/2026:** build completo aprovado, 229 testes unitários e 91 de integração, sem falhas, erros ou pulos; E2E em Chrome headless com 12 verificações aprovadas; backup/restauração isolada aprovados. Duas instâncias foram exercitadas no mesmo Windows, não em dois computadores. O ensaio de rede com outro integrante continua pendente. Resultados abaixo se referem a esta execução local, não a CI remoto ou aprovação acadêmica.
+**Fechamento validado em 24/11/2026:** 236 testes unitários + 95 IT, sem falhas/erros/pulos; spotless:check aprovado; E2E Chromium 12/12, Node 6/6 e guard do migrador 11/11. Resumos atuais em evidencias/fechamento-20261124/. O ensaio anterior de backup/restauração permanece histórico, sem nova execução nesta rodada. Duas instâncias foram exercitadas no mesmo Windows, não em dois computadores. O ensaio de rede com outro integrante continua pendente. Resultados abaixo se referem a esta execução local, não a CI remoto ou aprovação acadêmica.
 
 ## Ambiente e comandos
 
@@ -14,7 +14,7 @@ docker version
 python -c "print(pow(7,3,55), pow(13,27,55), (3*27)%40)"
 ```
 
-Resultado do `verify`: **BUILD SUCCESS**, 319 testes no total (229 unitários + 91 IT), zero failures/errors/skipped. Totais conferidos pela leitura dos XML: 18 suites Surefire e 17 Failsafe. Spotless final será conferido pelo líder após a revisão documental; não inferir porcentagem de cobertura sem relatório específico. Relatórios produzidos: `target/surefire-reports/` e `target/failsafe-reports/`; JaCoCo quando configurado. A configuração do CI está em `.github/workflows/ci.yml`. `spotless:apply` altera código; `spotless:check` é a conferência.
+Resultado histórico do `verify` anterior ao fechamento: **BUILD SUCCESS**, 320 testes no total (229 unitários + 91 IT), zero failures/errors/skipped. Totais conferidos pela leitura dos XML: 18 suites Surefire e 17 Failsafe. Spotless da rodada histórica foi aprovado; a rodada de fechamento tem conferência própria ao final deste documento; não inferir porcentagem de cobertura sem relatório específico. Relatórios produzidos: `target/surefire-reports/` e `target/failsafe-reports/`; JaCoCo quando configurado. A configuração do CI está em `.github/workflows/ci.yml`. `spotless:apply` altera código; `spotless:check` é a conferência.
 
 ## Matriz de casos
 
@@ -59,4 +59,18 @@ A execução criou geradora fictícia, consultou pontos pela AVL, rejeitou categ
 
 A restauração foi feita em banco novo com nome isolado, preservado para conferência; os 6,233 s medem aquele ensaio local, não comprovam RTO futuro, failover, retenção automática ou backup fora do anfitrião. Rede entre dois computadores não foi validada: não há segunda máquina disponível, o firewall não foi aplicado por ausência de privilégios administrativos e o IP do anfitrião mudou durante o trabalho. Loopback saudável não libera acesso remoto.
 
-Conferências adicionais: spotless:check final aprovado; importação de legado com arquivo válido e execução repetida passou no IT adicional (total final 91 IT). O script do operador executou migração sem dev depois de uma inicialização com seeds, encerrando com código 0. A tentativa de importar referências sem arquivos dos seeds falhou de forma controlada; não foi tratada como recuperação bem-sucedida.
+Conferências históricas anteriores ao fechamento: spotless:check aprovado; importação de legado com arquivo válido e execução repetida passou no IT adicional (total final 91 IT). O script do operador executou migração sem dev depois de uma inicialização com seeds, encerrando com código 0. A tentativa de importar referências sem arquivos dos seeds falhou de forma controlada; não foi tratada como recuperação bem-sucedida.
+
+## Rodada de fechamento da auditoria
+
+Baseline histórico preservado em [testes-resumo.json](evidencias/testes-resumo.json): **320 = 229 unitários + 91 IT**, sem falhas/erros/pulos. A menção anterior a 319 junto de 229+91 era soma incorreta, corrigida sem alterar o JSON histórico. Arquivos E2E/restauração antigos mantêm data e escopo originais.
+
+**Rodada aprovada: 331 testes Java (236 unitários + 95 IT), zero falhas, erros ou ignorados; spotless:check aprovado. E2E: 12/12.** Evidências novas estão publicadas em `docs/evidencias/fechamento-20261124/`, sem sobrescrever os JSON/PNG antigos. Os testes Node de configuração do E2E passaram (6/6): fuso São Paulo/virada de ano, data futura, overrides inválidos/passados e URLs locais distintas. Bootstrap executado com `npm ci --prefix tools` e `npm run browser:install --prefix tools`, Playwright 1.65.1 pinado; Chromium gerenciado instalado. Isso valida preparação/configuração, não substitui o E2E nem altera o total Java.
+
+E2E de fechamento: [resultado.json](evidencias/fechamento-20261124/resultado.json), run `fechamento-20261124-final`, de 24/11/2026. Node v22.21.1, Playwright 1.65.1 e Chromium gerenciado 159.0.8154.6, sem junction/runtime do Codex. Duas JVMs locais 18080/18081 apontaram ao banco isolado de auditoria na porta 15432; criaram solicitação **5**. Data de retirada foi calculada dinamicamente para 26/11/2026 09h27 em São Paulo. Há seis PNG e CDF fictício na mesma pasta; o JSON registra hash do PDF. A solicitação 6 e os horários anteriores pertencem à evidência histórica, não foram sobrescritos.
+
+O guard do migrador passou em 11 cenários: [migrador-cenarios.json](evidencias/fechamento-20261124/migrador-cenarios.json). Os casos permitidos simulam Java; não são prova de migração do banco comum. DER lógico corrigido expõe atributos VARCHAR/NUMERIC e PK caminho; UML corrige empresa opcional de ADMIN, assinatura criar(Solicitacao) e listeners separados AFTER_COMMIT/REQUIRES_NEW. PNGs foram regenerados antes dos PDFs afetados.
+
+Resultado Java consolidado: [testes-resumo.json](evidencias/fechamento-20261124/testes-resumo.json), obtido dos XML Surefire/Failsafe após `.\mvnw.cmd -B verify spotless:check` (BUILD SUCCESS). Antes da rodada final, a regressão encontrou expectativas antigas de links indisponíveis em HomeControllerTest e AcessoIT; elas foram corrigidas para a navegação atual, preservando autenticação e logout. Os específicos `.\mvnw.cmd -B -Dtest=ItemFormTest,SolicitacaoControllerTest -Dit.test=FluxoPiIT,SolicitacaoIT,RegrasR1R2IT verify` também passaram (17 IT); são subconjunto, não devem ser somados aos 331.
+
+Comandos adicionais executados: `npm.cmd test --prefix tools` (6/6), `pwsh -NoProfile -File infra/tests/Test-Migrate-Team.ps1` (11/11, Java/Maven simulados), `npm.cmd run demo --prefix tools` com PI_DEMO_CONFIRM=FICTICIO (12/12, Chromium real). O ensaio usou banco isolado, volume próprio e duas JVMs; não alterou o banco compartilhado da equipe.

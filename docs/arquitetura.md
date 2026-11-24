@@ -2,13 +2,13 @@
 
 Monólito modular em Spring Boot: um único deploy, com o código dividido em módulos de dono único (pacotes em `br.com.ewaste`).
 
-- Telas renderizadas no servidor com Thymeleaf; JavaScript só no mapa (Leaflet) e no contador de notificações.
+- Telas renderizadas no servidor com Thymeleaf; Leaflet é usado no seletor de localização dos cadastros, com entrada manual alternativa. Pontos são consultados em lista textual. Não há contador de notificações funcional nesta entrega.
 - Cada módulo expõe para os outros apenas o pacote `api` (interfaces + records). O teste `ArquiteturaTest` garante isso.
-- Efeitos colaterais (alertas, notificações, cobrança) viajam por eventos de domínio em `shared/events`. Eles são publicados com `ApplicationEventPublisher` e ouvidos com `@TransactionalEventListener`.
+- Criação/roteamento/rastreio usam eventos de domínio em `shared/events`, publicados com `ApplicationEventPublisher` dentro da transação e consumidos com `@TransactionalEventListener` após commit. Contratos reservam notificações/cobrança, mas não há implementação completa dessas extensões.
 - Segurança por prefixo de rota: `/geradora/**`, `/coletora/**` e `/admin/**`, cada um restrito ao perfil correspondente.
 - Banco PostgreSQL com esquema versionado por Flyway. O Hibernate só valida (`ddl-auto: validate`).
 
-Fluxo principal: homologação libera a coletora → a geradora cria a solicitação → o roteamento alerta as coletoras aptas no raio → a primeira aceita e agenda → a coleta e as mídias são registradas → os documentos (CDF, laudo, certificado) são emitidos → a geradora baixa os documentos no painel. O mapa público é independente desse fluxo.
+Fluxo principal: homologação libera a coletora → a geradora cria a solicitação → o roteamento alerta as coletoras aptas no raio → a primeira aceita e agenda → a coleta e as mídias são registradas → os documentos (CDF, laudo, certificado) são emitidos → a geradora baixa os documentos no painel. A consulta textual de pontos integra o início da solicitação; mapa cartográfico não é obrigatório. Telas de homologação administrativa/financeiro e notificações ainda não estão disponíveis; os atalhos não oferecem essas ações.
 
 ## Adequação ao PI oficial
 
@@ -42,6 +42,8 @@ Os contratos entre módulos estão em [contratos.md](contratos.md).
 
 ## Validação da arquitetura nesta entrega
 
-Em 24/11/2026, `verify` passou com 229 testes unitários e 91 de integração, sem falhas/erros/pulos. O E2E Chrome confirmou 12 verificações em duas instâncias team no mesmo Windows: dados gravados em A aparecem em B, upload recuperado na outra instância com integridade igual e CDF gerado/baixado em B. As seis imagens e o JSON estão em [docs/evidencias](evidencias/); casos e critérios em [testes](testes.md). Oito diagramas UML/DER/organograma foram renderizados em `docs/uml/*.png` a partir dos `.puml`.
+Na rodada histórica anterior ao fechamento de 24/11/2026, `verify` passou com 229 testes unitários e 91 de integração, sem falhas/erros/pulos. O E2E Chrome confirmou 12 verificações em duas instâncias team no mesmo Windows: dados gravados em A aparecem em B, upload recuperado na outra instância com integridade igual e CDF gerado/baixado em B. As seis imagens e o JSON estão em [docs/evidencias](evidencias/); casos e critérios em [testes](testes.md). Oito diagramas UML/DER/organograma foram renderizados em `docs/uml/*.png` a partir dos `.puml`.
 
 Backup/restauração local conferiu 19 tabelas (18 de domínio/infra mais flyway_schema_history), 3 arquivos e 19422 bytes em 6,233 s. A restauração em banco novo foi preservada; não houve cópia fora do host. O ensaio comprova o recorte local executado, não alta disponibilidade ou RTO futuro. Rede de dois computadores permanece pendente: sem máquina adicional e sem aplicação administrativa de firewall; mudança do IP detectado não configura automaticamente acesso dos colegas.
+
+No fechamento de 24/11/2026, `verify spotless:check` passou com 236 unitários + 95 IT e o E2E Chromium passou em 12/12. Evidências atuais: [resumo Java](evidencias/fechamento-20261124/testes-resumo.json) e [ensaio entre instâncias locais](evidencias/fechamento-20261124/resultado.json). Rede entre dois computadores continua pendente.

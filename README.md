@@ -58,6 +58,8 @@ O script confere a revisão, empacota sem DevTools, executa o perfil migrate e e
 - [Teoria da Computação — lógica e criptografia didática](docs/teoria-computacao.md)
 - [Administração e identidade](docs/administracao.md), [premissas de custos](docs/custos-premissas.csv)
 - [Testes e resultados](docs/testes.md) e [implantação/demonstração](docs/implantacao.md)
+- [Guia de uso](docs/guia-sistema.md), [guia técnico](docs/guia-tecnico.md) e [perguntas para apresentação](docs/perguntas-respostas.md)
+- [Bootstrap reproduzível do E2E](tools/README.md)
 - [PDFs acadêmicos](docs/pdf/) — fontes Markdown acima; não confundir com PDFs simulados gerados pelo aplicativo.
 
 Fluxo de demonstração: consultar `/mapa` → selecionar ponto/categoria → cadastrar solicitação identificando materiais → consultar situação/histórico → corrigir descrição/identificação em ABERTA. Rejeição demonstrável: ponto incompatível ou edição após aceite. A árvore AVL recebe dados do banco antes dos filtros/busca; `V601` agrega View, Function, Procedure e Trigger aplicados ao fluxo. Executar os casos e conferir resultados antes de declarar entrega concluída. Divergências de datas/grupos do documento oficial estão preservadas em requisitos.md.
@@ -66,7 +68,7 @@ Fluxo de demonstração: consultar `/mapa` → selecionar ponto/categoria → ca
 
 Cadastro em `/cadastro/geradora` e `/cadastro/coletora`, login em `/login` e painel por perfil em `/painel`. O cadastro valida CNPJ, e-mail, senha, coordenadas e raio da coletora; grava empresa e usuário na mesma transação, protege a senha com BCrypt e publica `EmpresaCadastradaEvent` para o módulo de homologação. CNPJ e e-mail duplicados são recusados, inclusive com restrição de unicidade no banco. E-mails são comparados sem distinção de maiúsculas.
 
-`UsuarioAtual` e `EmpresaConsulta` já usam implementações reais. A navbar e os painéis exibem os atalhos do perfil. Os destinos desses atalhos são implementados pelos demais desenvolvedores; nesta base ainda podem retornar 404. O cadastro de coletora não substitui sua homologação (Dev 2).
+`UsuarioAtual` e `EmpresaConsulta` já usam implementações reais. A navbar e os painéis exibem os atalhos disponíveis do perfil. Envio/análise administrativa de homologação, financeiro e notificações não têm interface completa; não são oferecidos como links navegáveis nesta demonstração. O cadastro de coletora não substitui sua homologação (Dev 2).
 
 O layout reutilizável está em `templates/fragments/layout.html`, com os fragmentos `head(titulo)`, `navbar` e `rodape`. A navbar reserva `#aviso-notificacoes` para o Dev 5. O seletor compartilhado `static/js/shared/seletor-localizacao.js` usa `#mapa-localizacao`, `#latitude` e `#longitude`; o mapa requer internet para Leaflet/OpenStreetMap e oferece preenchimento manual das coordenadas.
 

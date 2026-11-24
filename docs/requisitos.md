@@ -4,7 +4,7 @@ Fonte normativa acadêmica: Faculdade SENAI FATESG, **PI2026-2 ENG4-T1**, 9 pág
 
 ## Problema, usuários e limites
 
-Dificuldade de identificar locais e materiais aceitos, registrar o descarte e acompanhar sua situação (PDF, pp.1–3). O protótipo conecta geradoras a pontos de recebimento e coletoras e organiza os materiais e solicitações. A base existente é B2B: usuário responsável representa empresa GERADORA ou COLETORA; ADMIN administra homologações e pontos. A aceitação desse recorte pelo professor está **pendente**: o PDF não exige CNPJ nem exclui pessoas físicas.
+Dificuldade de identificar locais e materiais aceitos, registrar o descarte e acompanhar sua situação (PDF, pp.1–3). O protótipo conecta geradoras a pontos de recebimento e coletoras e organiza os materiais e solicitações. A base existente é B2B: usuário responsável representa empresa GERADORA ou COLETORA; ADMIN é perfil reservado; as interfaces de administração de homologações/pontos e financeiro não estão completas nesta entrega. A aceitação desse recorte pelo professor está **pendente**: o PDF não exige CNPJ nem exclui pessoas físicas.
 
 Preservamos Java 21, Spring Boot 3.5.16, Thymeleaf e PostgreSQL 16. Homologação, roteamento por raio, PDFs operacionais e monetização simulada são decisões anteriores, não requisitos mínimos do documento oficial. Mapa cartográfico, pagamentos, IA, publicação na internet e aplicativo nativo não são obrigações. A consulta textual de pontos atende ao objetivo de localizar informações sem depender de um provedor de mapas.
 
@@ -13,7 +13,7 @@ Preservamos Java 21, Spring Boot 3.5.16, Thymeleaf e PostgreSQL 16. Homologaçã
 | ID / PDF | História e comportamento | Critérios de aceitação |
 | --- | --- | --- |
 | RF01 / pp.2–3 | Como responsável, quero cadastrar minha empresa e autenticar minha conta. | CA01: cadastro válido grava empresa/usuário atomicamente, senha BCrypt; duplicidade/credencial inválida recusada; conta inativa não entra. |
-| RF02 / p.2 | Como geradora, quero identificar materiais, tipo, quantidade e peso ao solicitar descarte. | CA02: material nomeado e categoria válida aparecem após persistência; quantidade/peso inválidos são recusados; itens legados sem identificação continuam legíveis. |
+| RF02 / p.2 | Como geradora, quero identificar materiais, tipo, quantidade e peso ao solicitar descarte. | CA02: todo novo item informado, com ou sem ponto, exige identificação; material nomeado e categoria válida aparecem após persistência; quantidade/peso inválidos são recusados; itens legados sem identificação continuam legíveis. |
 | RF03 / pp.2–3 | Como geradora, quero classificar materiais em categorias. | CA03: Informática, Telefonia, Eletrodoméstico, Mídia de armazenamento, Bateria e Outro são consistentes no formulário, enum e banco. |
 | RF04 / p.3 | Como usuário, quero consultar pontos ativos por cidade e categoria. | CA04: consulta informa nome, local, materiais e horário; filtros retornam apenas compatíveis; lista vazia tem mensagem; dados do banco passam pela AVL. |
 | RF05 / p.3 | Como geradora, quero iniciar uma solicitação a partir de um ponto consultado. | CA05: ponto/categoria seguem para o formulário; ponto inativo ou incompatível é recusado; solicitação persistida referencia o ponto escolhido. Registro legado sem ponto é preservado. |
