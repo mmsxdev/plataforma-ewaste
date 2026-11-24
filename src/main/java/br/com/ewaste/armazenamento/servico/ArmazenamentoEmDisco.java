@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,14 @@ import org.springframework.web.multipart.MultipartFile;
  * viram {@link IllegalArgumentException} com uma mensagem que pode ser mostrada ao usuário.
  */
 @Service
+@Profile("!team")
 class ArmazenamentoEmDisco implements Armazenamento {
 
   /** Limite de tamanho por arquivo: 10 MB (o mesmo do spring.servlet.multipart.max-file-size). */
   static final long TAMANHO_MAXIMO = 10L * 1024 * 1024;
 
   /** Tipos aceitos (content type) e a extensão usada no nome gravado em disco. */
-  private static final Map<String, String> EXTENSAO_POR_TIPO =
+  static final Map<String, String> EXTENSAO_POR_TIPO =
       Map.of("application/pdf", ".pdf", "image/jpeg", ".jpg", "image/png", ".png");
 
   /**
@@ -120,14 +122,14 @@ class ArmazenamentoEmDisco implements Armazenamento {
   // Validações auxiliares
   // ---------------------------------------------------------------------------------------------
 
-  private static void validarTamanho(long tamanho) {
+  static void validarTamanho(long tamanho) {
     if (tamanho > TAMANHO_MAXIMO) {
       throw new IllegalArgumentException("O arquivo passa do limite de 10 MB.");
     }
   }
 
   /** Aceita só PDF, JPG e PNG; ignora maiúsculas e parâmetros como "; charset=...". */
-  private static String normalizarTipo(String contentType) {
+  static String normalizarTipo(String contentType) {
     String tipo = contentType == null ? "" : contentType.split(";")[0].trim().toLowerCase();
     if (tipo.equals("image/jpg")) {
       tipo = "image/jpeg"; // alguns navegadores mandam a variante não oficial
@@ -139,7 +141,7 @@ class ArmazenamentoEmDisco implements Armazenamento {
   }
 
   /** Confere se os primeiros bytes batem com o tipo declarado. */
-  private static void validarConteudo(byte[] conteudo, String tipo) {
+  static void validarConteudo(byte[] conteudo, String tipo) {
     byte[] assinatura = ASSINATURA_POR_TIPO.get(tipo);
     boolean confere =
         conteudo.length >= assinatura.length
@@ -149,7 +151,7 @@ class ArmazenamentoEmDisco implements Armazenamento {
     }
   }
 
-  private static void validarPasta(String pasta) {
+  static void validarPasta(String pasta) {
     if (pasta == null || !PASTA_VALIDA.matcher(pasta).matches()) {
       throw new IllegalArgumentException("Pasta inválida: " + pasta);
     }

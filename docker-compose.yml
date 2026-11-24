@@ -1,14 +1,27 @@
+name: ewaste-team
 services:
   db:
     image: postgres:16
     environment:
       POSTGRES_DB: ${DB_NAME:-ewaste}
       POSTGRES_USER: ${DB_USER:-ewaste}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-ewaste}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}
+      DB_APP_USER: ${DB_APP_USER:-ewaste_app}
+      DB_APP_PASSWORD: ${DB_APP_PASSWORD:?Defina DB_APP_PASSWORD fora do Git}
+    restart: unless-stopped
     ports:
-      - "5432:5432"
+      # Padrão: somente nesta máquina. Para compartilhar, configure DB_BIND_IP
+      # com o IPv4 da máquina anfitriã na rede confiável.
+      - "${DB_BIND_IP:-127.0.0.1}:${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./infra/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
 
 volumes:
   pgdata:
+    name: ${DB_VOLUME_NAME:-ewaste-team-pg16}
