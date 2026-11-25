@@ -1,6 +1,7 @@
 /* Contrato: #mapa-localizacao, #latitude, #longitude; opcional #localizacao-status.
    Opcional: #cep e #cep-buscar localizam a rua (ViaCEP + Nominatim/OpenStreetMap) e
    preenchem #endereco, #cidade e #uf quando existirem. O CEP não é enviado ao servidor.
+   Opcional: #raioAtendimentoKm (km) desenha o perímetro de atendimento em volta do ponto.
    Carrega Leaflet apenas nas telas que usam o seletor; coordenadas manuais sempre disponíveis. */
 (() => {
   'use strict';
@@ -26,11 +27,30 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', maxZoom: 19
     }).addTo(mapa);
+    // Opcional: #raioAtendimentoKm desenha o perímetro atendido em volta do ponto.
+    const raio = document.getElementById('raioAtendimentoKm');
+    let circulo;
+    const atualizarRaio = (enquadrar) => {
+      if (!raio) return;
+      const centro = coordenadas(), km = Number(raio.value);
+      if (!centro || !(km > 0)) { if (circulo) { circulo.remove(); circulo = null; } return; }
+      if (circulo) circulo.setLatLng(centro).setRadius(km * 1000);
+      else circulo = L.circle(centro, { radius: km * 1000, color: '#17634c', weight: 2, fillColor: '#17634c', fillOpacity: 0.12, interactive: false }).addTo(mapa);
+      if (enquadrar) mapa.fitBounds(circulo.getBounds(), { padding: [16, 16] });
+    };
     let marcador;
     const marcar = (ponto) => {
       if (marcador) marcador.setLatLng(ponto); else marcador = L.marker(ponto).addTo(mapa);
+      atualizarRaio(false);
     };
     if (coordenadas()) marcar(coordenadas());
+    if (raio) {
+      raio.addEventListener('input', () => {
+        atualizarRaio(true);
+        if (!coordenadas() && Number(raio.value) > 0) informar('Marque a localização (CEP ou clique no mapa) para ver o raio de atendimento.');
+      });
+      if (circulo) atualizarRaio(true);
+    }
     mapa.on('click', ({ latlng }) => {
       definirCoordenadas(latlng.lat, latlng.lng);
       marcar(latlng); informar('Localização selecionada. Confira o endereço informado.');
