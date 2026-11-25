@@ -45,7 +45,7 @@ try{
  await check('home e identidade visíveis',async()=>{await a.goto(A);assert.match(await a.locator('body').innerText(),/Missão/);await a.screenshot({path:path.join(out,'01-home.png'),fullPage:true});});
  await check('cadastro fictício pela interface',async()=>{
    await a.goto(A+'/cadastro/geradora');
-   for(const [id,value] of Object.entries({razaoSocial:'Empresa Fictícia '+tag,cnpj:cnpj(),telefone:'62999990000',endereco:'Rua Fictícia de Ensaio, 100',cidade:'São Paulo',latitude:'-23.5629',longitude:'-46.6544',nome:'Responsável Fictício',email,senha:password})) await a.locator('#'+id).fill(value);
+   for(const [id,value] of Object.entries({razaoSocial:'Empresa Fictícia '+tag,cnpj:cnpj(),telefone:'62999990000',endereco:'Rua Fictícia de Ensaio, 100',cidade:'São Paulo',latitude:'-23.5629',longitude:'-46.6544',nome:'Responsável Fictício',email,senha:password})) { const campo=a.locator('#'+id); if(await campo.getAttribute('type')==='hidden') await campo.evaluate((e,v)=>{e.value=v;},value); else await campo.fill(value); }
    await a.locator('#uf').selectOption('SP');await a.getByRole('button',{name:'Concluir cadastro'}).click();await a.waitForURL('**/login?cadastro');await login(a,A,email,password);
  });
  await check('consulta banco → AVL → lista e categoria',async()=>{await a.goto(A+'/mapa?tipo=INFORMATICA');assert.match(await a.locator('body').innerText(),/Escola Circular/);await a.screenshot({path:path.join(out,'02-pontos.png'),fullPage:true});});

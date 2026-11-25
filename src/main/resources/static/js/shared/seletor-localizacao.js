@@ -109,6 +109,17 @@
     });
   }
 
+  // Coordenadas podem ficar ocultas: o navegador não valida "required" em campos hidden.
+  if (latitude.type === 'hidden' && latitude.form) {
+    latitude.form.addEventListener('submit', (evento) => {
+      if (latitude.value !== '' && longitude.value !== '') return;
+      evento.preventDefault();
+      informar('Marque a localização: informe o CEP ou clique no mapa sobre o endereço.');
+      if (status) status.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      (cep || container).focus();
+    });
+  }
+
   if (window.L) { iniciar(); return; }
   const estilo = document.createElement('link');
   estilo.rel = 'stylesheet'; estilo.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
@@ -116,6 +127,8 @@
   const script = document.createElement('script');
   script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
   script.onload = iniciar;
-  script.onerror = () => informar('Mapa indisponível. Preencha as coordenadas manualmente.');
+  script.onerror = () => informar(latitude.type === 'hidden'
+    ? 'Mapa indisponível. Use o CEP para localizar o endereço.'
+    : 'Mapa indisponível. Preencha as coordenadas manualmente.');
   document.head.appendChild(script);
 })();
