@@ -29,7 +29,7 @@ class HomeControllerTest {
         .andExpect(content().string(containsString("/cadastro/coletora")))
         .andExpect(content().string(containsString("/login")))
         .andExpect(content().string(not(containsString("/logout"))))
-        .andExpect(content().string(containsString("Projeto acadêmico")));
+        .andExpect(content().string(not(containsString("Integrações e documentos simulados"))));
   }
 
   @ParameterizedTest
