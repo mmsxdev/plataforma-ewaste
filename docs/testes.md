@@ -49,7 +49,7 @@ Testes Java referenciados são relativos a `src/test/java/br/com/ewaste/`. Usar 
 
 ## Roteiro individual
 
-Cada integrante deve selecionar uma história, localizar UML e implementação, explicar uma decisão e apresentar um teste associado com resultado obtido. Atribuições e contribuições individuais: PENDENTES de registro pela equipe; nomes de donos de módulos não comprovam contribuição realizada.
+Cada integrante deve selecionar uma história, localizar UML e implementação, explicar uma decisão e apresentar um teste associado com resultado obtido. As áreas principais e revisões cruzadas foram definidas por autorização do usuário em [equipe.md](equipe.md). Cada integrante estuda o fluxo completo e demonstra seu foco: Miguel — Design/identidade/segurança; Davi — requisitos/solicitação/AVL; Guilherme — rastreio/documentos/Teoria; Felipe — qualidade/armazenamento/recuperação; Rafael — SQL/BDII/Administração/custos. Essas atribuições futuras não comprovam contribuições já realizadas; o registro individual e o ensaio ainda precisam acontecer.
 
 ## Evidências do navegador e limites
 
@@ -57,7 +57,7 @@ Registro legível: [e2e-duas-instancias.json](evidencias/e2e-duas-instancias.jso
 
 A execução criou geradora fictícia, consultou pontos pela AVL, rejeitou categoria inválida no servidor, criou solicitação 6, consultou e editou por outra instância, aceitou/agendou com coletora de seed, rejeitou edição posterior com HTTP 409, recuperou upload PNG em B após envio em A com SHA igual, registrou destinação pela Procedure, concluiu gerando dois PDFs e baixou CDF em B. SHA-256 do PDF consta no JSON. Os testes com mídias e negativa a outra empresa são casos IT separados; a alternância entre instâncias no E2E não equivale a acesso entre empresas distintas.
 
-A restauração foi feita em banco novo com nome isolado, preservado para conferência; os 6,233 s medem aquele ensaio local, não comprovam RTO futuro, failover, retenção automática ou backup fora do anfitrião. Rede entre dois computadores não foi validada: não há segunda máquina disponível, o firewall não foi aplicado por ausência de privilégios administrativos e o IP do anfitrião mudou durante o trabalho. Loopback saudável não libera acesso remoto.
+A restauração foi feita em banco novo com nome isolado, preservado para conferência; os 6,233 s medem aquele ensaio local, não comprovam RTO futuro, failover, retenção automática ou backup fora do anfitrião. Naquele ensaio, a rede entre dois computadores não foi validada: não havia segunda máquina disponível, o firewall não foi aplicado por ausência de privilégios administrativos e o IP do anfitrião mudou durante o trabalho. Loopback saudável não libera acesso remoto.
 
 Conferências históricas anteriores ao fechamento: spotless:check aprovado; importação de legado com arquivo válido e execução repetida passou no IT adicional (total final 91 IT). O script do operador executou migração sem dev depois de uma inicialização com seeds, encerrando com código 0. A tentativa de importar referências sem arquivos dos seeds falhou de forma controlada; não foi tratada como recuperação bem-sucedida.
 
@@ -74,3 +74,7 @@ O guard do migrador passou em 11 cenários: [migrador-cenarios.json](evidencias/
 Resultado Java consolidado: [testes-resumo.json](evidencias/fechamento-20261124/testes-resumo.json), obtido dos XML Surefire/Failsafe após `.\mvnw.cmd -B verify spotless:check` (BUILD SUCCESS). Antes da rodada final, a regressão encontrou expectativas antigas de links indisponíveis em HomeControllerTest e AcessoIT; elas foram corrigidas para a navegação atual, preservando autenticação e logout. Os específicos `.\mvnw.cmd -B -Dtest=ItemFormTest,SolicitacaoControllerTest -Dit.test=FluxoPiIT,SolicitacaoIT,RegrasR1R2IT verify` também passaram (17 IT); são subconjunto, não devem ser somados aos 331.
 
 Comandos adicionais executados: `npm.cmd test --prefix tools` (6/6), `pwsh -NoProfile -File infra/tests/Test-Migrate-Team.ps1` (11/11, Java/Maven simulados), `npm.cmd run demo --prefix tools` com PI_DEMO_CONFIRM=FICTICIO (12/12, Chromium real). O ensaio usou banco isolado, volume próprio e duas JVMs; não alterou o banco compartilhado da equipe.
+
+## Próximo ensaio entre computadores
+
+A segunda máquina será a de Felipe, escolhida também como futura anfitriã do PostgreSQL; Rafael operará o banco e Felipe as cópias/recuperação. A transferência ainda não ocorreu. T15 continua pendente até teste real autorizado de registro em uma máquina/consulta em outra e envio/recuperação de arquivo, incluindo origem não autorizada bloqueada. Os resultados anteriores de duas JVMs no mesmo Windows permanecem históricos e não serão reapresentados como prova desse ensaio. Todas as novas massas devem ser fictícias; não há produção ou dados pessoais reais planejados.

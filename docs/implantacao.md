@@ -2,6 +2,12 @@
 
 Decisão aprovada: uma instância PostgreSQL 16 compartilhada pela equipe, preservando o monólito Java 21/Spring Boot 3.5.16/Thymeleaf. Cada computador pode executar sua instância do aplicativo; o banco e os arquivos do perfil **team** são comuns. UML: [implantacao.puml](uml/implantacao.puml).
 
+## Transição operacional aprovada em 24/11/2026
+
+A máquina de **Felipe Rohnelt será a futura anfitriã** do PostgreSQL, mas a transferência ainda não ocorreu. A origem em Miguel permanece preservada até backup/restauração, conferência de dados/arquivos/privilégios e teste real entre computadores. **Rafael Camargo será operador do banco; Felipe cuidará das cópias e recuperação.** Não operar cópias divergentes como bancos comuns nem trocar URLs antes de validar o destino.
+
+A sequência e as responsabilidades estão em [operação](operacao-banco.md) e [equipe](equipe.md). Não foram configurados IP/firewall/VPN nem comprovada rede por essa decisão. Como Felipe hospedará o banco, backup somente em seu computador não será externo: **o destino protegido fora dele continua pendente**.
+
 ## Perfis e responsabilidades
 
 - **dev:** desenvolvimento isolado, Flyway e seeds de demonstração, arquivos em disco por padrão. Não apontar casualmente para o banco da equipe.
@@ -10,7 +16,7 @@ Decisão aprovada: uma instância PostgreSQL 16 compartilhada pela equipe, prese
 
 Detalhes operacionais e scripts vigentes: [banco-compartilhado-local.md](banco-compartilhado-local.md). Este documento não escolhe IP definitivo nem abre rede/firewall automaticamente. Endereços de exemplo são placeholders; conexão de colegas e uso em duas máquinas estão **PENDENTES**.
 
-Estado de rede do preparo local: publicação na interface de rede falhou no bind do Docker; usado loopback temporário. Rede identificada como pública, sem alteração administrativa de firewall. Isso permite validação local, não comprova acesso dos colegas. O IP detectado mudou de 10.21.145.125 para 192.168.2.7 durante o trabalho; nenhum deles é endereço definitivo escolhido para a equipe. PostgreSQL em localhost:5432 está saudável; firewall não foi aplicado, não houve privilégio administrativo e o usuário confirmou não haver segunda máquina disponível para ensaio.
+Estado histórico de rede do preparo local: publicação na interface de rede falhou no bind do Docker; usado loopback temporário. Rede identificada como pública, sem alteração administrativa de firewall. Isso permite validação local, não comprova acesso dos colegas. O IP detectado mudou de 10.21.145.125 para 192.168.2.7 durante o trabalho; nenhum deles é endereço definitivo escolhido para a equipe. PostgreSQL em localhost:5432 está saudável; firewall não foi aplicado, não houve privilégio administrativo e naquele ensaio não havia segunda máquina disponível. A escolha posterior de Felipe como futura anfitriã não transforma esse resultado em teste de rede.
 
 ## Arquivos compartilhados
 
@@ -58,3 +64,5 @@ Na rodada histórica anterior ao fechamento, o build completo passou: 229 testes
 Backup e restauração por scripts foram executados em banco novo isolado preservado: 19 tabelas incluindo o histórico Flyway e 3 arquivos somando 19422 bytes; tempo observado 6,233 s. [Resumo de restauração](evidencias/restauracao-resumo.json). Não foi feita cópia fora do anfitrião. O tempo do ensaio local não comprova RTO futuro, retenção nem disponibilidade remota. Duas JVMs no mesmo Windows não substituem teste com dois computadores.
 
 No fechamento de 24/11/2026, `verify spotless:check` passou com 236 unitários + 95 IT e o E2E Chromium passou em 12/12. Evidências atuais: [resumo Java](evidencias/fechamento-20261124/testes-resumo.json) e [ensaio entre instâncias locais](evidencias/fechamento-20261124/resultado.json). Rede entre dois computadores continua pendente.
+
+Roteiro de transferência autorizado, ainda não executado: [transferencia-felipe.md](transferencia-felipe.md). A restauração de ensaio não restaura privilégios; o operador precisa conferi-los antes de promover o banco.

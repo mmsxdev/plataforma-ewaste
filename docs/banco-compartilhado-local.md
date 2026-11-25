@@ -8,6 +8,12 @@ No perfil `team`, anexos e PDFs de até 10 MB são persistidos como BYTEA em `ar
 
 Fora de `team`, `ArmazenamentoEmDisco` preserva `uploads`. Nada é importado ou apagado automaticamente. DBeaver/pgAdmin são clientes opcionais; nenhum deles cria sincronização entre servidores.
 
+## Transição operacional aprovada em 24/11/2026
+
+A máquina de **Felipe Rohnelt será a futura anfitriã** do PostgreSQL, mas a transferência ainda não ocorreu. A origem em Miguel permanece preservada até backup/restauração, conferência de dados/arquivos/privilégios e teste real entre computadores. **Rafael Camargo será operador do banco; Felipe cuidará das cópias e recuperação.** Não operar cópias divergentes como bancos comuns nem trocar URLs antes de validar o destino.
+
+A sequência e as responsabilidades estão em [operação](operacao-banco.md) e [equipe](equipe.md). Não foram configurados IP/firewall/VPN nem comprovada rede por essa decisão. Como Felipe hospedará o banco, backup somente em seu computador não será externo: **o destino protegido fora dele continua pendente**.
+
 ## Preparação da anfitriã
 
 1. Inspecionar `docker context show`, `docker ps -a`, `docker volume ls` e os rótulos dos volumes antes de iniciar. Não apagar/reutilizar volume desconhecido e não usar `down -v`. Volume anônimo preservado não comprova que dados antigos não existam.

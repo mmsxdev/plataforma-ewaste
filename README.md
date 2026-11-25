@@ -1,6 +1,6 @@
 # Plataforma E-Waste
 
-Protótipo acadêmico B2B para o Projeto Integrador do 4º período de Engenharia de Software da Faculdade SENAI FATESG, 2026-2. Conecta empresas geradoras a pontos de recebimento e coletoras homologadas. Permite identificar/classificar materiais, consultar pontos por cidade/categoria, solicitar coleta e acompanhar histórico. A primeira coletora apta que aceitar assume a operação. Ao concluir coleta, destinação e mídias previstas, emite CDF, laudo e certificado simulados. O recorte B2B é preservado da base e sua aceitação acadêmica ainda depende de confirmação.
+Protótipo acadêmico B2B para o Projeto Integrador do 4º período de Engenharia de Software da Faculdade SENAI FATESG, 2026-2. Conecta empresas geradoras a pontos de recebimento e coletoras homologadas. Permite identificar/classificar materiais, consultar pontos por cidade/categoria, solicitar coleta e acompanhar histórico. A primeira coletora apta que aceitar assume a operação. Ao concluir coleta, destinação e mídias previstas, emite CDF, laudo e certificado simulados. O recorte B2B é preservado da base e sua aceitação foi informada pelo usuário em 24/11/2026; registro das confirmações em docs/equipe.md.
 
 > Projeto acadêmico. Não há integração SINIR/IBAMA ou cobrança implementada, e os documentos gerados levam a marca "documento simulado".
 
@@ -50,6 +50,7 @@ O script confere a revisão, empacota sem DevTools, executa o perfil migrate e e
 
 ## Documentação do PI e demonstração
 
+- [Equipe, funções, turma e decisões confirmadas](docs/equipe.md)
 - [Requisitos, histórias, critérios e dúvidas do PDF](docs/requisitos.md)
 - [Matriz de rastreabilidade e estados de comprovação](docs/rastreabilidade.md)
 - [Arquitetura e privacidade](docs/arquitetura.md) e [contratos](docs/contratos.md)
@@ -63,6 +64,8 @@ O script confere a revisão, empacota sem DevTools, executa o perfil migrate e e
 - [PDFs acadêmicos](docs/pdf/) — fontes Markdown acima; não confundir com PDFs simulados gerados pelo aplicativo.
 
 Fluxo de demonstração: consultar `/mapa` → selecionar ponto/categoria → cadastrar solicitação identificando materiais → consultar situação/histórico → corrigir descrição/identificação em ABERTA. Rejeição demonstrável: ponto incompatível ou edição após aceite. A árvore AVL recebe dados do banco antes dos filtros/busca; `V601` agrega View, Function, Procedure e Trigger aplicados ao fluxo. Executar os casos e conferir resultados antes de declarar entrega concluída. Divergências de datas/grupos do documento oficial estão preservadas em requisitos.md.
+
+A futura anfitriã do PostgreSQL será a máquina de Felipe; a instância atual em Miguel permanece preservada até transferência e validação reais. Rafael será operador do banco e Felipe responsável pelos backups/recuperação; o destino de cópia fora da nova anfitriã ainda está pendente. Dados do protótipo são exclusivamente fictícios, sem produção.
 
 ## Entrega Dev 1 (P1)
 
@@ -103,7 +106,7 @@ O build formata o código automaticamente (Spotless). No CI, código fora do for
 
 ## Módulos e donos
 
-Cada pasta tem um dono. Só o dono altera os arquivos dela; os outros usam o que está no pacote `api` do módulo.
+A tabela abaixo registra a divisão técnica histórica de módulos. As funções de fechamento, focos acadêmicos e revisões cruzadas atuais estão em [docs/equipe.md](docs/equipe.md); todos estudam o fluxo completo. Alterações em módulos de colegas são coordenadas, usando os pacotes `api`; a atribuição de foco não comprova autoria ou contribuição passada.
 
 | Pacote (`br.com.ewaste.*`) | Responsabilidade | Dono | Rotas |
 | --- | --- | --- | --- |
@@ -153,3 +156,5 @@ Depois abra o Pull Request no GitHub. O merge é por **Squash and merge**, depoi
 **Commits** seguem `tipo(módulo): descrição no imperativo`. Tipos: `feat`, `fix`, `test`, `refactor`, `docs`, `chore`, `build`, `ci` e `contrato` (mudança em `shared/events` ou em um pacote `api`, que exige 2 aprovações).
 
 **Branches** são curtas (1 a 2 dias), uma por tarefa, com o nome no formato `feat/<nome>/<tarefa>` ou `fix/<nome>/<tarefa>`.
+
+Documentação complementar: [normalização dos relatórios](docs/normalizacao.md) e [transferência planejada para Felipe](docs/transferencia-felipe.md).

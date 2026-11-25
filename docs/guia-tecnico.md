@@ -10,6 +10,8 @@ Fluxo importante: `PontoColetaRepository` → `PontosColetaService` → `ArvoreA
 
 ## 2 Preparar ambiente sem confundir bancos
 
+A equipe definiu Rafael como operador do banco/migrador e Felipe como responsável por cópias/recuperação. O usuário escolheu a máquina de Felipe como futura anfitriã; a transferência ainda não ocorreu e a origem em Miguel deve ser preservada até validação. Nenhum IP/firewall foi escolhido ou testado por essa decisão. Cópia somente na máquina de Felipe não será backup externo quando ela hospedar o banco; o destino fora dela continua pendente. Ver [equipe](equipe.md) e [operação](operacao-banco.md).
+
 Conferir JDK, Docker e versão combinada do repositório. O banco comum da equipe tem dados a preservar. Para E2E use um banco **novo isolado**, porta/volume próprios, preparado pelo operador com migrations e seeds fictícios. `.env` e arquivos privados locais ficam ignorados; não cole credenciais em terminal compartilhado/prints.
 
 Somente operador roda `infra/Migrate-Team.ps1 -ApprovedRevision <SHA-40-confirmado>`; o script confere revisão/estado e erros. `-IncludeDemoData` é exclusivo do banco fictício de demonstração, não da preparação cotidiana comum. Não usar repair, clean ou reset para contornar migração recusada; [operação](operacao-banco.md) detalha backup e recuperação. Comandos exatos de migração podem evoluir: conferir assinatura atual do script antes de executar.
@@ -57,4 +59,6 @@ O manifesto SHA-256 detecta alterações nas fontes/diagramas incluídos; não �
 
 ## 6 Demonstração técnica individual
 
-Escolha história/CA em requisitos.md, localize o caso UML e serviço correspondente, mostre um teste aprovado e explique limite/decisão. Sugestões: AVL entre banco e ponto; ponto ativo/categoria; transação e rejeição sem gravação parcial; edição por empresa/estado; Procedure de destinação e Trigger; armazenamento binário entre instâncias. Não atribua contribuições a pessoas sem confirmação. Apoio: [perguntas-respostas](perguntas-respostas.md).
+Escolha história/CA em requisitos.md, localize o caso UML e serviço correspondente, mostre um teste aprovado e explique limite/decisão. Sugestões: AVL entre banco e ponto; ponto ativo/categoria; transação e rejeição sem gravação parcial; edição por empresa/estado; Procedure de destinação e Trigger; armazenamento binário entre instâncias. As áreas principais estão em [equipe](equipe.md), mas não comprovam contribuições passadas; todos estudam o fluxo inteiro. Registre autoria/contribuição real sem inferi-la de cargos. Apoio: [perguntas-respostas](perguntas-respostas.md).
+
+Atualização da equipe em 24/11/2026: cinco autores/turma identificados, responsabilidades em equipe.md, custos revisados e relatórios com capa, folha de rosto e sumário paginado. Conferência própria em [confirmacoes-equipe-20261124/verificacao.json](evidencias/confirmacoes-equipe-20261124/verificacao.json). Isso não é uma nova rodada Java/E2E. O banco de destino será no Felipe, conforme [roteiro de transferência](transferencia-felipe.md), ainda sem execução entre computadores.

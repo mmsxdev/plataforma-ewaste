@@ -6,6 +6,14 @@ O Compose usa PostgreSQL 16, projeto `ewaste-team` e volume `ewaste-team-pg16`. 
 
 Antes de criar o banco foram listados containers, volumes e rótulos: nenhum identificado como E-Waste. Volumes anônimos e recursos de outros projetos foram preservados; sua existência não permite afirmar ausência de dados antigos. O clone também não recupera `.env`, volumes ou `uploads` antigos.
 
+## Transição operacional aprovada em 24/11/2026
+
+A futura anfitriã do PostgreSQL compartilhado será **a máquina de Felipe Rohnelt**, por escolha explícita do usuário. **Rafael Camargo é o operador do banco/migrador; Felipe responde pelas cópias e ensaios de recuperação.** A instância atual em Miguel permanece preservada até a transferência ser executada e validada. Esta decisão documental não indica que o banco foi movido, que IP/firewall/VPN estejam configurados ou que o acesso entre computadores já tenha passado.
+
+Antes da troca: inventariar o ambiente de Felipe sem reutilizar volumes desconhecidos; fixar a revisão do esquema; produzir backup consistente do banco e arquivos; restaurar em destino isolado, conferir contagens/bytes/hash/privilégios e uma operação/download; preparar acesso apenas às máquinas autorizadas e executar o teste cruzado real. Só depois promover a instância de Felipe e trocar as URLs dos clientes de forma coordenada. Durante a preparação, a cópia de destino não é outro banco comum para escrita independente. Não apagar a origem nem substituir volumes/dados para concluir o ensaio.
+
+Com Felipe como anfitrião, uma cópia guardada somente em seu computador não protege contra a perda da anfitriã. **O destino protegido fora da máquina de Felipe continua pendente**, assim como o teste de transferência e o ensaio de rede entre as máquinas. Metas de frequência/retenção/RPO/RTO permanecem propostas, sem agendamento ou garantia novos. Ver [equipe e responsabilidades](equipe.md).
+
 ## Política proposta para o protótipo
 
 - Backup diário e imediatamente antes de migração/importação. Meta de RPO: 24 horas; reduzir o intervalo se o grupo não aceitar perder um dia de trabalho.
@@ -57,3 +65,5 @@ POSTGRESQL GLOBAL DEVELOPMENT GROUP. **PostgreSQL 16 Documentation: Backup and R
 O script Migrate-Team.ps1 foi executado na revisão commitada com sucesso, sem recarregar seeds. Uma tentativa explícita de importação encontrou cinco referências fictícias do seed de homologação sem arquivos locais e interrompeu corretamente o lote; não foram inventados documentos nem removidas referências. Os três arquivos reais do ensaio team continuam disponíveis no banco. A importação com arquivo local válido, preservação da origem e idempotência foi aprovada em ArmazenamentoCompartilhadoIT.
 
 No Windows, encerrar instâncias do aplicativo que estejam executando o mesmo target/*.jar antes de empacotar: o arquivo aberto pode impedir o repackage. A falha de empacotamento interrompe o script antes de tocar no banco. Não encerrar processos de outros projetos.
+
+Roteiro de transferência autorizado, ainda não executado: [transferencia-felipe.md](transferencia-felipe.md). A restauração de ensaio não restaura privilégios; o operador precisa conferi-los antes de promover o banco.

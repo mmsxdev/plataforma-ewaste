@@ -41,4 +41,4 @@ Cada rodada usa `target/evidencias/<run-id>/`, com JSON, PNG e PDF fictício. `P
 python -B -X utf8 tools/gerar-relatorios.py --only banco-dados design-software
 ```
 
-O seletor mescla hashes antigos no manifesto e atualiza fontes Markdown/diagramas dos relatórios selecionados. Os outros PDFs e entradas permanecem preservados. Renderizar os PlantUML alterados antes da exportação; depois conferir visualmente os PDFs, tipos SQL/atributos e tabelas. Identificação de equipe/cargos nas capas continua pendente, sem atribuição inventada.
+O seletor mescla hashes antigos no manifesto e atualiza fontes Markdown/diagramas dos relatórios selecionados. Os outros PDFs e entradas permanecem preservados. Renderizar os PlantUML alterados antes da exportação; depois conferir visualmente os PDFs, tipos SQL/atributos e tabelas. As capas identificam os cinco integrantes, o 4º período e a turma 1; responsabilidades em docs/equipe.md e formato em docs/normalizacao.md. O gerador produz sumário real em múltiplas passagens.

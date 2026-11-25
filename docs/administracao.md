@@ -1,10 +1,10 @@
 # Fundamentos da Administração — E-Waste
 
-Entrega baseada nas pp.6–7 do PDF oficial. **Proposta para validação da equipe**, sem inventar cargos atribuídos, despesas pagas ou aprovação comercial da marca.
+Entrega baseada nas pp.6–7 do PDF oficial. Identidade aprovada pela equipe e funções definidas por autorização do usuário em 24/11/2026. Custos continuam estimativas didáticas, não despesas pagas ou salários reais. Referência canônica: [equipe e decisões](equipe.md).
 
 ## Identidade e planejamento estratégico
 
-Nome comercial proposto: **E-Waste** (marca já utilizada no projeto). Assinatura: “resíduos com destino”. O logotipo existente em `src/main/resources/pdf/logo.png` é reutilizado na página inicial; não há pesquisa de registro de marca, titularidade externa ou exclusividade comprovada.
+Nome comercial aprovado pela equipe: **E-Waste** (marca já utilizada no projeto). Assinatura: “resíduos com destino”. O logotipo existente em `src/main/resources/pdf/logo.png` é reutilizado na página inicial; não há pesquisa de registro de marca, titularidade externa ou exclusividade comprovada.
 
 - **Missão:** facilitar o descarte responsável de eletrônicos, conectando empresas a pontos de recebimento e coletoras e tornando cada solicitação acompanhável.
 - **Visão:** ser uma referência acadêmica de solução simples e rastreável para organizar o descarte eletrônico na comunidade atendida.
@@ -12,21 +12,21 @@ Nome comercial proposto: **E-Waste** (marca já utilizada no projeto). Assinatur
 
 Missão descreve a finalidade atual; Visão é uma aspiração, sem promessa de liderança de mercado; Valores orientam decisões concretas: alternativa textual aos mapas, documentos explicitamente simulados e restrição de acesso por empresa. Estes elementos estão visíveis na página inicial do protótipo.
 
-## Organograma proposto
+## Organograma e responsabilidades definidas
 
-Nomes dos responsáveis **PENDENTES de confirmação**. Os donos técnicos citados historicamente no README não equivalem automaticamente a cargos de uma empresa. Acúmulo de funções e hierarquia devem ser acordados pelo grupo.
+Grupo 01, Engenharia de Software, 4º período, turma 1: Davi Fraga, Guilherme Gonçalves, Miguel Melo, Felipe Rohnelt e Rafael Camargo. Matrículas dispensadas. Funções definidas com a autorização do usuário; não são alegações sobre contribuições já realizadas.
 
-Fonte do organograma gráfico: [uml/organograma.puml](uml/organograma.puml); [PNG renderizado](uml/organograma.png). Atribuições nominais continuam pendentes.
+Fonte gráfica: [uml/organograma.puml](uml/organograma.puml); [PNG](uml/organograma.png). Responsabilidades e revisão cruzada detalhadas em [equipe.md](equipe.md).
 
 ```text
-Coordenação de projeto [PENDENTE]
-├── Produto e requisitos [PENDENTE] — escopo, critérios de aceitação e validação
-├── Engenharia e dados [PENDENTE] — arquitetura, código, banco e revisão
-├── Qualidade e operação [PENDENTE] — testes, implantação e recuperação
-└── Administração e identidade [PENDENTE] — marca, estratégia e custos
+Coordenação e Design — Miguel Melo
+├── Produto, solicitações e EDII — Davi Fraga
+├── Rastreabilidade, documentos e Teoria — Guilherme Gonçalves
+├── Qualidade, armazenamento e recuperação — Felipe Rohnelt
+└── Banco de Dados II, Administração e custos — Rafael Camargo
 ```
 
-Coordenação organiza dependências e decisão compartilhada; os papéis acima não presumem vínculo empregatício. Revisão cruzada mantém responsabilidade de cada integrante. Documento institucional lista grupos com cinco pessoas apesar de regra de 3–4: confirmação de exceção permanece pendente.
+Miguel coordena dependências e a entrega; os focos colaboram com essa coordenação, sem vínculo empregatício presumido. Todos estudam o projeto completo e participam de revisão cruzada. Rafael é operador do banco/migrations; Felipe responde pelas cópias e ensaios de recuperação. A futura anfitriã será o computador de Felipe, mas a transferência e o ensaio de rede ainda não foram executados; backup nesse mesmo computador não conta como cópia externa. A participação de cinco integrantes foi confirmada pelo usuário como aceita pelos professores, mantendo-se a divergência original do PDF registrada em requisitos.md.
 
 ## Custos e premissas
 
@@ -42,4 +42,4 @@ FACULDADE SENAI FATESG. **Projeto Integrador 2026-2: Engenharia de Software, 4º
 
 ## Conferência dos artefatos
 
-A planilha calculou R$2640 de desenvolvimento com reserva, R$120/mês de operação e R$3000 no horizonte de três meses. Valores são estimativas didáticas, não despesas realizadas. Fórmulas e cache foram conferidos em `docs/custos.xlsx`; a prévia visual está em `target/academic/custos-preview.png`. O E2E de 24/11 verificou a visibilidade de identidade/Missão/Visão/Valores na home e o recorte móvel; [imagem](evidencias/01-home.png). Isso comprova integração visual, sem substituir a aprovação da proposta por integrantes ou professor.
+A premissa aprovada é 80 horas de desenvolvimento a R$120/h: base R$9.600, reserva de 10% de R$960 e total de R$10.560. Operação permanece R$120/mês e o horizonte de três meses totaliza R$10.920. Suporte operacional continua estimado em R$30/h. Os novos valores foram conferidos nas fórmulas e no cache do arquivo exportado após edição pontual da taxa de desenvolvimento. Valores são estimativas didáticas, não despesas realizadas. Fórmulas e cache foram conferidos em `docs/custos.xlsx`; a prévia visual está em `target/academic/custos-preview.png`. O E2E de 24/11 verificou a visibilidade de identidade/Missão/Visão/Valores na home e o recorte móvel; [imagem](evidencias/01-home.png). Isso comprova integração visual; a equipe aprovou a identidade em 24/11/2026. Não constitui aprovação docente do artefato nem registro comercial da marca.

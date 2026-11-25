@@ -45,7 +45,7 @@ Na semântica do aplicativo, T é a correspondência de quantidade declarada/reg
 
 ### 2.3 Ambiguidades e consistência
 
-“Usuário” não especifica pessoa física ou representante de empresa; o projeto preserva B2B, sujeito a confirmação. “Entrega ou coleta” não determina se ambos os modos são obrigatórios. “Atualização de dados” não exige que campos roteados possam mudar em qualquer estado: RN05 explicita o limite. Ponto selecionado não significa coletora vencedora; o roteamento B2B permanece separado do local informado. As inconsistências de datas/grupos do PDF estão em requisitos.md e não foram corrigidas silenciosamente. Testar as regras não resolve essas dúvidas de interpretação.
+“Usuário” não especifica pessoa física ou representante de empresa; o projeto preserva B2B, aceito conforme confirmação do usuário em equipe.md. “Entrega ou coleta” não determina se ambos os modos são obrigatórios. “Atualização de dados” não exige que campos roteados possam mudar em qualquer estado: RN05 explicita o limite. Ponto selecionado não significa coletora vencedora; o roteamento B2B permanece separado do local informado. As inconsistências de datas/grupos do PDF estão em requisitos.md e não foram corrigidas silenciosamente. A confirmação geral do usuário sobre as interpretações e as datas adotadas está registrada em equipe.md; as contradições do documento original permanecem identificadas.
 
 ## 3 Parte II — Teoria dos Números e criptografia
 

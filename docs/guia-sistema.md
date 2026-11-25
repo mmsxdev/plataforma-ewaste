@@ -16,7 +16,7 @@ Faça login com a conta criada. Os usuários dos seeds existem somente em ambien
 4. Envie. Um ponto indisponível ou incompatível deve provocar mensagem de rejeição, sem pedido parcial. Corrija o material ou volte à consulta.
 5. Na solicitação criada, confira situação e histórico. A escolha do ponto informa o destino; não significa que uma coletora já assumiu. O modelo B2B mantém roteamento para coletoras aptas no raio.
 
-Coleta no endereço sem ponto continua disponível por compatibilidade com o fluxo existente. Não apresentar essa alternativa como prova de que entrega presencial foi implementada; a interpretação de “entrega ou coleta” do PDF depende do professor.
+Coleta no endereço sem ponto continua disponível por compatibilidade com o fluxo existente. Não apresentar essa alternativa como prova de que entrega presencial foi implementada; a suficiência do recorte de coleta foi informada pelo usuário como confirmada pelos professores, sem alegar que existe entrega presencial.
 
 ## 3 Corrigir e acompanhar
 
@@ -40,4 +40,4 @@ Evidências históricas estão em [evidencias](evidencias/). A rodada E2E de fec
 
 ## 6 Limites e cuidados
 
-Não demonstrar homologação administrativa/financeiro/notificações como telas prontas. Não usar dados pessoais reais, importar fotos reais ou expor credenciais. Problemas de acesso ao banco/rede são tratados pelo operador, sem reset/limpeza dos dados. As divergências de datas/grupos e aceitação do recorte B2B estão em [requisitos](requisitos.md); não são resolvidas por este guia.
+Não demonstrar homologação administrativa/financeiro/notificações como telas prontas. Não usar dados pessoais reais, importar fotos reais ou expor credenciais. Problemas de acesso ao banco/rede são tratados pelo operador, sem reset/limpeza dos dados. As divergências originais e confirmações posteriores de datas/grupo/B2B estão em [requisitos](requisitos.md) e [equipe](equipe.md). A nova anfitriã será a máquina de Felipe; a transferência e o teste entre computadores ainda não aconteceram. Não apontar clientes para cópias divergentes durante a preparação.

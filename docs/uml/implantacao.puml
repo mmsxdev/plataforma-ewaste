@@ -1,26 +1,26 @@
 @startuml
 !pragma layout smetana
-title Ambiente de equipe proposto - endereços e pares a confirmar
-node "Computador integrante A" as A {
+title Transição planejada para Felipe - ensaio entre computadores pendente
+node "Computador Miguel - cliente após transferência" as A {
   artifact "Navegador A" as BA
   node "JVM Java 21 A" {
     artifact "E-Waste / profile team" as AppA
   }
 }
-node "Computador integrante B\nENSAIO PENDENTE" as B {
+node "Computador Felipe - aplicação cliente\nENSAIO PENDENTE" as B {
   artifact "Navegador B" as BB
   node "JVM Java 21 B" {
     artifact "E-Waste / profile team" as AppB
   }
 }
-node "Anfitrião autorizado\nIP e firewall a confirmar" as Host {
+node "Anfitrião de destino: Felipe\nTransferência, IP e firewall pendentes" as Host {
   node "Docker / PostgreSQL 16" {
     database "ewaste\nesquema + arquivo_compartilhado BYTEA" as Banco
   }
-  artifact "Operador de migração\ncredencial separada" as Op
+  artifact "Operador: Rafael Camargo\ncredencial separada" as Op
 }
-node "Destino protegido fora do anfitrião" {
-  artifact "Backup lógico + configuração privada\nrestauração a medir" as Backup
+node "Destino externo à máquina do Felipe\nLOCAL A DEFINIR" {
+  artifact "Backup lógico + configuração privada\nexecução externa a comprovar" as Backup
 }
 BA --> AppA : HTTP localhost:8080
 BB --> AppB : HTTP localhost:8080
@@ -32,6 +32,8 @@ note bottom of Banco
 Aplicações team não executam Flyway.
 HTTP é local; TLS da conexão DB deve ser
 decidido/configurado conforme rede.
-Não demonstra implantação pública/HA.
+Banco atual no Miguel preservado até restauração conferida.
+Felipe responde pelos backups; cópia externa deve sair do PC dele.
+Não demonstra transferência executada ou implantação pública.
 end note
 @enduml

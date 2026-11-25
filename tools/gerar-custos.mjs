@@ -5,7 +5,30 @@ import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 const root = process.cwd();
 const req = createRequire(path.join(root, 'target/academic/loader.cjs'));
-const { Workbook, SpreadsheetFile } = await import(pathToFileURL(req.resolve('@oai/artifact-tool')).href);
+const { Workbook, SpreadsheetFile, FileBlob } = await import(pathToFileURL(req.resolve('@oai/artifact-tool')).href);
+// Edição pontual: preserva a planilha existente e atualiza somente a taxa DEV01.
+if (process.argv.includes('--atualizar')) {
+ const file=path.join(root,'docs/custos.xlsx');
+ const wb=await SpreadsheetFile.importXlsx(await FileBlob.load(file));
+ const s=wb.worksheets.getItem('Custos');
+ const csv=await fs.readFile(path.join(root,'docs/custos-premissas.csv'),'utf8');
+ const input=csv.trim().split(/\r?\n/).find(line=>line.startsWith('DEV01;')).split(';');
+ if(s.getRange('A7').values[0][0]!=='DEV01') throw new Error('Posição DEV01 divergente; edição interrompida.');
+ s.getRange('G7').values=[[Number(input[6])]];
+ wb.recalculate();
+ console.log(JSON.stringify(await wb.inspect({kind:'region',sheetId:'Custos',range:'D18:H27',maxChars:2200,tableMaxRows:10,tableMaxCols:5})));
+ const base=Number(input[4])*Number(input[6]);
+ const reserve=base*s.getRange('H4').values[0][0];
+ const expected={H20:base,H21:reserve,H22:base+reserve,H25:120,H26:360,H27:base+reserve+360};
+ for(const [cell,value] of Object.entries(expected)) if(s.getRange(cell).values[0][0]!==value) throw new Error('Total divergente: '+cell);
+ const errors=await wb.inspect({kind:'match',searchTerm:'#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A|#NUM!|#NULL!',options:{useRegex:true,maxResults:10},summary:'Erros de fórmula'});
+ console.log(errors.ndjson);
+ const preview=await wb.render({sheetName:'Custos',range:'A1:I30',scale:1.3,format:'png'});
+ await fs.writeFile(path.join(root,'target/academic/custos-preview.png'),new Uint8Array(await preview.arrayBuffer()));
+ await (await SpreadsheetFile.exportXlsx(wb)).save(file);
+ await fs.rename(file+'.inspect.ndjson',path.join(root,'target/academic/custos-inspecao-'+Date.now()+'.ndjson')).catch(error=>{if(error.code!=='ENOENT')throw error;});
+ process.exit(0);
+}
 const wb = Workbook.create();
 const s = wb.worksheets.add('Custos');
 s.showGridLines = false;

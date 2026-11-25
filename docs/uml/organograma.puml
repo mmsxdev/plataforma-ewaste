@@ -1,19 +1,20 @@
 @startuml
 !pragma layout smetana
-title Organograma proposto - atribuições dependem da equipe
+title E-Waste - Grupo 01 / focos definidos em 24/11/2026
 top to bottom direction
-rectangle "Coordenação do projeto\nResponsável: PENDENTE\nEscopo e dependências" as Coord
-rectangle "Produto e requisitos\nResponsável: PENDENTE\nHistórias, critérios e validação" as Produto
-rectangle "Engenharia e dados\nResponsável: PENDENTE\nArquitetura, código e banco" as Eng
-rectangle "Qualidade e operação\nResponsável: PENDENTE\nTestes, implantação e recuperação" as QA
-rectangle "Administração e identidade\nResponsável: PENDENTE\nMarca, estratégia e custos" as Admin
+rectangle "Coordenação e Design de Software\nMiguel Melo\nArquitetura, identidade e segurança" as Coord
+rectangle "Produto, solicitações e EDII\nDavi Fraga\nRequisitos, roteamento e AVL" as Produto
+rectangle "Rastreabilidade e Teoria da Computação\nGuilherme Gonçalves\nColeta, documentos e demonstrações" as Rastreio
+rectangle "Qualidade e recuperação\nFelipe Rohnelt\nTestes, armazenamento e backups" as QA
+rectangle "Banco de Dados II e Administração\nRafael Camargo\nOperador SQL, identidade e custos" as Admin
 Coord --> Produto
-Coord --> Eng
+Coord --> Rastreio
 Coord --> QA
 Coord --> Admin
 note bottom of Coord
-Papéis propostos, não cargos atribuídos a integrantes.
-Acúmulo de funções/hierarquia dependem de acordo.
+Engenharia de Software, 4º período, turma 1.
+Todos estudam o fluxo completo e fazem revisão cruzada.
+Funções planejadas não comprovam contribuições passadas.
 Não presumir vínculo trabalhista.
 end note
 @enduml

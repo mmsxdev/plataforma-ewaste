@@ -16,7 +16,7 @@ Operações demonstráveis: `inserir`, `buscar`, `emOrdem`, `altura`. A chave ID
 
 Roteiro: inserir pontos fictícios no banco de demonstração por meio autorizado; consultar `/mapa`; conferir a correspondência banco/resultado; aplicar cidade/categoria; localizar um ID e iniciar solicitação; demonstrar teste de balanceamento com inserções em ordens diferentes. Evidências de teste e nome final dos casos estão em [testes](testes.md). **A existência deste relatório não comprova execução.**
 
-Limite acadêmico: confirmar com o professor se um fluxo integrado relevante basta, se espera todos os dados de todas as consultas e se exige remoção/balanceamento dessa operação. Esta implementação foi escolhida para consulta, sem remoção de nós pela interface.
+Escopo acadêmico: o usuário informou a aceitação do fluxo integrado de consulta, conforme equipe.md. Esta implementação foi escolhida para consulta, sem remoção de nós pela interface. Critérios docentes adicionais não transcritos não são inventados neste relatório.
 
 ## 3 Conclusão
 
