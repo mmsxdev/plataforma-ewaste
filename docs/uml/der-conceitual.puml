@@ -1,0 +1,54 @@
+@startuml
+!pragma layout smetana
+title Modelo conceitual - negócio B2B e extensões existentes
+hide methods
+entity Empresa
+entity Usuario
+note right of Usuario
+ADMIN não tem empresa; vínculo opcional.
+Responsáveis GERADORA/COLETORA são vinculados.
+end note
+entity Homologacao
+entity DocumentoHomologacao
+entity Solicitacao
+entity Material
+entity PontoColeta
+entity Alerta
+entity Roteamento
+entity Evento
+entity Midia
+entity DocumentoEmitido
+entity Notificacao
+entity Plano
+entity Assinatura
+entity Lancamento
+entity ArquivoCompartilhado
+entity AuditoriaEstado
+Empresa |o--o{ Usuario : representa
+Empresa ||--o| Homologacao : tem
+Homologacao ||--o{ DocumentoHomologacao : comprova
+Empresa ||--o{ Solicitacao : solicita
+Empresa |o--o{ Solicitacao : coleta
+PontoColeta |o--o{ Solicitacao : destino informado
+Solicitacao ||--o{ Material : contém
+Solicitacao ||--o{ Alerta : provoca
+Empresa ||--o{ Alerta : recebe
+Solicitacao ||--o| Roteamento : roteada uma vez
+Solicitacao ||--o{ Evento : acompanhada
+Solicitacao ||--o{ Midia : destrói
+Solicitacao ||--o{ DocumentoEmitido : comprova
+Solicitacao ||--o{ AuditoriaEstado : auditada
+Empresa |o--o{ Notificacao : destinatária
+Empresa ||--o{ Assinatura : contrata
+Plano ||--o{ Assinatura : define
+Empresa ||--o{ Lancamento : responsável
+note right of ArquivoCompartilhado
+Recursos binários fora do domínio principal.
+Referências por caminho são lógicas,
+sem FK para tabela de arquivos.
+end note
+note bottom of Plano
+Cobrança/notificações: estrutura herdada,
+não requisito mínimo nem fluxo final garantido.
+end note
+@enduml

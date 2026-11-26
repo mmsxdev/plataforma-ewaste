@@ -16,6 +16,8 @@
       Nenhuma coletora apta na sua região no momento. A solicitação continua aberta.
     </p>
 
+    <p th:if="${s.status.name() == 'ABERTA'}"><a th:href="@{/geradora/solicitacoes/{id}/editar(id=${s.id})}">Atualizar identificação dos resíduos</a></p>
+    <p th:if="${ponto != null}">Ponto de destino: <span th:text="${ponto.nome}"></span></p>
     <section class="card">
       <h2>Dados</h2>
       <dl class="dados">
@@ -35,9 +37,10 @@
       <h2>Itens</h2>
       <div class="tabela-rolagem">
         <table class="tabela">
-          <thead><tr><th>Tipo</th><th>Quantidade</th><th>Peso</th></tr></thead>
+          <thead><tr><th>Identificação</th><th>Tipo</th><th>Quantidade</th><th>Peso</th></tr></thead>
           <tbody>
             <tr th:each="i : ${s.itens}">
+              <td th:text="${i.identificacao ?: 'Não informada (registro anterior)'}"></td>
               <td th:text="${i.tipoResiduo.descricao}">Informática</td>
               <td th:text="${i.quantidade}">1</td>
               <td th:text="${i.pesoKg} ? |${#numbers.formatDecimal(i.pesoKg, 1, 'POINT', 2, 'COMMA')} kg| : '—'">10,00 kg</td>

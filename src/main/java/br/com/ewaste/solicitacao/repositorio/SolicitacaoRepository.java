@@ -13,6 +13,10 @@ import org.springframework.data.repository.query.Param;
 /** Acesso à tabela solicitacao (Spring Data gera a implementação a partir dos nomes). */
 public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long> {
 
+  @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+  @Query("select s from Solicitacao s where s.id = :id and s.geradoraId = :geradoraId")
+  Optional<Solicitacao> findParaEdicao(@Param("id") Long id, @Param("geradoraId") Long geradoraId);
+
   /** Solicitações de uma geradora, as mais novas primeiro. */
   List<Solicitacao> findByGeradoraIdOrderByCriadaEmDesc(Long geradoraId);
 
@@ -29,6 +33,8 @@ public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long> 
   Optional<Solicitacao> findComItens(Long id);
 
   List<Solicitacao> findByIdInAndStatus(Collection<Long> ids, StatusSolicitacao status);
+
+  List<Solicitacao> findByStatus(StatusSolicitacao status);
 
   /** Solicitação só se esta coletora venceu o aceite. */
   Optional<Solicitacao> findByIdAndColetoraId(Long id, Long coletoraId);

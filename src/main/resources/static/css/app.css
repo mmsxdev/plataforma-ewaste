@@ -45,6 +45,10 @@ form > button { margin-top: 24px; }
 .notice, .error-box { border-radius: 8px; padding: 16px; background: #e4eee5; }
 .error-box { background: #fff0eb; color: #872b17; border: 1px solid #e1b5a6; }
 small { font-size: .85rem; }
+.cep-busca { display: flex; gap: 12px; align-items: flex-end; max-width: 420px; }
+.cep-busca > div { flex: 1; }
+#cep-ajuda { display: block; margin: 6px 0 12px; }
 .map { height: 300px; background: #e4eee5; border: 1px solid #9bad9e; border-radius: 8px; }
 footer { border-top: 1px solid #d8e3da; margin-top: 48px; color: #526c5b; }
+footer:empty { display: none; }
 @media (max-width: 620px) { .form-grid { grid-template-columns: 1fr; } .card { padding: 20px; } .brand span { display: none; } .hero { padding: 32px 0; } }

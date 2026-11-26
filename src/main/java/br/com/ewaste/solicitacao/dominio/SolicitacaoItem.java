@@ -31,6 +31,19 @@ public class SolicitacaoItem {
   @Column(name = "tipo_residuo", nullable = false, length = 30)
   private TipoResiduo tipoResiduo;
 
+  @Column(length = 150)
+  private String identificacao;
+
+  public String getIdentificacao() {
+    return identificacao;
+  }
+
+  public void identificar(String valor) {
+    if (valor != null && valor.length() > 150)
+      throw new IllegalArgumentException("Use até 150 caracteres na identificação.");
+    identificacao = valor == null || valor.isBlank() ? null : valor.strip();
+  }
+
   @Column(nullable = false)
   private int quantidade;
 

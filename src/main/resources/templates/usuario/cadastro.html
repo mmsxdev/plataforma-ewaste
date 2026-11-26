@@ -6,7 +6,7 @@
   <p class="eyebrow" th:text="${tipo == 'coletora' ? 'Parceiros de coleta' : 'Empresas geradoras'}"></p>
   <h1 th:text="${tipo == 'coletora' ? 'Cadastre sua coletora' : 'Dê um destino aos seus resíduos'}"></h1>
   <p th:if="${tipo == 'coletora'}">Após o cadastro, envie sua documentação para homologação. O cadastro não habilita o recebimento de oportunidades automaticamente.</p>
-  <p>Preencha todos os campos. A localização pode ser indicada no mapa ou pelas coordenadas.</p>
+  <p>Preencha todos os campos. A localização é indicada pelo CEP e pelo mapa.</p>
   <form class="card" th:action="@{/cadastro/{tipo}(tipo=${tipo})}" th:object="${cadastro}" method="post">
     <div class="error-box" role="alert" th:if="${#fields.hasAnyErrors()}">
       <strong>Revise os dados antes de continuar.</strong><ul><li th:each="erro : ${#fields.allErrors()}" th:text="${erro}"></li></ul>
@@ -21,13 +21,18 @@
       <div><label for="uf">UF</label><select th:field="*{uf}" required autocomplete="address-level1"><option value="">Selecione</option><option th:each="estado : ${#strings.arraySplit('AC,AL,AP,AM,BA,CE,DF,ES,GO,MA,MT,MS,MG,PA,PB,PR,PE,PI,RJ,RN,RS,RO,RR,SC,SP,SE,TO', ',')}" th:value="${estado}" th:text="${estado}"></option></select></div>
     </div>
     <h2>Localização <span th:if="${tipo == 'coletora'}">da base</span></h2>
-    <p id="localizacao-ajuda">Clique no mapa para marcar o endereço. Se o mapa não carregar, preencha latitude e longitude manualmente.</p>
+    <p id="localizacao-ajuda">Informe o CEP para localizar a rua no mapa e depois clique no ponto exato.</p>
+    <div class="cep-busca">
+      <div><label for="cep">CEP</label><input id="cep" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code" aria-describedby="cep-ajuda"></div>
+      <button type="button" id="cep-buscar" class="secondary">Localizar pelo CEP</button>
+    </div>
+    <small id="cep-ajuda">Preenche endereço, cidade e UF e leva o mapa até a rua. O CEP não é armazenado.</small>
     <div id="mapa-localizacao" class="map" aria-label="Mapa para selecionar localização" aria-describedby="localizacao-ajuda"></div>
     <p id="localizacao-status" role="status"></p>
-    <div class="form-grid">
-      <div><label for="latitude">Latitude</label><input th:field="*{latitude}" required type="number" min="-90" max="90" step="any" placeholder="-23.5505"></div>
-      <div><label for="longitude">Longitude</label><input th:field="*{longitude}" required type="number" min="-180" max="180" step="any" placeholder="-46.6333"></div>
-      <div th:if="${tipo == 'coletora'}"><label for="raioAtendimentoKm">Raio de atendimento (km)</label><input th:field="*{raioAtendimentoKm}" required type="number" min="1" step="1"></div>
+    <input type="hidden" th:field="*{latitude}">
+    <input type="hidden" th:field="*{longitude}">
+    <div class="form-grid" th:if="${tipo == 'coletora'}">
+      <div><label for="raioAtendimentoKm">Raio de atendimento (km)</label><input th:field="*{raioAtendimentoKm}" required type="number" min="1" step="1"></div>
     </div>
     <h2>Seu acesso</h2><div class="form-grid">
       <div><label for="nome">Nome do responsável</label><input th:field="*{nome}" required maxlength="120" autocomplete="name"></div>

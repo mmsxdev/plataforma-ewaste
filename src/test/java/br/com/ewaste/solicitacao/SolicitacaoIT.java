@@ -96,7 +96,8 @@ class SolicitacaoIT {
             "SP",
             -23.56,
             -46.65);
-    s.adicionarItem(TipoResiduo.INFORMATICA, 10, new BigDecimal("250"));
+    s.adicionarItem(TipoResiduo.INFORMATICA, 10, new BigDecimal("250"))
+        .identificar("Computadores fictícios");
     return s;
   }
 

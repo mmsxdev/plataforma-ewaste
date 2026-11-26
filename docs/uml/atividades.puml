@@ -1,0 +1,36 @@
+@startuml
+!pragma layout smetana
+title Fluxo de solicitação de descarte
+start
+:Cadastrar empresa fictícia e autenticar;
+:Identificar material e categoria;
+:Consultar pontos por cidade/categoria;
+:Selecionar ponto e abrir formulário;
+:Informar identificação, categoria,
+quantidade e peso dos itens;
+if (Dados válidos e ponto ativo/compatível?) then (sim)
+  :Gravar solicitação ABERTA e itens
+  na mesma transação;
+  :Commit e eventos de criação/roteamento;
+  :Consultar situação e histórico próprios;
+  if (Precisa corrigir descrição/identificação?) then (sim)
+    if (Dona e estado ainda ABERTA?) then (sim)
+      :Salvar correção autorizada;
+    else (não)
+      :Rejeitar alteração e preservar dados;
+    endif
+  endif
+  :Coletora apta aceita e agenda;
+  :Registrar coleta, destinação e mídias;
+  if (Requisitos de conclusão completos?) then (sim)
+    :Concluir e emitir PDFs simulados;
+    :Geradora acompanha conclusão;
+  else (não)
+    :Rejeitar conclusão e informar pendência;
+  endif
+else (não)
+  :Rejeitar sem gravar solicitação parcial;
+  :Exibir mensagem e permitir correção;
+endif
+stop
+@enduml

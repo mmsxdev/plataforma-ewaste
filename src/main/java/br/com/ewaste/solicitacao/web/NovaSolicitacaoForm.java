@@ -27,6 +27,16 @@ public class NovaSolicitacaoForm {
   @Size(max = 1000, message = "Use no máximo 1000 caracteres.")
   private String descricao;
 
+  @Positive private Long pontoDescarteId;
+
+  public Long getPontoDescarteId() {
+    return pontoDescarteId;
+  }
+
+  public void setPontoDescarteId(Long valor) {
+    pontoDescarteId = valor;
+  }
+
   @NotNull(message = "Informe o peso estimado.")
   @Positive(message = "O peso estimado deve ser maior que zero.")
   @Digits(integer = 8, fraction = 2, message = "Use no máximo 2 casas decimais.")
@@ -92,7 +102,11 @@ public class NovaSolicitacaoForm {
             longitude);
     itens.stream()
         .filter(ItemForm::isPreenchido)
-        .forEach(i -> s.adicionarItem(i.getTipoResiduo(), i.getQuantidade(), i.getPesoKg()));
+        .forEach(
+            i ->
+                s.adicionarItem(i.getTipoResiduo(), i.getQuantidade(), i.getPesoKg())
+                    .identificar(i.getIdentificacao()));
+    s.definirPonto(pontoDescarteId);
     return s;
   }
 

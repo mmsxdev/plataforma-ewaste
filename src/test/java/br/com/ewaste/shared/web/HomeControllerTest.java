@@ -29,7 +29,7 @@ class HomeControllerTest {
         .andExpect(content().string(containsString("/cadastro/coletora")))
         .andExpect(content().string(containsString("/login")))
         .andExpect(content().string(not(containsString("/logout"))))
-        .andExpect(content().string(containsString("Projeto acadêmico")));
+        .andExpect(content().string(not(containsString("Integrações e documentos simulados"))));
   }
 
   @ParameterizedTest
@@ -46,7 +46,7 @@ class HomeControllerTest {
         .andExpect(content().string(not(containsString(outro))))
         .andExpect(content().string(not(containsString(terceiro))))
         .andExpect(content().string(containsString("id=\"aviso-notificacoes\"")))
-        .andExpect(content().string(containsString("/notificacoes")))
+        .andExpect(content().string(not(containsString("href=\"/notificacoes\""))))
         .andExpect(content().string(containsString("/logout")))
         .andExpect(content().string(containsString("name=\"_csrf\"")));
   }

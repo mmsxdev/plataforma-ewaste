@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Homologação')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container form-page">
+    <h1>Homologação da coletora</h1>
+    <p>Para receber solicitações de coleta, envie a licença ambiental e o cadastro IBAMA em dia e peça a análise. O administrador da plataforma aprova ou informa o que corrigir.</p>
+
+    <p class="notice" th:if="${mensagem}" th:text="${mensagem}">Mensagem</p>
+    <p class="error-box" th:if="${erro}" th:text="${erro}" role="alert">Erro</p>
+
+    <section class="card secao">
+      <h2>Situação: <span th:text="${h.statusRotulo}">pendente</span></h2>
+      <p th:if="${h.apta}">Sua coletora está apta e recebe as solicitações abertas dentro do raio de atendimento.</p>
+      <p th:if="${h.status.name() == 'APROVADA' and !h.apta}">Aprovada, mas há documento obrigatório vencido. Procure o administrador.</p>
+      <p th:if="${h.status.name() == 'EM_ANALISE'}">Seus documentos estão com o administrador. Você não precisa fazer nada agora.</p>
+      <p th:if="${h.status.name() == 'PENDENTE'}">Envie os documentos abaixo e clique em “Enviar para análise”.</p>
+      <div th:if="${h.status.name() == 'REPROVADA'}" class="error-box">
+        <strong>Reprovada.</strong> Motivo: <span th:text="${h.motivo}">motivo</span><br>
+        Corrija os documentos e envie para análise novamente.
+      </div>
+      <p th:if="${h.status.name() == 'SUSPENSA'}" class="error-box">Suspensa. Motivo: <span th:text="${h.motivo}"></span></p>
+      <p th:if="${h.podeEnviarDocumentos() and !#lists.isEmpty(h.faltando)}">
+        Faltam (obrigatórios): <strong th:text="${#strings.listJoin(h.faltando, ', ')}">Licença ambiental</strong>
+      </p>
+    </section>
+
+    <section class="secao">
+      <h2>Documentos enviados</h2>
+      <p th:if="${#lists.isEmpty(h.documentos)}">Nenhum documento enviado ainda.</p>
+      <div class="tabela-rolagem" th:unless="${#lists.isEmpty(h.documentos)}">
+        <table class="tabela">
+          <thead><tr><th>Tipo</th><th>Arquivo</th><th>Validade</th><th>Enviado em</th></tr></thead>
+          <tbody>
+            <tr th:each="d : ${h.documentos}">
+              <td th:text="${d.tipo}">Licença ambiental</td>
+              <td><a th:href="@{/coletora/homologacao/documentos/{id}(id=${d.id})}" th:text="${d.nome}">licenca.pdf</a></td>
+              <td th:text="${d.validade}">31/12/2030</td>
+              <td th:text="${d.enviadoEm}">01/11/2026 10:00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <form th:if="${h.podeEnviarDocumentos()}" class="card secao" th:action="@{/coletora/homologacao/documentos}" method="post" enctype="multipart/form-data">
+      <h2>Enviar documento</h2>
+      <div class="form-grid">
+        <div>
+          <label for="tipo">Tipo de documento</label>
+          <select id="tipo" name="tipo" required>
+            <option value="">Selecione</option>
+            <option th:each="t : ${tipos}" th:value="${t.valor}" th:text="${t.obrigatorio} ? |${t.rotulo} (obrigatório)| : ${t.rotulo}"></option>
+          </select>
+        </div>
+        <div>
+          <label for="validade">Validade</label>
+          <input id="validade" name="validade" type="date" aria-describedby="validade-ajuda">
+          <small id="validade-ajuda">Deixe em branco se o documento não vence.</small>
+        </div>
+      </div>
+      <label for="arquivo">Arquivo (PDF, JPG ou PNG, até 10 MB)</label>
+      <input id="arquivo" name="arquivo" type="file" accept="application/pdf,image/jpeg,image/png" required>
+      <button type="submit">Enviar documento</button>
+    </form>
+
+    <form th:if="${h.podeEnviarDocumentos()}" class="secao" th:action="@{/coletora/homologacao/enviar}" method="post">
+      <button type="submit" th:disabled="${!#lists.isEmpty(h.faltando)}">Enviar para análise</button>
+      <small th:unless="${#lists.isEmpty(h.faltando)}">Disponível depois de enviar os documentos obrigatórios.</small>
+    </form>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

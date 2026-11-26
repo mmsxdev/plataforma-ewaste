@@ -16,6 +16,7 @@
 
     <p th:if="${#lists.isEmpty(oportunidades)}" class="card">
       Nenhuma oportunidade aberta para você no momento.
+      Coletoras só recebem solicitações depois de homologadas: confira a <a th:href="@{/coletora/homologacao}">situação da sua homologação</a>.
     </p>
 
     <div class="tabela-rolagem" th:unless="${#lists.isEmpty(oportunidades)}">

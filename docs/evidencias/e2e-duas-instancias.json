@@ -1,0 +1,59 @@
+{
+  "started": "2026-11-24T03:17:55.135Z",
+  "scope": "Duas JVMs no mesmo Windows; teste entre duas máquinas permanece pendente",
+  "tag": "PI-1795490275003",
+  "checks": [
+    {
+      "name": "home e identidade visíveis",
+      "passed": true
+    },
+    {
+      "name": "cadastro fictício pela interface",
+      "passed": true
+    },
+    {
+      "name": "consulta banco → AVL → lista e categoria",
+      "passed": true
+    },
+    {
+      "name": "rejeição de material incompatível pelo servidor",
+      "passed": true
+    },
+    {
+      "name": "solicitação válida e persistência",
+      "passed": true
+    },
+    {
+      "name": "registro criado em A aparece em B",
+      "passed": true
+    },
+    {
+      "name": "edição autorizada enquanto aberta",
+      "passed": true
+    },
+    {
+      "name": "coletora aceita e agenda pelo navegador",
+      "passed": true
+    },
+    {
+      "name": "edição rejeitada após aceite",
+      "passed": true
+    },
+    {
+      "name": "upload em A recuperado em B",
+      "passed": true
+    },
+    {
+      "name": "destinação via procedure e PDFs recuperados em B",
+      "passed": true
+    },
+    {
+      "name": "interface móvel e navegação por teclado",
+      "passed": true
+    }
+  ],
+  "solicitacao_id": 6,
+  "pdf_sha256": "842a32e249cc0ada528d85ab5884b25c6a5c021780b6cb0ecf4ef3631905a234",
+  "passed": true,
+  "finished": "2026-11-24T03:17:59.143Z"
+}

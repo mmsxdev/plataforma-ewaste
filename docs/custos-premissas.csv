@@ -1,0 +1,8 @@
+id;fase;natureza;recurso;quantidade;unidade;valor_unitario_brl;periodicidade;premissa
+DEV01;desenvolvimento;variavel;Esforco total estimado;80;hora;120;unico;Estimativa didatica nao horas realizadas nem salario real
+DEV02;desenvolvimento;fixo;Ferramentas gratuitas;1;conjunto;0;unico;Sem contratacao adicional proposta para prototipo
+DEV03;desenvolvimento;fixo;Equipamento existente;1;posto;0;unico;Custo incremental zero sem contabilizar depreciacao
+OPS01;operacao;fixo;Internet rateio estimado;1;mes;30;mensal;Premissa didatica sem fatura real
+OPS02;operacao;variavel;Energia anfitriao;20;kWh;1;mensal;20kWh a R$1/kWh estimativa sem medicao
+OPS03;operacao;fixo;Reserva armazenamento backup;1;mes;10;mensal;Rateio hipotetico de armazenamento existente sem compra autorizada
+OPS04;operacao;variavel;Suporte estimado;2;hora;30;mensal;Tempo estimado por mes sem contratar integrante

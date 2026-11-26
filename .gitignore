@@ -11,6 +11,8 @@ target/
 
 # Ambiente local
 .env
+.env.*.local
+backups/
 uploads/
 *.log
 
