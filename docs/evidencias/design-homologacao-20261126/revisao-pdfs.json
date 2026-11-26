@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-26",
+  "scope": "Revisão formal e visual dos cinco PDFs; não é aprovação docente",
+  "pdfs": {
+    "administracao.pdf": {
+      "pages": 14,
+      "sha256": "a0585150bf37c85a7b1ab2901a19629dd3f3b66367753cb26a3f0b66c3fe57bf",
+      "toc_links_checked": 28,
+      "visual_review": "capas, sumário, tabelas, referências, figuras e quebras inspecionados após renderização"
+    },
+    "banco-dados.pdf": {
+      "pages": 30,
+      "sha256": "6176a68801486765447a529c5bda25b79117d7b74d15b2e82a50170eaae56384",
+      "toc_links_checked": 88,
+      "visual_review": "capas, sumário, tabelas, referências, figuras e quebras inspecionados após renderização"
+    },
+    "design-software.pdf": {
+      "pages": 49,
+      "sha256": "9bb3a89427a707f982929c67725a96ad63975ea2ea34f408e9cb8c91d1b9914a",
+      "toc_links_checked": 106,
+      "visual_review": "capas, sumário, tabelas, referências, figuras e quebras inspecionados após renderização"
+    },
+    "estrutura-dados.pdf": {
+      "pages": 8,
+      "sha256": "4460cbfca894c250e6f317ea1582b2393a90db71096ff501c83b264d5e98bfb7",
+      "toc_links_checked": 10,
+      "visual_review": "capas, sumário, tabelas, referências, figuras e quebras inspecionados após renderização"
+    },
+    "teoria-computacao.pdf": {
+      "pages": 10,
+      "sha256": "db9ddf9fdb57e046c44b152749828e9817917250349c319abfc57506f1e4241c",
+      "toc_links_checked": 22,
+      "visual_review": "capas, sumário, tabelas, referências, figuras e quebras inspecionados após renderização"
+    }
+  },
+  "limitations": [
+    "Metadados da apostila de Luciano Lima citada pelo PR23 sem conferência direta do arquivo original.",
+    "Diagramas largos são visão geral no PDF; PNG original e dicionário textual disponíveis."
+  ]
+}

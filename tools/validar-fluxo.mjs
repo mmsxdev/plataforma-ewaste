@@ -35,6 +35,7 @@ const results={started:new Date().toISOString(),scope:'Duas JVMs locais no mesmo
 const contexts=[];
 async function context(){let c=await browser.newContext({viewport:{width:1440,height:1000}});contexts.push(c);return c;}
 async function login(p,base,user,pass){await p.goto(base+'/login');await p.locator('#username').fill(user);await p.locator('#password').fill(pass);await p.locator('form[action="/login"] button').click();await p.waitForURL('**/painel');}
+async function manual(p){const d=p.locator('#localizacao-manual');if(await d.count() && await d.getAttribute('open')===null)await d.locator('summary').click();}
 async function check(name,action){await action();results.checks.push({name,passed:true});console.log('OK',name);}
 try{
  browser=await chromium.launch(browserOptions);
@@ -44,13 +45,13 @@ try{
  const a=await ca.newPage(),b=await cb.newPage(),c=await cc.newPage();
  await check('home e identidade visíveis',async()=>{await a.goto(A);assert.match(await a.locator('body').innerText(),/Missão/);await a.screenshot({path:path.join(out,'01-home.png'),fullPage:true});});
  await check('cadastro fictício pela interface',async()=>{
-   await a.goto(A+'/cadastro/geradora');
-   for(const [id,value] of Object.entries({razaoSocial:'Empresa Fictícia '+tag,cnpj:cnpj(),telefone:'62999990000',endereco:'Rua Fictícia de Ensaio, 100',cidade:'São Paulo',latitude:'-23.5629',longitude:'-46.6544',nome:'Responsável Fictício',email,senha:password})) { const campo=a.locator('#'+id); if(await campo.getAttribute('type')==='hidden') await campo.evaluate((e,v)=>{e.value=v;},value); else await campo.fill(value); }
+   await a.goto(A+'/cadastro/geradora');await manual(a);
+   for(const [id,value] of Object.entries({razaoSocial:'Empresa Fictícia '+tag,cnpj:cnpj(),telefone:'62999990000',endereco:'Rua Fictícia de Ensaio, 100',cidade:'São Paulo',latitude:'-23.5629',longitude:'-46.6544',nome:'Responsável Fictício',email,senha:password})) { const campo=a.locator('#'+id); await campo.fill(value); }
    await a.locator('#uf').selectOption('SP');await a.getByRole('button',{name:'Concluir cadastro'}).click();await a.waitForURL('**/login?cadastro');await login(a,A,email,password);
  });
  await check('consulta banco → AVL → lista e categoria',async()=>{await a.goto(A+'/mapa?tipo=INFORMATICA');assert.match(await a.locator('body').innerText(),/Escola Circular/);await a.screenshot({path:path.join(out,'02-pontos.png'),fullPage:true});});
  const formHref=await a.getByRole('link',{name:'Registrar solicitação para este ponto'}).first().getAttribute('href');
- async function fillForm(type){await a.goto(A+formHref);for(const [name,value] of Object.entries({descricao:tag,pesoEstimadoKg:'10',endereco:'Rua Fictícia, 100',cidade:'São Paulo',uf:'SP',latitude:'-23.5629',longitude:'-46.6544','itens[0].identificacao':'Notebook fictício '+tag,'itens[0].quantidade':'1','itens[0].pesoKg':'10'})){const campo=a.locator(`[name="${name}"]`);if(await campo.getAttribute('type')==='hidden')await campo.evaluate((e,v)=>{e.value=v;},value);else await campo.fill(value);}await a.locator('[name="itens[0].tipoResiduo"]').selectOption(type);}
+ async function fillForm(type){await a.goto(A+formHref);await manual(a);for(const [name,value] of Object.entries({descricao:tag,pesoEstimadoKg:'10',endereco:'Rua Fictícia, 100',cidade:'São Paulo',uf:'SP',latitude:'-23.5629',longitude:'-46.6544','itens[0].identificacao':'Notebook fictício '+tag,'itens[0].quantidade':'1','itens[0].pesoKg':'10'})){const campo=a.locator(`[name="${name}"]`);await campo.fill(value);}await a.locator('[name="itens[0].tipoResiduo"]').selectOption(type);}
  await check('rejeição de material incompatível pelo servidor',async()=>{await fillForm('BATERIA');await a.getByRole('button',{name:'Criar solicitação'}).click();assert.match(await a.locator('body').innerText(),/não recebe todos os tipos/);await a.screenshot({path:path.join(out,'03-rejeicao.png'),fullPage:true});});
  let id;
  await check('solicitação válida e persistência',async()=>{await fillForm('INFORMATICA');await a.getByRole('button',{name:'Criar solicitação'}).click();await a.waitForURL(/\/geradora\/solicitacoes\/\d+$/);id=Number(a.url().split('/').at(-1));results.solicitacao_id=id;assert.match(await a.locator('body').innerText(),new RegExp(tag));});

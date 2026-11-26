@@ -67,7 +67,11 @@ class AdminHomologacaoController {
 
   @GetMapping("/{id}/documentos/{documentoId}")
   ResponseEntity<Resource> documento(@PathVariable Long id, @PathVariable Long documentoId) {
-    return Arquivos.download(homologacoes.documentoParaAdmin(id, documentoId));
+    try {
+      return Arquivos.download(homologacoes.documentoParaAdmin(id, documentoId));
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.notFound().build();
+    }
   }
 
   private String executar(RedirectAttributes redirect, String sucesso, Runnable acao) {

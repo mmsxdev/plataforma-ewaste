@@ -42,3 +42,11 @@ python -B -X utf8 tools/gerar-relatorios.py --only banco-dados design-software
 ```
 
 O seletor mescla hashes antigos no manifesto e atualiza fontes Markdown/diagramas dos relatórios selecionados. Os outros PDFs e entradas permanecem preservados. Renderizar os PlantUML alterados antes da exportação; depois conferir visualmente os PDFs, tipos SQL/atributos e tabelas. As capas identificam os cinco integrantes, o 4º período e a turma 1; responsabilidades em docs/equipe.md e formato em docs/normalizacao.md. O gerador produz sumário real em múltiplas passagens.
+
+Mudanças comuns de normalização no gerador exigem exportar os cinco relatórios, omitindo `--only`. A revisão atual centraliza títulos sem número, identifica tabelas/figuras, posiciona suas fontes abaixo e preserva siglas e nomes próprios nas palavras-chave. Tabelas longas continuam divididas entre páginas; conferir visualmente as novas quebras e a posição de título/fonte. Conferir também todos os destinos do sumário após a exportação, sem reutilizar contagens ou hashes anteriores como evidência da rodada nova.
+
+A contribuição bibliográfica de Davi no PR #23 deve ser preservada ao gerar Estrutura de Dados II. Fontes normativas consultadas e os metadados da apostila ainda não conferidos diretamente estão em [normalizacao.md](../docs/normalizacao.md).
+
+## Ensaio de homologação
+
+Após preparar a instância fictícia isolada e a aplicação local, executar `npm.cmd run demo:homologacao --prefix tools` com PI_DEMO_CONFIRM=FICTICIO e PI_RUN_ID único. O ensaio bloqueia HTTPS externo, cadastra por coordenadas manuais e percorre documentos → análise → reprovação/reenvio → aprovação → alerta retroativo → downloads próprio/alheio. JSON/PNG ficam em target/evidencias/<id>. Credenciais usadas são as fictícias dos seeds, não as do portal de estudo ou do banco comum.

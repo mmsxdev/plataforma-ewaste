@@ -66,3 +66,7 @@ Backup e restauração por scripts foram executados em banco novo isolado preser
 No fechamento de 24/11/2026, `verify spotless:check` passou com 236 unitários + 95 IT e o E2E Chromium passou em 12/12. Evidências atuais: [resumo Java](evidencias/fechamento-20261124/testes-resumo.json) e [ensaio entre instâncias locais](evidencias/fechamento-20261124/resultado.json). Rede entre dois computadores continua pendente.
 
 Roteiro de transferência autorizado, ainda não executado: [transferencia-felipe.md](transferencia-felipe.md). A restauração de ensaio não restaura privilégios; o operador precisa conferi-los antes de promover o banco.
+
+## Destino revisto para VPS — decisão posterior
+
+Em 25/11 o usuário substituiu o plano de anfitriã no PC do Felipe por uma VPS pessoal dele. A restauração local e a aplicação UP no Felipe foram relatadas pelo usuário; não foram verificadas diretamente nesta sessão. A VPS ainda aguarda configuração/acesso e comprovação de dados/arquivos/rede/backup. O acesso dos integrantes será limitado ao projeto; administração geral da VPS permanece com Felipe. Não apresentar a VPS como implantada. O teste local desta sessão usa somente a instância isolada na porta 15432.

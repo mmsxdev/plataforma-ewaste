@@ -4,7 +4,7 @@ Fonte normativa acadêmica: Faculdade SENAI FATESG, **PI2026-2 ENG4-T1**, 9 pág
 
 ## Problema, usuários e limites
 
-Dificuldade de identificar locais e materiais aceitos, registrar o descarte e acompanhar sua situação (PDF, pp.1–3). O protótipo conecta geradoras a pontos de recebimento e coletoras e organiza os materiais e solicitações. A base existente é B2B: usuário responsável representa empresa GERADORA ou COLETORA; ADMIN é perfil reservado; as interfaces de administração de homologações/pontos e financeiro não estão completas nesta entrega. O usuário informou em 24/11/2026 a confirmação dos professores para esse recorte; o PDF original não exige CNPJ nem exclui pessoas físicas. A origem da confirmação está em [equipe.md](equipe.md), sem modificar a fonte oficial.
+Dificuldade de identificar locais e materiais aceitos, registrar o descarte e acompanhar sua situação (PDF, pp.1–3). O protótipo conecta geradoras a pontos de recebimento e coletoras e organiza os materiais e solicitações. A base existente é B2B: usuário responsável representa empresa GERADORA ou COLETORA; ADMIN é perfil reservado; a homologação dispõe de envio/análise/aprovação/reprovação, enquanto suspensão não tem ação na interface; administração de pontos e financeiro não estão completos nesta entrega. O usuário informou em 24/11/2026 a confirmação dos professores para esse recorte; o PDF original não exige CNPJ nem exclui pessoas físicas. A origem da confirmação está em [equipe.md](equipe.md), sem modificar a fonte oficial.
 
 Preservamos Java 21, Spring Boot 3.5.16, Thymeleaf e PostgreSQL 16. Homologação, roteamento por raio, PDFs operacionais e monetização simulada são decisões anteriores, não requisitos mínimos do documento oficial. Mapa cartográfico, pagamentos, IA, publicação na internet e aplicativo nativo não são obrigações. A consulta textual de pontos atende ao objetivo de localizar informações sem depender de um provedor de mapas.
 
@@ -59,3 +59,7 @@ Prazo adotado: execução 23/11/2026 a 05/12/2026; entrega até **23h59 de 05/12
 ## Referência
 
 FACULDADE SENAI FATESG. **Projeto Integrador 2026-2: Engenharia de Software, 4º período**. Goiânia, 2026. 9 p. Documento fornecido à equipe, arquivo PI2026-2 ENG4-T1.pdf.
+
+## Homologação preservada do domínio B2B
+
+RN08 (decisão de negócio existente): coletora envia Licença ambiental e Cadastro IBAMA válidos e solicita análise; ADMIN aprova ou reprova com motivo. A aprovação permite aptidão e alerta retroativo apenas para solicitações ainda ABERTAS dentro do raio e sem alerta anterior. Reprovação permite correção/reenvio. Critério de aceite: upload → análise → aprovação → oportunidade retroativa; negativa por documento inválido/ausente, reprovação/reenvio e proteção de arquivo de outra coletora. Suspensão na interface permanece fora do implementado. Evidências de serviço/controller em `HomologacaoServiceTest`, `HomologacaoControllersTest`, `FluxoHomologacaoIT` e `AlertaAoHomologarTest`; resultados de execução ficam em testes.md.
