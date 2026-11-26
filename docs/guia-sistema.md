@@ -6,7 +6,7 @@ Este guia apresenta o que a interface de demonstração disponibiliza. Configura
 
 Na página inicial, consulte pontos sem autenticação ou cadastre uma empresa geradora/coletora. O cadastro solicita dados da empresa e do responsável; o sistema valida CNPJ, e-mail, senha e localização. Escolher coletora não libera automaticamente sua atuação: a aptidão depende da homologação existente. ADMIN não é cadastrado publicamente.
 
-Faça login com a conta criada. Os usuários dos seeds existem somente em ambiente preparado para demonstração; consulte o operador. Nunca reutilize senha pessoal. A navegação de GERADORA oferece solicitações e documentos; COLETORA oferece oportunidades e coletas. Envio/análise administrativa de homologação, financeiro e notificações não possuem interface completa neste protótipo e não devem ser apresentados como ações disponíveis.
+Faça login com a conta criada. Os usuários dos seeds existem somente em ambiente preparado para demonstração; consulte o operador. Nunca reutilize senha pessoal. A navegação de GERADORA oferece solicitações e documentos; COLETORA oferece oportunidades e coletas. A coletora acessa Homologação para enviar documentos e solicitar análise; o ADMIN acessa Homologações para aprovar ou reprovar, com motivo. Após aprovação válida, o sistema alerta retroativamente sobre solicitações ainda abertas no raio. Financeiro e notificações continuam sem interface completa.
 
 ## 2 Consultar pontos e solicitar descarte
 
@@ -40,4 +40,10 @@ Evidências históricas estão em [evidencias](evidencias/). A rodada E2E de fec
 
 ## 6 Limites e cuidados
 
-Não demonstrar homologação administrativa/financeiro/notificações como telas prontas. Não usar dados pessoais reais, importar fotos reais ou expor credenciais. Problemas de acesso ao banco/rede são tratados pelo operador, sem reset/limpeza dos dados. As divergências originais e confirmações posteriores de datas/grupo/B2B estão em [requisitos](requisitos.md) e [equipe](equipe.md). A nova anfitriã será a máquina de Felipe; a transferência e o teste entre computadores ainda não aconteceram. Não apontar clientes para cópias divergentes durante a preparação.
+A homologação possui telas de envio, análise, aprovação e reprovação. Suspensão permanece sem ação na interface; financeiro e notificações não possuem telas completas. Não usar dados pessoais reais, importar fotos reais ou expor credenciais. Problemas de acesso ao banco/rede são tratados pelo operador, sem reset/limpeza dos dados. As divergências originais e confirmações posteriores de datas/grupo/B2B estão em [requisitos](requisitos.md) e [equipe](equipe.md). O destino atual planejado é a VPS pessoal do Felipe; a restauração local no PC dele foi relatada pelo usuário, mas VPS/rede/cópia externa ainda não foram comprovadas nesta sessão. Não apontar clientes para cópias divergentes durante a preparação.
+
+## Homologação e alertas retroativos
+
+Em `/coletora/homologacao`, envie Licença ambiental e Cadastro IBAMA fictícios (PDF/JPG/PNG, até 10 MB), informe validade quando aplicável e escolha Enviar para análise. O ADMIN acessa `/admin/homologacoes`, consulta os arquivos e aprova ou reprova informando o motivo. Após reprovação, a coletora pode corrigir e reenviar. A aprovação exige documentos obrigatórios válidos; só então a coletora fica apta.
+
+A aprovação publica `ColetoraHomologadaEvent`; `AlertaAoHomologar` verifica solicitações ABERTAS no raio de atendimento e cria os alertas que faltam. Não presume que aprovação gera alertas para solicitações fora do raio ou já aceitas. Os downloads da coletora são limitados à própria homologação. A tela informa SUSPENSA quando esse estado existir, mas não oferece a ação de suspender.

@@ -2,15 +2,15 @@
 
 ## 1 Introdução
 
-O PI exige uma árvore que receba dados oriundos do banco antes da manipulação pelo sistema (FACULDADE SENAI FATESG, 2026, p. 3). O fluxo escolhido é a consulta pública dos pontos de coleta. Uma lista estática de exemplo e os índices internos do PostgreSQL não satisfazem essa integração.
+O PI exige uma árvore que receba dados oriundos do banco antes da manipulação pelo sistema (Faculdade SENAI FATESG, 2026, p. 3). O fluxo escolhido é a consulta pública dos pontos de coleta. Uma lista estática de exemplo e os índices internos do PostgreSQL não satisfazem essa integração.
 
 ## 2 Desenvolvimento
 
-Arquivos: `src/main/java/br/com/ewaste/mapa/dominio/ArvoreAvl.java`, `mapa/repositorio/PontoColetaRepository.java`, `mapa/servico/PontosColetaService.java`, `mapa/api/PontosColeta.java` e `PontoResumo.java` (os últimos caminhos relativos ao pacote br/com/ewaste) (E-WASTE, 2026).
+Arquivos: `src/main/java/br/com/ewaste/mapa/dominio/ArvoreAvl.java`, `mapa/repositorio/PontoColetaRepository.java`, `mapa/servico/PontosColetaService.java`, `mapa/api/PontosColeta.java` e `PontoResumo.java` (os últimos caminhos relativos ao pacote br/com/ewaste) (E-Waste, 2026).
 
 O repositório JDBC obtém registros de `ponto_descarte`; o serviço insere os registros numa **AVL própria, genérica, com chave Long id**. A busca por ID usa a árvore. A listagem percorre em ordem e aplica os filtros de cidade/categoria para produzir a consulta pública em `/mapa`. O encadeamento é PostgreSQL → registros → inserir na AVL → buscar/percurso → filtros → resposta Thymeleaf. Não se trata de substituir o SGBD ou manter um segundo banco.
 
-Proposta por Adel'son-Vel'skii e Landis (1962), a AVL é uma árvore binária de busca que mantém, em cada nó, alturas e diferença entre alturas dos filhos limitada a -1, 0 ou 1 após balanceamento. Rotação simples ou dupla restabelece esse limite quando necessário (LIMA, [2026], p. 3). Inserção e busca têm custo O(log n) com balanceamento (LIMA, [2026], p. 5); percurso ordenado custa O(n); construir a partir de n linhas por inserções custa O(n log n), com O(n) de memória. Filtro de texto/categoria no percurso continua O(n), não O(log n): a chave é ID, não cidade. Não alegamos ganho de desempenho contra uma consulta SQL indexada.
+Proposta por Adel'son-Vel'skii e Landis (1962), a AVL é uma árvore binária de busca que mantém, em cada nó, alturas e diferença entre alturas dos filhos limitada a -1, 0 ou 1 após balanceamento. Rotação simples ou dupla restabelece esse limite quando necessário (Lima, [2026], p. 3). Inserção e busca têm custo O(log n) com balanceamento (Lima, [2026], p. 5); percurso ordenado custa O(n); construir a partir de n linhas por inserções custa O(n log n), com O(n) de memória. Filtro de texto/categoria no percurso continua O(n), não O(log n): a chave é ID, não cidade. Não alegamos ganho de desempenho contra uma consulta SQL indexada.
 
 Operações demonstráveis: `inserir`, `buscar`, `emOrdem`, `altura`. A chave ID mantém registros com nomes repetidos distintos. Os nós em memória não persistem alterações no banco; o banco é a fonte da verdade. A construção por consulta evita cache indefinidamente desatualizado, com custo de leitura e memória adequado ao pequeno protótipo. Para escala maior, paginação/índices e estratégia de cache exigiriam decisão específica.
 

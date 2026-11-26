@@ -2,7 +2,7 @@
 
 ## 1 Introdução
 
-O aplicativo E-Waste registra materiais e acompanha descarte. Este relatório relaciona requisitos concretos à lógica matemática e demonstra criptografia didática. Referência acadêmica: PDF oficial, pp.4–5. A identificação da implementação e dos resultados está em [rastreabilidade](rastreabilidade.md).
+O aplicativo E-Waste registra materiais e acompanha descarte. Este relatório relaciona requisitos concretos à lógica matemática e demonstra criptografia didática. Os requisitos acadêmicos estão no documento oficial (Faculdade SENAI FATESG, 2026, p. 4-5). A identificação da implementação e dos resultados está em [rastreabilidade](rastreabilidade.md).
 
 ## 2 Parte I — Lógica aplicada a requisitos
 
@@ -53,7 +53,7 @@ Nome/e-mail do responsável, telefone/endereço, senha, localização e document
 
 ### 3.1 Conceitos
 
-Divisibilidade: a divide b se existe inteiro k com b = ak. Primos possuem exatamente os divisores positivos 1 e eles próprios. O MDC identifica coprimalidade, necessária para o inverso modular usado aqui. Congruência a ≡ b (mod n) significa n divide a−b; aritmética modular opera com classes de restos. A dificuldade de fatorar produtos grandes é parte da motivação do RSA, mas os números minúsculos deste exemplo são deliberadamente inseguros.
+Divisibilidade: a divide b se existe inteiro k com b = ak. Primos possuem exatamente os divisores positivos 1 e eles próprios. O MDC identifica coprimalidade, necessária para o inverso modular usado aqui. Congruência a ≡ b (mod n) significa n divide a−b; aritmética modular opera com classes de restos. A dificuldade de fatorar produtos grandes é parte da motivação do RSA (Rivest; Shamir; Adleman, 1978), mas os números minúsculos deste exemplo são deliberadamente inseguros.
 
 ### 3.2 Exemplo RSA calculável à mão
 
@@ -75,8 +75,6 @@ A formalização expõe premissas de autorização/estado e evita interpretar co
 
 ## Referências
 
-FACULDADE SENAI FATESG. **Projeto Integrador 2026-2: Engenharia de Software, 4º período**. Goiânia, 2026. p.4–5.
+FACULDADE SENAI FATESG. **Projeto Integrador 2026-2: Engenharia de Software, 4º período**. Goiânia, 2026. 9 p. Documento fornecido à equipe, arquivo PI2026-2 ENG4-T1.pdf.
 
-RIVEST, Ronald L.; SHAMIR, Adi; ADLEMAN, Leonard. **A method for obtaining digital signatures and public-key cryptosystems**. Communications of the ACM, v.21, n.2, p.120–126, 1978. Disponível em: https://people.csail.mit.edu/rivest/Rsapaper.pdf. Acesso em: 23 nov. 2026.
-
-Referências organizadas no padrão autor/título/dados de publicação/acesso; a conferência final das normas ABNT e do modelo institucional é responsabilidade da equipe antes de submeter o PDF.
+RIVEST, Ronald L.; SHAMIR, Adi; ADLEMAN, Leonard. A method for obtaining digital signatures and public-key cryptosystems. **Communications of the ACM**, [S. l.], v. 21, n. 2, p. 120-126, 1978. Disponível em: https://people.csail.mit.edu/rivest/Rsapaper.pdf. Acesso em: 23 nov. 2026.

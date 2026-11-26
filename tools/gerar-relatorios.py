@@ -39,14 +39,16 @@ styles.add(ParagraphStyle(name='Centro',fontName=FONT,fontSize=12,leading=18,ali
 styles.add(ParagraphStyle(name='Natureza',fontName=FONT,fontSize=12,leading=12,leftIndent=WIDTH/2,spaceAfter=12,alignment=TA_JUSTIFY))
 styles.add(ParagraphStyle(name='Celula',fontName=FONT,fontSize=8,leading=10,spaceAfter=2))
 styles.add(ParagraphStyle(name='Legenda',fontName=FONT,fontSize=10,leading=12,spaceAfter=8))
+styles.add(ParagraphStyle(name='TituloIlustracao',fontName=FONT,fontSize=10,leading=12,spaceBefore=6,spaceAfter=6,keepWithNext=True))
+styles.add(ParagraphStyle(name='TituloSemNumero',parent=styles['Heading1'],alignment=TA_CENTER))
 styles.add(ParagraphStyle(name='Referencia',fontName=FONT,fontSize=12,leading=12,alignment=TA_LEFT,spaceAfter=12))
 AUTHORS=['Davi Fraga','Guilherme Gonçalves','Miguel Melo','Felipe Rohnelt','Rafael Camargo']
 META={
- 'estrutura-dados':('Estrutura de Dados II','Apresenta a árvore AVL integrada ao fluxo de consulta de pontos de coleta, com origem no PostgreSQL, operações de inserção, busca e percurso, complexidade, limitações e evidências de testes.','Describes the AVL tree integrated into collection-point queries, including PostgreSQL input, insertion, search, traversal, complexity, limitations and test evidence.','Árvore AVL; Banco de dados; Resíduos eletrônicos.'),
- 'teoria-computacao':('Teoria da Computação','Formaliza regras de negócio por lógica e tabelas-verdade e demonstra operações de um exemplo RSA didático. Distingue os cálculos acadêmicos dos mecanismos efetivos de autenticação e integridade do aplicativo.','Formalizes business rules using logic and truth tables and demonstrates a didactic RSA example. Academic calculations are distinguished from the application authentication and integrity mechanisms.','Lógica; Aritmética modular; Criptografia.'),
- 'banco-dados':('Banco de Dados II','Documenta o modelo de negócio, os modelos conceitual e lógico, o dicionário de dados e recursos SQL do PostgreSQL 16. Descreve transações, privilégios, recuperação e os limites das evidências locais de execução.','Documents the business model, conceptual and logical models, data dictionary and PostgreSQL 16 resources. It describes transactions, privileges, recovery and the limits of local execution evidence.','PostgreSQL; Modelagem; Recuperação.'),
- 'design-software':('Design de Software','Relaciona requisitos, critérios de aceitação, arquitetura, UML, testes e implantação do protótipo E-Waste. Distingue o fluxo funcional validado, as decisões da equipe e as etapas de rede e submissão ainda não executadas.','Relates requirements, acceptance criteria, architecture, UML, tests and deployment of the E-Waste prototype. It distinguishes validated functionality, team decisions and network and submission tasks not yet executed.','Requisitos; Arquitetura; Testes.'),
- 'administracao':('Fundamentos da Administração','Apresenta identidade, Missão, Visão e Valores aprovados pela equipe, organograma com responsabilidades e estimativas de custos do protótipo. Os valores são premissas didáticas, sem comprovação de despesas ou horas realizadas.','Presents the approved identity, mission, vision and values, assigned project responsibilities and prototype cost estimates. Values are didactic assumptions rather than evidence of expenses or hours worked.','Organograma; Planejamento; Custos.')}
+ 'estrutura-dados':('Estrutura de Dados II','Apresenta a árvore AVL integrada ao fluxo de consulta de pontos de coleta, com origem no PostgreSQL, operações de inserção, busca e percurso, complexidade, limitações e evidências de testes.','Describes the AVL tree integrated into collection-point queries, including PostgreSQL input, insertion, search, traversal, complexity, limitations and test evidence.','árvore AVL; banco de dados; resíduos eletrônicos.'),
+ 'teoria-computacao':('Teoria da Computação','Formaliza regras de negócio por lógica e tabelas-verdade e demonstra operações de um exemplo RSA didático. Distingue os cálculos acadêmicos dos mecanismos efetivos de autenticação e integridade do aplicativo.','Formalizes business rules using logic and truth tables and demonstrates a didactic RSA example. Academic calculations are distinguished from the application authentication and integrity mechanisms.','lógica; aritmética modular; criptografia.'),
+ 'banco-dados':('Banco de Dados II','Documenta o modelo de negócio, os modelos conceitual e lógico, o dicionário de dados e recursos SQL do PostgreSQL 16. Descreve transações, privilégios, recuperação e os limites das evidências locais de execução.','Documents the business model, conceptual and logical models, data dictionary and PostgreSQL 16 resources. It describes transactions, privileges, recovery and the limits of local execution evidence.','PostgreSQL; modelagem; recuperação.'),
+ 'design-software':('Design de Software','Relaciona requisitos, critérios de aceitação, arquitetura, UML, testes e implantação do protótipo E-Waste. Distingue o fluxo funcional validado, as decisões da equipe e as etapas de rede e submissão ainda não executadas.','Relates requirements, acceptance criteria, architecture, UML, tests and deployment of the E-Waste prototype. It distinguishes validated functionality, team decisions and network and submission tasks not yet executed.','requisitos; arquitetura; testes.'),
+ 'administracao':('Fundamentos da Administração','Apresenta identidade, Missão, Visão e Valores aprovados pela equipe, organograma com responsabilidades e estimativas de custos do protótipo. Os valores são premissas didáticas, sem comprovação de despesas ou horas realizadas.','Presents the approved identity, mission, vision and values, assigned project responsibilities and prototype cost estimates. Values are didactic assumptions rather than evidence of expenses or hours worked.','organograma; planejamento; custos.')}
 
 def markup(value):
     parts=[]
@@ -76,7 +78,7 @@ class AcademicDoc(BaseDocTemplate):
             canvas.drawRightString(A4[0]-RIGHT,A4[1]-2*cm,str(doc.page-1));canvas.restoreState()
 
 class Sections:
-    def __init__(self):self.n=[0,0,0];self.count=0
+    def __init__(self):self.n=[0,0,0];self.count=0;self.tables=0;self.current_title='Dados do relatório'
     def heading(self,text,level=0,number=True):
         self.count+=1
         if number:
@@ -84,7 +86,9 @@ class Sections:
             for j in range(level+1,3):self.n[j]=0
             text=re.sub(r'^\d+(?:\.\d+)*\s+','',text)
             text='.'.join(map(str,self.n[:level+1]))+' '+text
-        p=Paragraph(markup(text.upper() if level==0 else text),styles['Heading'+str(level+1)])
+        self.current_title=text
+        style=styles['Heading'+str(level+1)] if number else styles['TituloSemNumero']
+        p=Paragraph(markup(text.upper() if level==0 else text),style)
         p.toc_level=level;p.toc_text=html.escape(text.upper() if level==0 else text);p.toc_key='sec-'+str(self.count)
         return p
 
@@ -119,7 +123,9 @@ def parse(source,sections,references):
             if rows:
                 n=max(map(len,rows));data=[[Paragraph(markup(c),styles['Celula']) for c in row+['']*(n-len(row))] for row in rows]
                 t=LongTable(data,colWidths=[WIDTH/n]*n,repeatRows=1,hAlign='LEFT')
-                t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#DDEDE8')),('VALIGN',(0,0),(-1,-1),'TOP'),('LINEBELOW',(0,0),(-1,0),.5,colors.black),('LINEBELOW',(0,-1),(-1,-1),.5,colors.black),('LEFTPADDING',(0,0),(-1,-1),4),('RIGHTPADDING',(0,0),(-1,-1),4)]));story.append(t)
+                t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#DDEDE8')),('VALIGN',(0,0),(-1,-1),'TOP'),('LINEBELOW',(0,0),(-1,0),.5,colors.black),('LINEBELOW',(0,-1),(-1,-1),.5,colors.black),('LEFTPADDING',(0,0),(-1,-1),4),('RIGHTPADDING',(0,0),(-1,-1),4)]))
+                sections.tables+=1
+                story += [Paragraph(markup('Tabela '+str(sections.tables)+' — '+sections.current_title),styles['TituloIlustracao']),t,Paragraph(markup('Fonte: elaboração da equipe; dados e referências em docs/'+source.name+'.'),styles['Legenda'])]
             continue
         buf=[line];i+=1
         while i<len(lines) and lines[i].strip() and not re.match(r'^(#|\||```|[-*] |\d+\. )',lines[i].strip()):buf.append(lines[i].strip());i+=1
@@ -135,7 +141,7 @@ def preliminaries(name):
     story=[center('FACULDADE SENAI FATESG'),center('ENGENHARIA DE SOFTWARE — 4º PERÍODO — TURMA 1'),Spacer(1,24)]+authors+[Spacer(1,75),center('<b>E-WASTE: RESÍDUOS COM DESTINO</b>'.replace('<b>','').replace('</b>','')),center(title.upper()),Spacer(1,125),center('GOIÂNIA'),center('2026'),PageBreak()]
     story += [center(a.upper()) for a in AUTHORS]
     story += [Spacer(1,65),center('E-WASTE: RESÍDUOS COM DESTINO'),center(title.upper()),Spacer(1,40),Paragraph(markup('Relatório acadêmico apresentado ao Projeto Integrador 2026-2 do curso de Engenharia de Software, 4º período, turma 1, da Faculdade SENAI FATESG. Disciplina: '+title+'. Grupo 01.'),styles['Natureza']),Paragraph('Professora líder: Carmen Cecília Centeno da Silva.',styles['Natureza']),Spacer(1,90),center('GOIÂNIA'),center('2026'),PageBreak()]
-    story += [center('RESUMO'),Spacer(1,18),Paragraph(markup(pt),styles['BodyText']),Paragraph('Palavras-chave: '+markup(keywords.lower()),styles['BodyText']),PageBreak(),center('ABSTRACT'),Spacer(1,18),Paragraph(markup(en),styles['BodyText']),Paragraph('Keywords: E-Waste; software engineering; academic project.',styles['BodyText']),PageBreak(),center('SUMÁRIO'),Spacer(1,18)]
+    story += [center('RESUMO'),Spacer(1,18),Paragraph(markup(pt),styles['BodyText']),Paragraph('Palavras-chave: '+markup(keywords),styles['BodyText']),PageBreak(),center('ABSTRACT'),Spacer(1,18),Paragraph(markup(en),styles['BodyText']),Paragraph('Keywords: E-Waste; software engineering; academic project.',styles['BodyText']),PageBreak(),center('SUMÁRIO'),Spacer(1,18)]
     toc=TableOfContents();toc.levelStyles=[ParagraphStyle('TOC'+str(i),fontName=FONT,fontSize=12,leading=18,leftIndent=i*12,firstLineIndent=0,spaceBefore=4) for i in range(3)]
     toc.dotsMinLevel=0
     return story+[toc,PageBreak()]
@@ -154,7 +160,7 @@ for name,files in bundles.items():
         manifest[filename]=hashlib.sha256(source.read_text(encoding='utf8').encode('utf8')).hexdigest()
     if references:
         story.append(sections.heading('Referências',number=False))
-        for text in sorted(dict.fromkeys(references)):story.append(Paragraph(markup(text),styles['Referencia']))
+        for text in sorted(dict.fromkeys(references),key=str.casefold):story.append(Paragraph(markup(text),styles['Referencia']))
         story.append(PageBreak())
     if name in ['design-software','banco-dados','administracao']:
         pattern='*.png' if name=='design-software' else 'der-*.png' if name=='banco-dados' else 'organograma.png'
@@ -163,8 +169,9 @@ for name,files in bundles.items():
             diagram=image.with_suffix('.puml')
             if diagram.exists():manifest['uml/'+diagram.name]=hashlib.sha256(diagram.read_text(encoding='utf8').encode('utf8')).hexdigest()
             from PIL import Image as PILImage
-            w,h=PILImage.open(image).size;factor=min(WIDTH/w,(A4[1]-TOP-BOTTOM-100)/h)
-            story += [sections.heading('Apêndice '+chr(65+appendix_index)+' — '+image.stem.replace('-',' '),number=False),Paragraph('Fonte: elaboração da equipe; docs/uml/'+image.name+'. Amplie o PDF ou consulte o PNG original para os detalhes. DER também possui dicionário textual no relatório de Banco de Dados.',styles['Legenda']),Image(str(image),width=w*factor,height=h*factor),PageBreak()]
+            w,h=PILImage.open(image).size;factor=min(WIDTH/w,(A4[1]-TOP-BOTTOM-140)/h)
+            figure_title=image.stem.replace('-',' ')
+            story += [sections.heading('Apêndice '+chr(65+appendix_index)+' — '+figure_title,number=False),Paragraph(markup('Figura '+str(appendix_index+1)+' — '+figure_title),styles['TituloIlustracao']),Image(str(image),width=w*factor,height=h*factor),Paragraph('Fonte: elaboração da equipe; docs/uml/'+image.name+'.',styles['Legenda']),Paragraph('Amplie o PDF ou consulte o PNG original para os detalhes. DER também possui dicionário textual no relatório de Banco de Dados.',styles['Legenda']),PageBreak()]
     if isinstance(story[-1],PageBreak):story.pop()
     pdf=OUT/(name+'.pdf')
     AcademicDoc(str(pdf),pagesize=A4,title='E-Waste — '+META[name][0],author='; '.join(AUTHORS)).multiBuild(story)

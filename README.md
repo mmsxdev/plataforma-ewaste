@@ -71,7 +71,7 @@ A futura anfitriã do PostgreSQL será a máquina de Felipe; a instância atual 
 
 Cadastro em `/cadastro/geradora` e `/cadastro/coletora`, login em `/login` e painel por perfil em `/painel`. O cadastro valida CNPJ, e-mail, senha, coordenadas e raio da coletora; grava empresa e usuário na mesma transação, protege a senha com BCrypt e publica `EmpresaCadastradaEvent` para o módulo de homologação. CNPJ e e-mail duplicados são recusados, inclusive com restrição de unicidade no banco. E-mails são comparados sem distinção de maiúsculas.
 
-`UsuarioAtual` e `EmpresaConsulta` já usam implementações reais. A navbar e os painéis exibem os atalhos disponíveis do perfil. Envio/análise administrativa de homologação, financeiro e notificações não têm interface completa; não são oferecidos como links navegáveis nesta demonstração. O cadastro de coletora não substitui sua homologação (Dev 2).
+`UsuarioAtual` e `EmpresaConsulta` já usam implementações reais. A navbar e os painéis exibem os atalhos disponíveis do perfil. A coletora envia documentos e solicita análise em `/coletora/homologacao`; o ADMIN aprova ou reprova em `/admin/homologacoes`. A aprovação pode gerar alertas retroativos para solicitações abertas no raio. Suspensão não possui ação na interface. Financeiro e notificações seguem sem interface completa. O cadastro de coletora não substitui sua homologação (Dev 2).
 
 O layout reutilizável está em `templates/fragments/layout.html`, com os fragmentos `head(titulo)`, `navbar` e `rodape`. A navbar reserva `#aviso-notificacoes` para o Dev 5. O seletor compartilhado `static/js/shared/seletor-localizacao.js` usa `#mapa-localizacao`, `#latitude` e `#longitude`; o mapa requer internet para Leaflet/OpenStreetMap e oferece preenchimento manual das coordenadas.
 
@@ -158,3 +158,5 @@ Depois abra o Pull Request no GitHub. O merge é por **Squash and merge**, depoi
 **Branches** são curtas (1 a 2 dias), uma por tarefa, com o nome no formato `feat/<nome>/<tarefa>` ou `fix/<nome>/<tarefa>`.
 
 Documentação complementar: [normalização dos relatórios](docs/normalizacao.md) e [transferência planejada para Felipe](docs/transferencia-felipe.md).
+
+Coordenação/estudo de Miguel: [roteiro](docs/roteiro-miguel.md). Homologação: [sequência de análise e alerta retroativo](docs/uml/sequencia-homologacao.puml). Rodada de validação de 26/11 em [testes](docs/testes.md); VPS é destino planejado, ainda sem implantação comprovada.

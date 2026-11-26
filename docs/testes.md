@@ -78,3 +78,13 @@ Comandos adicionais executados: `npm.cmd test --prefix tools` (6/6), `pwsh -NoPr
 ## Próximo ensaio entre computadores
 
 A segunda máquina será a de Felipe, escolhida também como futura anfitriã do PostgreSQL; Rafael operará o banco e Felipe as cópias/recuperação. A transferência ainda não ocorreu. T15 continua pendente até teste real autorizado de registro em uma máquina/consulta em outra e envio/recuperação de arquivo, incluindo origem não autorizada bloqueada. Os resultados anteriores de duas JVMs no mesmo Windows permanecem históricos e não serão reapresentados como prova desse ensaio. Todas as novas massas devem ser fictícias; não há produção ou dados pessoais reais planejados.
+
+## Rodada de coordenação e Design — 26/11/2026
+
+`verify spotless:check`: BUILD SUCCESS, **248 unitários + 97 IT = 345**, zero falhas/erros/ignorados, JDK 21/Docker/Testcontainers descartável. [Resumo atual](evidencias/design-homologacao-20261126/testes-java.json). As contagens de 24/11 são históricas.
+
+O navegador real concluiu **12/12** no [fluxo integrado](evidencias/design-homologacao-20261126/fluxo-integrado/resultado.json) e **10/10** no [fluxo de homologação](evidencias/design-homologacao-20261126/homologacao/resultado.json): coletora fictícia, solicitação anterior à aprovação, rejeição sem documentos, upload, análise, reprovação/motivo, correção/reenvio, aprovação, alerta retroativo e acesso ao documento próprio/alheio. No ensaio de homologação, HTTPS externo foi bloqueado para exercitar o cadastro por coordenadas manuais sem CDN/CEP. Dois aplicativos locais usaram banco isolado na porta 15432; isso não comprova VPS nem dois computadores.
+
+A [reprodução anterior](evidencias/design-homologacao-20261126/reproducao-download-500.json) passou em nove casos e encontrou HTTP 500 no download fora da coletora dona. Após correção, os dois controllers devolvem404 vazio; dois testes específicos e o E2E final confirmam a negativa sem arquivo. Esse resultado inicial falho permanece histórico, sem ser apresentado como aprovação.
+
+Treze testes Node cobrem seis casos de configuração do ensaio e sete do seletor de localização: concorrência de CEP/geocoder, invalidação das coordenadas e alternativa manual em falha externa. Não equivalem a treze novos testes Java nem devem ser somados aos 345.
