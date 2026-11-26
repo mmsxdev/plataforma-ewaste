@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "browser:install": "playwright install chromium",
     "demo": "node validar-fluxo.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "demo:homologacao": "node validar-homologacao.mjs"
   },
-  "devDependencies": { "playwright": "1.65.1" }
+  "devDependencies": {
+    "playwright": "1.65.1"
+  }
 }
