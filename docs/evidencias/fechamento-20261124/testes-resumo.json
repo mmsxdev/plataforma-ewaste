@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-24",
+  "command": ".\\mvnw.cmd -B verify spotless:check",
+  "java": "21.0.9",
+  "result": "BUILD SUCCESS",
+  "spotless": "passed",
+  "scope": "Testcontainers descartável; banco comum não utilizado",
+  "unitarios": {
+    "tests": 236,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "integracao": {
+    "tests": 95,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

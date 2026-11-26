@@ -150,7 +150,8 @@ class RegrasR1R2IT {
             "SP",
             -23.5614,
             -46.6559);
-    s.adicionarItem(TipoResiduo.MIDIA_ARMAZENAMENTO, 5, new BigDecimal("10"));
+    s.adicionarItem(TipoResiduo.MIDIA_ARMAZENAMENTO, 5, new BigDecimal("10"))
+        .identificar("HDs fictícios");
     return solicitacoes.criar(s);
   }
 

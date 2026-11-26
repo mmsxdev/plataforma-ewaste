@@ -1,0 +1,36 @@
+@startuml
+!pragma layout smetana
+left to right direction
+actor Visitante
+actor "Geradora autenticada" as Geradora
+actor "Coletora autenticada" as Coletora
+actor Administrador
+rectangle "E-Waste" {
+  usecase "Cadastrar empresa / autenticar" as Cadastro
+  usecase "Consultar pontos e categorias" as Pontos
+  usecase "Identificar/classificar materiais\ne solicitar descarte" as Solicitar
+  usecase "Consultar histórico próprio" as Historico
+  usecase "Corrigir descrição/identificação\nem ABERTA" as Editar
+  usecase "Aceitar e agendar coleta" as Aceitar
+  usecase "Registrar retirada, mídias,\ndestinação e concluir" as Concluir
+  usecase "Baixar documentos próprios" as Documentos
+}
+Visitante --> Cadastro
+Visitante --> Pontos
+Geradora --> Pontos
+Geradora --> Solicitar
+Geradora --> Historico
+Geradora --> Editar
+Geradora --> Documentos
+Coletora --> Aceitar
+Coletora --> Concluir
+note right of Administrador
+Administração SQL e homologação têm
+escopos próprios; permissões do papel
+não comprovam telas completas.
+end note
+note bottom of Solicitar
+Ponto selecionado ativo e compatível.
+Coleta no endereço sem ponto preservada.
+end note
+@enduml

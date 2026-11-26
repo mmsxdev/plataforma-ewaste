@@ -1,0 +1,65 @@
+{
+  "date": "2026-11-24",
+  "scope": "Documentos, custos e diagramas; sem novos testes Java/E2E e sem transferência real de banco",
+  "pdfs": {
+    "administracao.pdf": {
+      "pages": 13,
+      "sha256": "2d93a66907328a69aff16522a5e1f24e45b91e446d5e2c2f1fb1d89d12c983bb",
+      "authors_confirmed": true,
+      "toc_links_checked": 26,
+      "pagination": "Capa excluída; contagem desde folha de rosto; números no texto"
+    },
+    "banco-dados.pdf": {
+      "pages": 28,
+      "sha256": "d263f777b49f89ea7782519bccfae481211fcdc5004f5f1af2aa2713c893a34e",
+      "authors_confirmed": true,
+      "toc_links_checked": 88,
+      "pagination": "Capa excluída; contagem desde folha de rosto; números no texto"
+    },
+    "design-software.pdf": {
+      "pages": 44,
+      "sha256": "467edb8fde44299f542be99986af1ee26bf261a629073c6165f7d9f776e6144c",
+      "authors_confirmed": true,
+      "toc_links_checked": 92,
+      "pagination": "Capa excluída; contagem desde folha de rosto; números no texto"
+    },
+    "estrutura-dados.pdf": {
+      "pages": 8,
+      "sha256": "b7ecaec52480cfa68bae98481d59b8543d67acc7bb0741142db01c89eafc7a47",
+      "authors_confirmed": true,
+      "toc_links_checked": 10,
+      "pagination": "Capa excluída; contagem desde folha de rosto; números no texto"
+    },
+    "teoria-computacao.pdf": {
+      "pages": 10,
+      "sha256": "a34d611cd65d17c6cdc0d6c0f73a8baf822770fc36c79ad826dc2abf364877bb",
+      "authors_confirmed": true,
+      "toc_links_checked": 22,
+      "pagination": "Capa excluída; contagem desde folha de rosto; números no texto"
+    }
+  },
+  "spreadsheet": {
+    "changed_inputs": [
+      [
+        "G7",
+        30,
+        120
+      ]
+    ],
+    "cached_totals": {
+      "G7": 120,
+      "G13": 30,
+      "H20": 9600,
+      "H21": 960,
+      "H22": 10560,
+      "H25": 120,
+      "H26": 360,
+      "H27": 10920
+    },
+    "formulas_and_styles_preserved": true,
+    "tabs_and_freeze_preserved": true,
+    "sha256": "0dc98ff2fd927971c494420709b6d69f43eccd8263b78a2ae70187b12f3c942b",
+    "engine": "Artifact Tool recálculo/exportação; openpyxl somente leitura para conferência do arquivo salvo; Excel nativo não executado"
+  },
+  "official_pdf_preserved": true
+}

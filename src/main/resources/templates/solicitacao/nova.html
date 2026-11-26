@@ -7,9 +7,13 @@
   <main class="container form-page">
     <h1>Nova solicitação de coleta</h1>
 
-    <form th:action="@{/geradora/solicitacoes}" th:object="${form}" method="post" novalidate>
+    <form th:action="@{/geradora/solicitacoes}" th:object="${form}" method="post">
       <p class="error-box" th:if="${#fields.hasErrors('*')}">Revise os campos destacados abaixo.</p>
 
+      <div th:if="${#fields.hasGlobalErrors()}" class="error-box" role="alert"><p th:each="e : ${#fields.globalErrors()}" th:text="${e}"></p></div>
+      <input type="hidden" th:field="*{pontoDescarteId}">
+      <p th:if="${form.pontoDescarteId != null}" th:text="|Ponto de coleta selecionado: nº ${form.pontoDescarteId}. Informe o endereço de origem para a retirada.|"></p>
+      <p><a th:href="@{/mapa}">Consultar pontos e categorias aceitas</a></p>
       <h2>Resíduos</h2>
       <label for="descricao">Descrição (opcional)</label>
       <input type="text" th:field="*{descricao}" placeholder="Ex.: computadores e HDs do antigo datacenter">
@@ -33,8 +37,9 @@
       </div>
 
       <h2 class="secao">Itens</h2>
-      <p class="dica">Preencha pelo menos um item. Linhas em branco são ignoradas.</p>
+      <p class="dica">Preencha pelo menos um item, com identificação, tipo, quantidade e peso. Linhas totalmente em branco são ignoradas.</p>
       <div class="itens-form" th:each="item, st : *{itens}">
+        <div><label th:for="|itens${st.index}.identificacao|">Identificação do equipamento</label><input th:field="*{itens[__${st.index}__].identificacao}" maxlength="150" placeholder="Ex.: notebook para reciclagem"><span class="erro" th:errors="*{itens[__${st.index}__].identificacao}"></span></div>
         <div>
           <label th:for="|itens${st.index}.tipoResiduo|">Tipo de resíduo</label>
           <select th:field="*{itens[__${st.index}__].tipoResiduo}">
@@ -88,5 +93,6 @@
     </form>
   </main>
   <footer th:replace="~{fragments/layout :: rodape}"></footer>
+  <script th:src="@{/js/solicitacao/validar-itens.js}" defer></script>
 </body>
 </html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html><html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Editar solicitação')}"></head><body>
+<header th:replace="~{fragments/layout :: navbar}"></header><main class="container form-page">
+<h1>Atualizar identificação dos resíduos</h1>
+<p>A edição é permitida enquanto a solicitação estiver aberta. Categoria, quantidade, ponto e local já enviados às coletoras são preservados.</p>
+<form th:action="@{/geradora/solicitacoes/{id}/editar(id=${s.id})}" th:object="${form}" method="post">
+<div th:if="${#fields.hasAnyErrors()}" class="error-box" role="alert"><p th:each="e : ${#fields.allErrors()}" th:text="${e}"></p></div>
+<label for="descricao">Descrição geral</label><input th:field="*{descricao}" maxlength="1000">
+<div th:each="i : ${s.itens}"><label th:for="|item-${i.id}|" th:text="|Identificação — ${i.tipoResiduo.descricao}|"></label>
+<input th:id="|item-${i.id}|" th:name="|identificacoes[${i.id}]|" th:value="${form.identificacoes[i.id]}" th:required="${i.identificacao != null or s.pontoDescarteId != null}" maxlength="150"></div>
+<button type="submit">Salvar alterações</button></form>
+<p><a th:href="@{/geradora/solicitacoes/{id}(id=${s.id})}">Voltar ao acompanhamento</a></p>
+</main><footer th:replace="~{fragments/layout :: rodape}"></footer></body></html>

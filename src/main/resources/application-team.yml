@@ -1,0 +1,18 @@
+# Todos os integrantes usam este perfil; somente o operador aplica migrations.
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_APP_USER}
+    password: ${DB_APP_PASSWORD}
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+server:
+  address: 127.0.0.1
+
+app:
+  storage:
+    backend: postgres

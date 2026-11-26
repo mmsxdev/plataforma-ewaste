@@ -1,0 +1,79 @@
+[
+  {
+    "scenario": "limpo",
+    "passed": true,
+    "allowed": true,
+    "java_simulated": true,
+    "block_reason": ""
+  },
+  {
+    "scenario": "documentos-e-pdf-locais",
+    "passed": true,
+    "allowed": true,
+    "java_simulated": true,
+    "block_reason": ""
+  },
+  {
+    "scenario": "target-residual",
+    "passed": true,
+    "allowed": true,
+    "java_simulated": true,
+    "block_reason": ""
+  },
+  {
+    "scenario": "head-diferente",
+    "passed": true,
+    "allowed": false,
+    "java_simulated": false,
+    "block_reason": "HEAD difere da revisao combinada; nenhum banco foi alterado."
+  },
+  {
+    "scenario": "worktree-java",
+    "passed": true,
+    "allowed": false,
+    "java_simulated": false,
+    "block_reason": "Worktree de fontes/configuracao alterado; nenhum banco foi alterado."
+  },
+  {
+    "scenario": "index-sql",
+    "passed": true,
+    "allowed": false,
+    "java_simulated": false,
+    "block_reason": "Index de fontes/configuracao alterado; nenhum banco foi alterado."
+  },
+  {
+    "scenario": "untracked-sql",
+    "passed": true,
+    "allowed": false,
+    "java_simulated": false,
+    "block_reason": "Arquivos de entrada nao rastreados; nenhum banco foi alterado."
+  },
+  {
+    "scenario": "ignored-sql",
+    "passed": true,
+    "allowed": false,
+    "java_simulated": false,
+    "block_reason": "Arquivos de entrada nao rastreados; nenhum banco foi alterado."
+  },
+  {
+    "scenario": "wrapper-alterado",
+    "passed": true,
+    "allowed": false,
+    "java_simulated": false,
+    "block_reason": "Worktree de fontes/configuracao alterado; nenhum banco foi alterado."
+  },
+  {
+    "scenario": "build-altera-snapshot",
+    "passed": true,
+    "allowed": false,
+    "java_simulated": false,
+    "block_reason": "O empacotamento alterou fontes/configuracao da revisao; nenhum banco foi alterado."
+  },
+  {
+    "scenario": "build-altera-origem",
+    "passed": true,
+    "allowed": false,
+    "java_simulated": false,
+    "block_reason": "Worktree de fontes/configuracao alterado; nenhum banco foi alterado."
+  }
+]

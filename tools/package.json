@@ -1,0 +1,13 @@
+{
+  "name": "ewaste-demo-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "browser:install": "playwright install chromium",
+    "demo": "node validar-fluxo.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": { "playwright": "1.65.1" }
+}

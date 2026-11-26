@@ -1,0 +1,20 @@
+@startuml
+!pragma layout smetana
+title E-Waste - Grupo 01 / focos definidos em 24/11/2026
+top to bottom direction
+rectangle "Coordenação e Design de Software\nMiguel Melo\nArquitetura, identidade e segurança" as Coord
+rectangle "Produto, solicitações e EDII\nDavi Fraga\nRequisitos, roteamento e AVL" as Produto
+rectangle "Rastreabilidade e Teoria da Computação\nGuilherme Gonçalves\nColeta, documentos e demonstrações" as Rastreio
+rectangle "Qualidade e recuperação\nFelipe Rohnelt\nTestes, armazenamento e backups" as QA
+rectangle "Banco de Dados II e Administração\nRafael Camargo\nOperador SQL, identidade e custos" as Admin
+Coord --> Produto
+Coord --> Rastreio
+Coord --> QA
+Coord --> Admin
+note bottom of Coord
+Engenharia de Software, 4º período, turma 1.
+Todos estudam o fluxo completo e fazem revisão cruzada.
+Funções planejadas não comprovam contribuições passadas.
+Não presumir vínculo trabalhista.
+end note
+@enduml

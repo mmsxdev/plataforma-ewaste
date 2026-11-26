@@ -1,0 +1,16 @@
+# Perfil reservado ao operador. Porta efêmera local; encerra depois da migração.
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  flyway:
+    enabled: true
+    out-of-order: false
+    # Dados fictícios só são resolvidos/executados quando o operador escolhe também dev.
+    # Um banco que recebeu seeds pode ser migrado depois sem recarregá-los.
+    ignore-migration-patterns: repeatable:missing
+
+server:
+  address: 127.0.0.1
+  port: 0

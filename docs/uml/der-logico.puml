@@ -1,0 +1,201 @@
+@startuml
+!pragma layout smetana
+title Modelo lógico - 18 tabelas versionadas
+entity empresa {
+  {field} id : BIGINT <<PK>>
+  {field} tipo : VARCHAR(20)
+  {field} razao_social : VARCHAR(150)
+  {field} cnpj : VARCHAR(14)
+  {field} telefone : VARCHAR(20)
+  {field} endereco : VARCHAR(200)
+  {field} cidade : VARCHAR(100)
+  {field} uf : CHAR(2)
+  {field} latitude : DOUBLE PRECISION
+  {field} longitude : DOUBLE PRECISION
+  {field} raio_atendimento_km : INTEGER
+  {field} criado_em : TIMESTAMPTZ
+}
+entity usuario {
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} nome : VARCHAR(120)
+  {field} email : VARCHAR(150)
+  {field} senha_hash : VARCHAR(100)
+  {field} perfil : VARCHAR(20)
+  {field} ativo : BOOLEAN
+  {field} criado_em : TIMESTAMPTZ
+}
+entity homologacao {
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} status : VARCHAR(20)
+  {field} motivo : VARCHAR(500)
+  {field} analisado_por : BIGINT <<FK>>
+  {field} analisado_em : TIMESTAMPTZ
+  {field} criado_em : TIMESTAMPTZ
+}
+entity documento_homologacao {
+  {field} id : BIGINT <<PK>>
+  {field} homologacao_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(30)
+  {field} arquivo_ref : VARCHAR(300)
+  {field} nome_original : VARCHAR(200)
+  {field} validade : DATE
+  {field} enviado_em : TIMESTAMPTZ
+}
+entity solicitacao {
+  {field} id : BIGINT <<PK>>
+  {field} geradora_id : BIGINT <<FK>>
+  {field} descricao : VARCHAR(1000)
+  {field} peso_estimado_kg : NUMERIC(10, 2)
+  {field} contem_midias : BOOLEAN
+  {field} qtd_midias : INTEGER
+  {field} endereco : VARCHAR(200)
+  {field} cidade : VARCHAR(100)
+  {field} uf : CHAR(2)
+  {field} latitude : DOUBLE PRECISION
+  {field} longitude : DOUBLE PRECISION
+  {field} status : VARCHAR(20)
+  {field} coletora_id : BIGINT <<FK>>
+  {field} aceita_em : TIMESTAMPTZ
+  {field} agendada_para : TIMESTAMPTZ
+  {field} criada_em : TIMESTAMPTZ
+  {field} version : BIGINT
+  {field} ponto_descarte_id : BIGINT <<FK>>
+}
+entity solicitacao_item {
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} tipo_residuo : VARCHAR(30)
+  {field} quantidade : INTEGER
+  {field} peso_kg : NUMERIC(10, 2)
+  {field} identificacao : VARCHAR(150)
+}
+entity alerta_solicitacao {
+  {field} solicitacao_id : BIGINT <<PK,FK>>
+  {field} coletora_id : BIGINT <<PK,FK>>
+  {field} distancia_km : NUMERIC(8, 2)
+  {field} enviado_em : TIMESTAMPTZ
+}
+entity evento_rastreio {
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(30)
+  {field} descricao : VARCHAR(500)
+  {field} peso_real_kg : NUMERIC(10, 2)
+  {field} evidencia_ref : VARCHAR(300)
+  {field} registrado_por : BIGINT <<FK>>
+  {field} registrado_em : TIMESTAMPTZ
+}
+entity midia_destruida {
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} numero_serie : VARCHAR(100)
+  {field} tipo : VARCHAR(10)
+  {field} metodo : VARCHAR(20)
+  {field} nivel : VARCHAR(10)
+  {field} destruida_em : TIMESTAMPTZ
+  {field} evidencia_ref : VARCHAR(300)
+}
+entity documento_emitido {
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(30)
+  {field} numero : VARCHAR(40)
+  {field} arquivo_ref : VARCHAR(300)
+  {field} hash_sha256 : CHAR(64)
+  {field} codigo_verificacao : VARCHAR(40)
+  {field} emitido_em : TIMESTAMPTZ
+}
+entity notificacao {
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(40)
+  {field} titulo : VARCHAR(150)
+  {field} mensagem : VARCHAR(500)
+  {field} link : VARCHAR(300)
+  {field} lida : BOOLEAN
+  {field} criada_em : TIMESTAMPTZ
+}
+entity ponto_descarte {
+  {field} id : BIGINT <<PK>>
+  {field} nome : VARCHAR(150)
+  {field} endereco : VARCHAR(200)
+  {field} cidade : VARCHAR(100)
+  {field} uf : CHAR(2)
+  {field} latitude : DOUBLE PRECISION
+  {field} longitude : DOUBLE PRECISION
+  {field} tipos_aceitos : VARCHAR(300)
+  {field} horario : VARCHAR(150)
+  {field} ativo : BOOLEAN
+}
+entity plano {
+  {field} id : BIGINT <<PK>>
+  {field} nome : VARCHAR(60)
+  {field} valor_mensal : NUMERIC(10, 2)
+}
+entity assinatura {
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} plano_id : BIGINT <<FK>>
+  {field} status : VARCHAR(20)
+  {field} inicio : DATE
+}
+entity lancamento {
+  {field} id : BIGINT <<PK>>
+  {field} empresa_id : BIGINT <<FK>>
+  {field} tipo : VARCHAR(20)
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} documento_id : BIGINT <<FK>>
+  {field} valor : NUMERIC(10, 2)
+  {field} competencia : DATE
+  {field} criado_em : TIMESTAMPTZ
+}
+entity arquivo_compartilhado {
+  {field} caminho : VARCHAR(300) <<PK>>
+  {field} nome_original : TEXT
+  {field} content_type : VARCHAR(100)
+  {field} tamanho : BIGINT
+  {field} conteudo : BYTEA
+  {field} criado_em : TIMESTAMPTZ
+}
+entity roteamento_solicitacao {
+  {field} solicitacao_id : BIGINT <<PK,FK>>
+  {field} processado_em : TIMESTAMPTZ
+}
+entity solicitacao_auditoria {
+  {field} id : BIGINT <<PK>>
+  {field} solicitacao_id : BIGINT <<FK>>
+  {field} status_anterior : VARCHAR(20)
+  {field} status_novo : VARCHAR(20)
+  {field} usuario_banco : TEXT
+  {field} transacao_id : BIGINT
+  {field} registrado_em : TIMESTAMPTZ
+}
+empresa |o--o{ usuario : empresa_id
+empresa ||--o| homologacao : empresa_id
+usuario |o--o{ homologacao : analisado_por
+homologacao ||--o{ documento_homologacao : homologacao_id
+empresa ||--o{ solicitacao : geradora_id
+empresa |o--o{ solicitacao : coletora_id
+ponto_descarte |o--o{ solicitacao : ponto_descarte_id
+solicitacao ||--o{ solicitacao_item : solicitacao_id
+solicitacao ||--o{ alerta_solicitacao : solicitacao_id
+empresa ||--o{ alerta_solicitacao : coletora_id
+solicitacao ||--o{ evento_rastreio : solicitacao_id
+usuario |o--o{ evento_rastreio : registrado_por
+solicitacao ||--o{ midia_destruida : solicitacao_id
+solicitacao ||--o{ documento_emitido : solicitacao_id
+empresa |o--o{ notificacao : empresa_id
+empresa ||--o{ assinatura : empresa_id
+plano ||--o{ assinatura : plano_id
+empresa ||--o{ lancamento : empresa_id
+solicitacao |o--o{ lancamento : solicitacao_id
+documento_emitido |o--o{ lancamento : documento_id
+solicitacao ||--o| roteamento_solicitacao : solicitacao_id
+solicitacao ||--o{ solicitacao_auditoria : solicitacao_id
+note bottom of arquivo_compartilhado
+*_ref/caminho têm relação lógica, sem FK.
+Entidades entre módulos referenciadas por ID.
+end note
+@enduml
