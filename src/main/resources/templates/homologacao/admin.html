@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Homologações')}"></head>
+<body>
+  <header th:replace="~{fragments/layout :: navbar}"></header>
+  <link rel="stylesheet" th:href="@{/css/solicitacao.css}">
+  <main class="container">
+    <h1>Homologação de coletoras</h1>
+    <p>Confira os documentos e decida. Coletoras aprovadas, com licença ambiental e cadastro IBAMA em dia, passam a receber as solicitações abertas no raio delas.</p>
+
+    <p class="notice" th:if="${mensagem}" th:text="${mensagem}">Mensagem</p>
+    <p class="error-box" th:if="${erro}" th:text="${erro}" role="alert">Erro</p>
+
+    <h2 class="secao">Aguardando análise</h2>
+    <p th:if="${#lists.isEmpty(emAnalise)}" class="card">Nenhuma coletora aguardando análise.</p>
+    <section class="card secao" th:each="h : ${emAnalise}">
+      <h3 th:text="${h.empresa}">Coletora</h3>
+      <p th:text="${h.local}">Goiânia/GO</p>
+      <p th:unless="${#lists.isEmpty(h.faltando)}" class="error-box">Obrigatórios ausentes ou vencidos: <span th:text="${#strings.listJoin(h.faltando, ', ')}"></span></p>
+      <ul>
+        <li th:each="d : ${h.documentos}">
+          <a th:href="@{/admin/homologacoes/{id}/documentos/{doc}(id=${h.id},doc=${d.id})}" th:text="|${d.tipo}: ${d.nome}|">Licença</a>
+          <span th:text="|(validade: ${d.validade}; enviado em ${d.enviadoEm})|"></span>
+        </li>
+      </ul>
+      <form th:action="@{/admin/homologacoes/{id}/aprovar(id=${h.id})}" method="post">
+        <button type="submit">Aprovar</button>
+      </form>
+      <form class="secao" th:action="@{/admin/homologacoes/{id}/reprovar(id=${h.id})}" method="post">
+        <label th:for="|motivo-${h.id}|">Motivo da reprovação</label>
+        <input th:id="|motivo-${h.id}|" name="motivo" required maxlength="500" placeholder="Ex.: licença ambiental ilegível">
+        <button type="submit" class="secondary">Reprovar</button>
+      </form>
+    </section>
+
+    <h2 class="secao">Demais coletoras</h2>
+    <div class="tabela-rolagem">
+      <table class="tabela">
+        <thead><tr><th>Coletora</th><th>Local</th><th>Situação</th><th>Recebe solicitações</th><th>Documentos</th><th>Decisão em</th></tr></thead>
+        <tbody>
+          <tr th:each="h : ${demais}">
+            <td th:text="${h.empresa}">Coletora</td>
+            <td th:text="${h.local}">Goiânia/GO</td>
+            <td><span th:text="${h.statusRotulo}">pendente</span><span th:if="${h.motivo}" th:text="| — ${h.motivo}|"></span></td>
+            <td th:text="${h.apta} ? 'Sim' : 'Não'">Não</td>
+            <td>
+              <span th:if="${#lists.isEmpty(h.documentos)}">Nenhum</span>
+              <a th:each="d, it : ${h.documentos}" th:href="@{/admin/homologacoes/{id}/documentos/{doc}(id=${h.id},doc=${d.id})}" th:text="${d.tipo} + (${it.last} ? '' : ', ')">Licença</a>
+            </td>
+            <td th:text="${h.analisadoEm} ?: '—'">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer th:replace="~{fragments/layout :: rodape}"></footer>
+</body>
+</html>

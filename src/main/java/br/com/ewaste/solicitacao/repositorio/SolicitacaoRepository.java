@@ -34,6 +34,8 @@ public interface SolicitacaoRepository extends JpaRepository<Solicitacao, Long> 
 
   List<Solicitacao> findByIdInAndStatus(Collection<Long> ids, StatusSolicitacao status);
 
+  List<Solicitacao> findByStatus(StatusSolicitacao status);
+
   /** Solicitação só se esta coletora venceu o aceite. */
   Optional<Solicitacao> findByIdAndColetoraId(Long id, Long coletoraId);
 

@@ -23,4 +23,12 @@ public interface HomologacaoRepository extends JpaRepository<Homologacao, Long> 
   @Query(
       "select distinct h from Homologacao h left join fetch h.documentos where h.status = :status")
   List<Homologacao> findComDocumentosByStatus(StatusHomologacao status);
+
+  /** Todas as homologações, com documentos, para o painel do admin. */
+  @Query(
+      "select distinct h from Homologacao h left join fetch h.documentos order by h.criadoEm desc")
+  List<Homologacao> findTodasComDocumentos();
+
+  @Query("select h from Homologacao h left join fetch h.documentos where h.id = :id")
+  Optional<Homologacao> findComDocumentosById(Long id);
 }

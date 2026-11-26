@@ -36,7 +36,7 @@ class HomeControllerTest {
   @CsvSource({
     "GERADORA,/geradora/solicitacoes,/coletora/oportunidades,/admin/homologacoes",
     "COLETORA,/coletora/oportunidades,/geradora/solicitacoes,/admin/homologacoes",
-    "ADMIN,/painel,/geradora/solicitacoes,/coletora/oportunidades"
+    "ADMIN,/admin/homologacoes,/geradora/solicitacoes,/coletora/oportunidades"
   })
   void navbarMostraAtalhosDoPerfil(String perfil, String permitido, String outro, String terceiro)
       throws Exception {
@@ -47,7 +47,6 @@ class HomeControllerTest {
         .andExpect(content().string(not(containsString(terceiro))))
         .andExpect(content().string(containsString("id=\"aviso-notificacoes\"")))
         .andExpect(content().string(not(containsString("href=\"/notificacoes\""))))
-        .andExpect(content().string(not(containsString("href=\"/admin/homologacoes\""))))
         .andExpect(content().string(containsString("/logout")))
         .andExpect(content().string(containsString("name=\"_csrf\"")));
   }

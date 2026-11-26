@@ -8,12 +8,12 @@
     <a class="card action" th:href="@{/geradora/documentos}"><h2>Meus documentos</h2><p>Consulte os documentos liberados após a coleta.</p></a>
   </div>
   <div class="cards" sec:authorize="hasRole('COLETORA')">
-    <section class="card"><h2>Homologação</h2><p>O envio e a análise de documentos estão indisponíveis nesta demonstração.</p></section>
+    <a class="card action" th:href="@{/coletora/homologacao}"><h2>Homologação</h2><p>Envie seus documentos para começar a receber solicitações.</p></a>
     <a class="card action" th:href="@{/coletora/oportunidades}"><h2>Oportunidades</h2><p>Encontre solicitações na sua região de atendimento.</p></a>
     <a class="card action" th:href="@{/coletora/coletas}"><h2>Minhas coletas</h2><p>Registre a execução e o destino dos resíduos.</p></a>
   </div>
   <div class="cards" sec:authorize="hasRole('ADMIN')">
-    <section class="card"><h2>Homologações</h2><p>A análise administrativa está indisponível nesta demonstração.</p></section>
+    <a class="card action" th:href="@{/admin/homologacoes}"><h2>Homologações</h2><p>Analise os documentos e aprove ou reprove coletoras.</p></a>
     <section class="card"><h2>Financeiro</h2><p>Os serviços financeiros estão indisponíveis nesta demonstração.</p></section>
   </div>
   <p><a th:href="@{/mapa}">Consultar pontos de coleta</a></p>

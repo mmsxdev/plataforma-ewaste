@@ -2,6 +2,7 @@ package br.com.ewaste.solicitacao.servico;
 
 import br.com.ewaste.solicitacao.api.SolicitacaoConsulta;
 import br.com.ewaste.solicitacao.api.SolicitacaoResumo;
+import br.com.ewaste.solicitacao.api.StatusSolicitacao;
 import br.com.ewaste.solicitacao.dominio.Solicitacao;
 import br.com.ewaste.solicitacao.repositorio.SolicitacaoRepository;
 import java.util.List;
@@ -31,6 +32,13 @@ class SolicitacaoConsultaService implements SolicitacaoConsulta {
   @Override
   public List<SolicitacaoResumo> listarDaColetora(Long coletoraId) {
     return solicitacoes.findByColetoraIdOrderByAceitaEmDesc(coletoraId).stream()
+        .map(SolicitacaoConsultaService::resumir)
+        .toList();
+  }
+
+  @Override
+  public List<SolicitacaoResumo> listarAbertas() {
+    return solicitacoes.findByStatus(StatusSolicitacao.ABERTA).stream()
         .map(SolicitacaoConsultaService::resumir)
         .toList();
   }
