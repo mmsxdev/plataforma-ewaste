@@ -20,4 +20,8 @@ O CDF e o laudo são emitidos em toda coleta concluída. O certificado de destru
 
 ## Testes
 
-`./mvnw verify` roda o teste `FluxoRastreioIT` com PostgreSQL real. Ele cobre a regra R3, o conteúdo do PDF, o download negado à outra geradora, o hash alterado e a linha do tempo automática.
+`./mvnw verify` roda o teste `FluxoRastreioIT` com PostgreSQL real. Ele cobre a regra R3, o conteúdo do PDF, o download negado à outra geradora, o hash alterado, a linha do tempo automática, a coleta recusada fora de AGENDADA e o clique duplo no registro da coleta: um envio grava e o outro volta com a mensagem de estado.
+
+## Limites conhecidos
+
+- A foto é gravada em disco antes do INSERT. Se a transação for desfeita depois disso, o arquivo fica sem referência em `STORAGE_DIR`. O contrato `Armazenamento` não tem operação de remoção. A trava no registro da coleta evita o caso mais comum, o clique duplo, porque o segundo envio para antes de gravar a foto.
