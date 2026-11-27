@@ -33,7 +33,7 @@ Resultado histórico do `verify` anterior ao fechamento: **BUILD SUCCESS**, 320 
 | T11 | RNF02, transação com erro; aceite concorrente | Rollback e somente uma coletora vencedora | APROVADO no verify: rollback, concorrência e transições. |
 | T12 | BD, instância isolada | Executar View/Procedure/Function/Trigger, permissões e backup/restauração | APROVADO verify RecursosSqlIT e restauração isolada local em 6,233 s; cópia fora do host PENDENTE. |
 | T13 | TC, inteiros didáticos sem dados pessoais | RSA imprime `13 7 1` e tabelas-verdade conferidas | APROVADO: comando RSA executado retornou 13 7 1; duas tabelas conferidas no relatório. |
-| T14 | CA09, navegador desktop e tela estreita | Percorrer por teclado, foco, labels, mensagens e alternativa textual | PARCIAL: auditoria de 26/11/2026 (ver [Auditoria de acessibilidade](#auditoria-de-acessibilidade-t14)). Rótulos, contraste de texto e navegação por teclado aprovados; borda dos campos (2,37:1) e anel de foco (2,78:1) abaixo de 3:1; marcação do ponto no mapa sem alternativa por teclado quando o CEP falha. Recorte E2E anterior: 390 px e foco via Tab, check 12. |
+| T14 | CA09, navegador desktop e tela estreita | Percorrer por teclado, foco, labels, mensagens e alternativa textual | APROVADO nos critérios auditados após o reteste de 27/11/2026 (ver [Auditoria de acessibilidade](#auditoria-de-acessibilidade-t14)): borda dos campos 3,69:1 e anel de foco 3,77:1; ponto do mapa marcado por teclado (Enter/Espaço no centro); erros da nova solicitação associados aos campos. A auditoria de 26/11 resultou PARCIAL. Leitor de tela real, zoom de 200% e Lighthouse/axe PENDENTES. Recorte E2E anterior: 390 px e foco via Tab, check 12. |
 | T15 | RNF05, duas máquinas autorizadas com mesmo banco team | Documento gravado numa instância é recuperado na outra; conexão/permissões corretas | PARCIAL: duas JVMs 18080/18081 no mesmo Windows compartilharam dados e upload; duas máquinas PENDENTE. |
 
 Testes Java referenciados são relativos a `src/test/java/br/com/ewaste/`. Usar dados integralmente fictícios; revisar massas legadas antes de demonstração, especialmente CNPJ que pode coincidir com organização real. Não coletar dados pessoais reais de colegas para comprovar os casos.
@@ -47,6 +47,7 @@ Testes Java referenciados são relativos a `src/test/java/br/com/ewaste/`. Usar 
 | 24/11/2026 / execução coordenada pelo líder | Backup-Team.ps1 + Test-Restore.ps1, banco novo isolado preservado | 19 tabelas incluindo flyway_schema_history; 3 arquivos / 19422 bytes; 6,233 s | [restauracao-resumo.json](evidencias/restauracao-resumo.json) |
 | 24/11/2026 / execução coordenada pelo líder | Python pow para RSA didático | 13 7 1 | Cálculos reproduzíveis em teoria-computacao.md |
 | 26/11/2026 / Davi Fraga | Auditoria T14: perfil dev, PostgreSQL descartável, Chromium automatizado 1366 px e 390 px | PARCIAL: 3 critérios por tela; 2 falhas de contraste de componente e 1 limite de teclado no mapa | [Auditoria de acessibilidade](#auditoria-de-acessibilidade-t14) e PNG em evidencias/acessibilidade-20261126/ |
+| 27/11/2026 / Davi Fraga | Reteste T14 após correções: `.\mvnw.cmd -B verify spotless:check` e o mesmo ambiente da auditoria | BUILD SUCCESS, 247 unitários + 97 IT, zero falhas; contraste, mapa por teclado e erros associados aprovados | [Reteste](#reteste-após-correções-27112026) e PNG em evidencias/acessibilidade-20261127/ |
 
 ## Roteiro individual
 
@@ -95,13 +96,28 @@ Em 390 px nenhuma das telas apresentou rolagem horizontal. Botões de estilo sua
 
 **Mensagens de erro.** Os textos são claros e ficam junto do campo. Na nova solicitação, porém, o resumo "Revise os campos destacados abaixo" não usa `role="alert"`, os campos inválidos não recebem `aria-invalid` nem `aria-describedby` apontando para a mensagem, e o foco volta ao início da página após o envio. O cadastro usa resumo com `role="alert"`.
 
-Recomendações, **não implementadas nesta auditoria** (combinar responsável com a equipe):
+Recomendações da auditoria de 26/11 (implementadas em 27/11, ver [reteste](#reteste-após-correções-27112026)):
 
 1. Escurecer a borda dos campos e a cor do anel de foco até pelo menos 3:1 contra `#ffffff` e `#f5f7f3`.
 2. Oferecer alternativa por teclado à marcação no mapa, por exemplo campos de latitude/longitude visíveis quando o CEP falhar ou marcação do centro do mapa por tecla.
 3. Na nova solicitação, aplicar `role="alert"` ao resumo, `aria-invalid` e `aria-describedby` aos campos com erro e mover o foco para o resumo após o envio.
 
 Não verificados: leitor de tela real (NVDA/VoiceOver), ampliação de 200%/reflow além de 390 px, demais telas do sistema e ferramentas automáticas como Lighthouse/axe. Evidências: [cadastro geradora](evidencias/acessibilidade-20261126/cadastro-geradora-desktop.png) ([390 px](evidencias/acessibilidade-20261126/cadastro-geradora-390px.png)), [cadastro coletora](evidencias/acessibilidade-20261126/cadastro-coletora-desktop.png) ([390 px](evidencias/acessibilidade-20261126/cadastro-coletora-390px.png), [CEP por teclado](evidencias/acessibilidade-20261126/cadastro-coletora-cep-teclado.png)), [nova solicitação](evidencias/acessibilidade-20261126/nova-solicitacao-desktop.png) ([390 px](evidencias/acessibilidade-20261126/nova-solicitacao-390px.png), [sem localização](evidencias/acessibilidade-20261126/nova-solicitacao-erro-sem-mapa.png), [erros do servidor](evidencias/acessibilidade-20261126/nova-solicitacao-erros.png)), [oportunidades](evidencias/acessibilidade-20261126/oportunidades-desktop.png) ([390 px](evidencias/acessibilidade-20261126/oportunidades-390px.png)) e [detalhe](evidencias/acessibilidade-20261126/oportunidade-detalhe-desktop.png).
+
+### Reteste após correções (27/11/2026)
+
+Correções no branch `fix/davi/acessibilidade-t14`, sobre o mesmo ambiente da auditoria (perfil dev, PostgreSQL descartável, Chromium automatizado a 1366 px):
+
+| Achado de 26/11 | Correção | Resultado do reteste |
+| --- | --- | --- |
+| Borda dos campos 2,37:1 / 2,20:1 | `app.css`: borda de `input`, `select` e `.map` de `#9bad9e` para `#6f8574` | 3,97:1 sobre `#ffffff` e 3,69:1 sobre `#f5f7f3`: **aprovado** (1.4.11) |
+| Anel de foco 2,78:1 | `app.css`: `:focus-visible` de `#c28b20` para `#a87410` | 4,06:1 sobre branco, 3,77:1 sobre a página e 3,42:1 sobre `#e4eee5`: **aprovado** (1.4.11/2.4.7) |
+| Mapa sem alternativa por teclado | `seletor-localizacao.js`: com o mapa em foco, Enter ou Espaço marca o centro; `app.css` mostra uma mira no centro enquanto o mapa tem foco; ajuda das duas telas cita o atalho | Nova solicitação e cadastro de coletora: Tab até o mapa, setas e `+` para posicionar, Enter preencheu latitude/longitude, exibiu o marcador e anunciou o status; Espaço também marcou sem rolar a página; o raio da coletora foi desenhado. Não depende mais do CEP: **aprovado** (2.1.1) |
+| Erros da nova solicitação sem associação | `nova.html`: resumo com `role="alert"` e `tabindex="-1"`, campos com erro recebem `aria-invalid="true"` e `aria-describedby` para a mensagem; `validar-itens.js` move o foco ao resumo | Envio com peso 0 e quantidade 0: foco no resumo, `aria-invalid` e `aria-describedby` somente em `pesoEstimadoKg` e `itens0.quantidade`, mensagens localizadas pelo id; localização marcada mantida: **aprovado** (3.3.1/1.3.1) |
+
+Teste automatizado novo: `SolicitacaoControllerTest.errosFicamAssociadosAosCamposParaLeitorDeTela`, escrito antes da correção (falhou) e aprovado depois. Rodada completa `.\mvnw.cmd -B verify spotless:check`: BUILD SUCCESS, 247 unitários + 97 IT, zero falhas, erros ou ignorados.
+
+Limites: o mapa por teclado ainda depende do Leaflet carregado de unpkg; se ele falhar, mouse e teclado ficam igualmente sem mapa e resta o CEP. Continuam não verificados: leitor de tela real, zoom de 200% e Lighthouse/axe. Evidências: [mapa por teclado na nova solicitação](evidencias/acessibilidade-20261127/mapa-teclado-enter.png), [mapa por teclado no cadastro de coletora](evidencias/acessibilidade-20261127/cadastro-coletora-mapa-teclado.png) e [erros associados](evidencias/acessibilidade-20261127/nova-solicitacao-erros-aria.png).
 
 ## Próximo ensaio entre computadores
 
