@@ -4,7 +4,7 @@ Fonte normativa acadêmica: Faculdade SENAI FATESG, **PI2026-2 ENG4-T1**, 9 pág
 
 ## Problema, usuários e limites
 
-Dificuldade de identificar locais e materiais aceitos, registrar o descarte e acompanhar sua situação (PDF, pp.1–3). O protótipo conecta geradoras a pontos de recebimento e coletoras e organiza os materiais e solicitações. A base existente é B2B: usuário responsável representa empresa GERADORA ou COLETORA; ADMIN é perfil reservado; a homologação dispõe de envio/análise/aprovação/reprovação, enquanto suspensão não tem ação na interface; administração de pontos e financeiro não estão completos nesta entrega. O usuário informou em 24/11/2026 a confirmação dos professores para esse recorte; o PDF original não exige CNPJ nem exclui pessoas físicas. A origem da confirmação está em [equipe.md](equipe.md), sem modificar a fonte oficial.
+Dificuldade de identificar locais e materiais aceitos, registrar o descarte e acompanhar sua situação (PDF, pp.1–3). O protótipo conecta geradoras a pontos de recebimento e coletoras e organiza os materiais e solicitações. A base existente é B2B: usuário responsável representa empresa GERADORA ou COLETORA; ADMIN é perfil reservado; a homologação dispõe de envio/análise/aprovação/reprovação, enquanto suspensão não tem ação na interface; administração de pontos e financeiro não estão completos nesta entrega. Os professores confirmaram esse recorte em 24/11/2026; o PDF original não exige CNPJ nem exclui pessoas físicas. A origem da confirmação está em [equipe.md](equipe.md), sem modificar a fonte oficial.
 
 Preservamos Java 21, Spring Boot 3.5.16, Thymeleaf e PostgreSQL 16. Homologação, roteamento por raio, PDFs operacionais e monetização simulada são decisões anteriores, não requisitos mínimos do documento oficial. Mapa cartográfico, pagamentos, IA, publicação na internet e aplicativo nativo não são obrigações. A consulta textual de pontos atende ao objetivo de localizar informações sem depender de um provedor de mapas.
 
@@ -46,15 +46,15 @@ Preservamos Java 21, Spring Boot 3.5.16, Thymeleaf e PostgreSQL 16. Homologaçã
 
 ## Confirmações e inconsistências de origem preservadas
 
-Registro de 24/11/2026: o usuário informou que os professores confirmaram as interpretações, inclusive grupo de cinco, recorte B2B, fluxo de coleta e abrangência da AVL integrada. Não foram fornecidas novas rubricas detalhadas para substituir o que consta no documento. [Equipe e decisões](equipe.md) registra a origem dessas informações.
+Registro de 24/11/2026: os professores confirmaram as interpretações, inclusive grupo de cinco, recorte B2B, fluxo de coleta e abrangência da AVL integrada. Não foram fornecidas novas rubricas detalhadas para substituir o que consta no documento. [Equipe e decisões](equipe.md) registra a origem dessas informações.
 
-1. Apresentação: a p.7 do PDF diz **07/12/2025** e a p.8 **07/12/2026**. O calendário adotado é **07/12/2026**, por confirmação explícita do usuário; a fonte contraditória permanece preservada.
-2. Controle: a p.7 diz **25/12/2026 e 02/12/2026**. O usuário confirmou essas datas literalmente. **25/12 permanece posterior à entrega**, sem substituição por uma data presumida; não tratamos esse ponto como pergunta ainda sem resposta.
-3. Grupo: a p.8 exige 3–4 integrantes e lista grupos com cinco. O Grupo 01 de cinco integrantes foi confirmado pelo usuário como aceito; a regra e a lista originais não foram alteradas.
-4. A equipe mantém B2B, o modo de coleta e uma AVL própria recebendo dados do banco na consulta de pontos, conforme confirmação geral relatada pelo usuário. Os recursos adicionais herdados não passam a ser mínimos obrigatórios.
-5. O usuário definiu **ABNT com capa, folha de rosto (contracapa) e sumário**. A estrutura de pastas da p.6 é sugestão; manter organização equivalente. PDFs acadêmicos em docs/pdf são distintos dos modelos operacionais src/main/resources/pdf. O link da pasta compartilhada de submissão ainda não foi fornecido.
+1. Apresentação: a p.7 do PDF diz **07/12/2025** e a p.8 **07/12/2026**. O calendário adotado é **07/12/2026**, por decisão da equipe; a fonte contraditória permanece preservada.
+2. Controle: a p.7 diz **25/12/2026 e 02/12/2026**. A equipe confirmou essas datas literalmente. **25/12 permanece posterior à entrega**, sem substituição por uma data presumida; não tratamos esse ponto como pergunta ainda sem resposta.
+3. Grupo: a p.8 exige 3–4 integrantes e lista grupos com cinco. O Grupo 01 de cinco integrantes foi aceito pelos professores; a regra e a lista originais não foram alteradas.
+4. A equipe mantém B2B, o modo de coleta e uma AVL própria recebendo dados do banco na consulta de pontos, conforme confirmação geral dos professores. Os recursos adicionais herdados não passam a ser mínimos obrigatórios.
+5. A equipe adotou **ABNT com capa, folha de rosto (contracapa) e sumário**. A estrutura de pastas da p.6 é sugestão; manter organização equivalente. PDFs acadêmicos em docs/pdf são distintos dos modelos operacionais src/main/resources/pdf. O link da pasta compartilhada de submissão ainda não foi fornecido.
 
-Prazo adotado: execução 23/11/2026 a 05/12/2026; entrega até **23h59 de 05/12/2026**, confirmada pelo usuário. Avaliação geral registrada na fonte: 50% grupo/50% individual; ausência desconta 10% individual. Não inventamos fórmula adicional, notas ou rubricas docentes não transcritas. Não enviamos mensagens aos professores nem submetemos o trabalho.
+Prazo adotado: execução 23/11/2026 a 05/12/2026; entrega até **23h59 de 05/12/2026**, confirmada pela equipe. Avaliação geral registrada na fonte: 50% grupo/50% individual; ausência desconta 10% individual. Não inventamos fórmula adicional, notas ou rubricas docentes não transcritas. Não enviamos mensagens aos professores nem submetemos o trabalho.
 
 ## Referência
 

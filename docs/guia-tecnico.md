@@ -10,7 +10,7 @@ Fluxo importante: `PontoColetaRepository` → `PontosColetaService` → `ArvoreA
 
 ## 2 Preparar ambiente sem confundir bancos
 
-A equipe definiu Rafael como operador do banco/migrador e Felipe como responsável por cópias/recuperação. O usuário escolheu a máquina de Felipe como futura anfitriã; a transferência ainda não ocorreu e a origem em Miguel deve ser preservada até validação. Nenhum IP/firewall foi escolhido ou testado por essa decisão. Cópia somente na máquina de Felipe não será backup externo quando ela hospedar o banco; o destino fora dela continua pendente. Ver [equipe](equipe.md) e [operação](operacao-banco.md).
+A equipe definiu Rafael como operador do banco/migrador e Felipe como responsável por cópias/recuperação. A equipe escolheu inicialmente a máquina de Felipe como futura anfitriã; a transferência ainda não ocorreu e a origem em Miguel deve ser preservada até validação. Nenhum IP/firewall foi escolhido ou testado por essa decisão. Cópia somente na máquina de Felipe não será backup externo quando ela hospedar o banco; o destino fora dela continua pendente. Ver [equipe](equipe.md) e [operação](operacao-banco.md).
 
 Conferir JDK, Docker e versão combinada do repositório. O banco comum da equipe tem dados a preservar. Para E2E use um banco **novo isolado**, porta/volume próprios, preparado pelo operador com migrations e seeds fictícios. `.env` e arquivos privados locais ficam ignorados; não cole credenciais em terminal compartilhado/prints.
 
@@ -47,7 +47,7 @@ $env:PI_DEMO_CONFIRM = 'FICTICIO'
 npm.cmd run demo --prefix tools
 ```
 
-Comandos Java devem usar banco Testcontainers descartável, não o comum. Ferramentas Node são dependências de desenvolvimento pinadas em tools/package-lock.json; instalação/Chromium não dependem do Codex. Opções de navegador, data e execução em [tools/README](../tools/README.md). Agendamento calculado 48h adiante em São Paulo; override só se for real e futuro. Cada rodada gera pasta única em `target/evidencias/`; não sobrescreve histórico.
+Comandos Java devem usar banco Testcontainers descartável, não o comum. Ferramentas Node são dependências de desenvolvimento pinadas em tools/package-lock.json; instalação/Chromium não dependem de ferramentas externas ao repositório. Opções de navegador, data e execução em [tools/README](../tools/README.md). Agendamento calculado 48h adiante em São Paulo; override só se for real e futuro. Cada rodada gera pasta única em `target/evidencias/`; não sobrescreve histórico.
 
 O E2E de fechamento passou em 12/12 verificações com Playwright do projeto/Chromium gerenciado e banco isolado15432; JSON e PNG estão em docs/evidencias/fechamento-20261124. A regressão final passou em 331 testes Java (236 unitários + 95 IT), sem falhas/erros/pulos, com spotless:check aprovado; resumo atual em [testes](testes.md). Os totais anteriores permanecem históricos. Não alegar execução destes comandos apenas pela existência deste guia.
 
@@ -63,4 +63,4 @@ Escolha história/CA em requisitos.md, localize o caso UML e serviço correspond
 
 Atualização da equipe em 24/11/2026: cinco autores/turma identificados, responsabilidades em equipe.md, custos revisados e relatórios com capa, folha de rosto e sumário paginado. Conferência própria em [confirmacoes-equipe-20261124/verificacao.json](evidencias/confirmacoes-equipe-20261124/verificacao.json). Isso não é uma nova rodada Java/E2E. O banco de destino será no Felipe, conforme [roteiro de transferência](transferencia-felipe.md), ainda sem execução entre computadores.
 
-Homologação desde e765791: coletora envia documentos e pede análise; ADMIN aprova/reprova; AlertaAoHomologar processa a aprovação retroativamente. Suspensão não possui ação na UI. O roteiro de estudo/coordenação de Miguel está em [roteiro-miguel](roteiro-miguel.md); resultados novos em [testes](testes.md).
+Homologação desde e765791: coletora envia documentos e pede análise; ADMIN aprova/reprova; AlertaAoHomologar processa a aprovação retroativamente. Suspensão não possui ação na UI. Resultados novos em [testes](testes.md).

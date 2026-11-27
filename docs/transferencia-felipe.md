@@ -1,6 +1,6 @@
 # Transferência do PostgreSQL para a máquina do Felipe
 
-Plano autorizado pelo usuário em 24/11/2026. **Não executado:** esta sessão não tem acesso à máquina do Felipe. A instância atual no Miguel e seus volumes permanecem preservados. Rafael é o operador do banco; Felipe responde pelas cópias e pela recuperação. Somente uma instância será a referência de escrita da equipe após a troca.
+Plano aprovado pela equipe em 24/11/2026. **Não executado neste registro:** depende de acesso à máquina do Felipe. A instância atual no Miguel e seus volumes permanecem preservados. Rafael é o operador do banco; Felipe responde pelas cópias e pela recuperação. Somente uma instância será a referência de escrita da equipe após a troca.
 
 ## Preparação sem alterar a origem
 

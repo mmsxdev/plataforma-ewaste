@@ -1,6 +1,6 @@
 # Plataforma E-Waste
 
-Protótipo acadêmico B2B para o Projeto Integrador do 4º período de Engenharia de Software da Faculdade SENAI FATESG, 2026-2. Conecta empresas geradoras a pontos de recebimento e coletoras homologadas. Permite identificar/classificar materiais, consultar pontos por cidade/categoria, solicitar coleta e acompanhar histórico. A primeira coletora apta que aceitar assume a operação. Ao concluir coleta, destinação e mídias previstas, emite CDF, laudo e certificado simulados. O recorte B2B é preservado da base e sua aceitação foi informada pelo usuário em 24/11/2026; registro das confirmações em docs/equipe.md.
+Protótipo acadêmico B2B para o Projeto Integrador do 4º período de Engenharia de Software da Faculdade SENAI FATESG, 2026-2. Conecta empresas geradoras a pontos de recebimento e coletoras homologadas. Permite identificar/classificar materiais, consultar pontos por cidade/categoria, solicitar coleta e acompanhar histórico. A primeira coletora apta que aceitar assume a operação. Ao concluir coleta, destinação e mídias previstas, emite CDF, laudo e certificado simulados. O recorte B2B é preservado da base e sua aceitação foi confirmada pelos professores em 24/11/2026; registro das confirmações em docs/equipe.md.
 
 > Projeto acadêmico. Não há integração SINIR/IBAMA ou cobrança implementada, e os documentos gerados levam a marca "documento simulado".
 
@@ -159,4 +159,4 @@ Depois abra o Pull Request no GitHub. O merge é por **Squash and merge**, depoi
 
 Documentação complementar: [normalização dos relatórios](docs/normalizacao.md) e [transferência planejada para Felipe](docs/transferencia-felipe.md).
 
-Coordenação/estudo de Miguel: [roteiro](docs/roteiro-miguel.md). Homologação: [sequência de análise e alerta retroativo](docs/uml/sequencia-homologacao.puml). Rodada de validação de 26/11 em [testes](docs/testes.md); VPS é destino planejado, ainda sem implantação comprovada.
+Homologação: [sequência de análise e alerta retroativo](docs/uml/sequencia-homologacao.puml). Rodada de validação de 26/11 em [testes](docs/testes.md); VPS é destino planejado, ainda sem implantação comprovada.

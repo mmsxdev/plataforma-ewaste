@@ -1,6 +1,6 @@
 # Apresentação dos relatórios acadêmicos
 
-Formato definido pelo usuário em 24/11/2026: ABNT, com capa, folha de rosto (chamada de contracapa na conversa) e sumário. Grupo 01, Engenharia de Software, 4º período, turma 1; sem matrículas. Dados da equipe em [equipe](equipe.md).
+Formato definido pela equipe em 24/11/2026: ABNT, com capa, folha de rosto (também chamada de contracapa) e sumário. Grupo 01, Engenharia de Software, 4º período, turma 1; sem matrículas. Dados da equipe em [equipe](equipe.md).
 
 Os cinco relatórios possuem capa, folha de rosto com natureza do trabalho, resumo, abstract, sumário gerado a partir dos títulos e páginas reais, corpo técnico, referências e apêndices quando houver. A capa não entra na contagem; as folhas são contadas desde a folha de rosto e os números aparecem a partir do texto. Não há assinatura, nota ou banca presumida.
 
@@ -22,7 +22,7 @@ A revisão usa a NBR 10520:2023 para chamadas autor-data com maiúsculas e minú
 
 Nas referências de artigos, o destaque tipográfico identifica o periódico. O texto do artigo RSA é disponibilizado por um dos autores; os dados bibliográficos já utilizados são preservados e a localização editorial não identificada recebe `[S. l.]`, sem confundir o endereço do autor com o local da publicação. Observações sobre a revisão ficam neste guia, em vez de serem exportadas como itens da lista bibliográfica.
 
-Fontes conferidas nesta rodada:
+Fontes conferidas na revisão de 26/11/2026:
 
 - ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. **ABNT NBR 10520:2023: Informação e documentação — Citações em documentos — Apresentação**. Texto disponibilizado pela Universidade Federal Fluminense: https://mccicm.uff.br/wp-content/uploads/sites/79/2026/03/ABNT_NBR_10520_-2023_Informacao-e-documentacao-%E2%80%94-Citacoes-em-documentos.pdf. Acesso em: 26 nov. 2026.
 - ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. **ABNT NBR 6028:2021: Informação e documentação — Resumo, resenha e recensão — Apresentação**. Texto disponibilizado pela Universidade Federal da Paraíba: https://www.ufpb.br/secretariado/contents/documentos/2021_ABNT6028Resumo.pdf. Acesso em: 26 nov. 2026.
