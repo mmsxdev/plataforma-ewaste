@@ -33,7 +33,7 @@ Resultado histórico do `verify` anterior ao fechamento: **BUILD SUCCESS**, 320 
 | T11 | RNF02, transação com erro; aceite concorrente | Rollback e somente uma coletora vencedora | APROVADO no verify: rollback, concorrência e transições. |
 | T12 | BD, instância isolada | Executar View/Procedure/Function/Trigger, permissões e backup/restauração | APROVADO verify RecursosSqlIT e restauração isolada local em 6,233 s; cópia fora do host PENDENTE. |
 | T13 | TC, inteiros didáticos sem dados pessoais | RSA imprime `13 7 1` e tabelas-verdade conferidas | APROVADO: comando RSA executado retornou 13 7 1; duas tabelas conferidas no relatório. |
-| T14 | CA09, navegador desktop e tela estreita | Percorrer por teclado, foco, labels, mensagens e alternativa textual | APROVADO no recorte E2E: viewport 390 px e foco via Tab, check 12; auditoria completa de acessibilidade NÃO realizada. |
+| T14 | CA09, navegador desktop e tela estreita | Percorrer por teclado, foco, labels, mensagens e alternativa textual | PARCIAL: auditoria de 26/11/2026 (ver [Auditoria de acessibilidade](#auditoria-de-acessibilidade-t14)). Rótulos, contraste de texto e navegação por teclado aprovados; borda dos campos (2,37:1) e anel de foco (2,78:1) abaixo de 3:1; marcação do ponto no mapa sem alternativa por teclado quando o CEP falha. Recorte E2E anterior: 390 px e foco via Tab, check 12. |
 | T15 | RNF05, duas máquinas autorizadas com mesmo banco team | Documento gravado numa instância é recuperado na outra; conexão/permissões corretas | PARCIAL: duas JVMs 18080/18081 no mesmo Windows compartilharam dados e upload; duas máquinas PENDENTE. |
 
 Testes Java referenciados são relativos a `src/test/java/br/com/ewaste/`. Usar dados integralmente fictícios; revisar massas legadas antes de demonstração, especialmente CNPJ que pode coincidir com organização real. Não coletar dados pessoais reais de colegas para comprovar os casos.
@@ -46,6 +46,7 @@ Testes Java referenciados são relativos a `src/test/java/br/com/ewaste/`. Usar 
 | 24/11/2026 / execução coordenada pelo líder | Chrome headless, duas instâncias team 18080/18081 no mesmo Windows | 12/12 checks, sucesso e rejeição, dados/arquivos compartilhados | [e2e-duas-instancias.json](evidencias/e2e-duas-instancias.json) e seis PNG |
 | 24/11/2026 / execução coordenada pelo líder | Backup-Team.ps1 + Test-Restore.ps1, banco novo isolado preservado | 19 tabelas incluindo flyway_schema_history; 3 arquivos / 19422 bytes; 6,233 s | [restauracao-resumo.json](evidencias/restauracao-resumo.json) |
 | 24/11/2026 / execução coordenada pelo líder | Python pow para RSA didático | 13 7 1 | Cálculos reproduzíveis em teoria-computacao.md |
+| 26/11/2026 / Davi Fraga | Auditoria T14: perfil dev, PostgreSQL descartável, Chromium automatizado 1366 px e 390 px | PARCIAL: 3 critérios por tela; 2 falhas de contraste de componente e 1 limite de teclado no mapa | [Auditoria de acessibilidade](#auditoria-de-acessibilidade-t14) e PNG em evidencias/acessibilidade-20261126/ |
 
 ## Roteiro individual
 
@@ -74,6 +75,33 @@ O guard do migrador passou em 11 cenários: [migrador-cenarios.json](evidencias/
 Resultado Java consolidado: [testes-resumo.json](evidencias/fechamento-20261124/testes-resumo.json), obtido dos XML Surefire/Failsafe após `.\mvnw.cmd -B verify spotless:check` (BUILD SUCCESS). Antes da rodada final, a regressão encontrou expectativas antigas de links indisponíveis em HomeControllerTest e AcessoIT; elas foram corrigidas para a navegação atual, preservando autenticação e logout. Os específicos `.\mvnw.cmd -B -Dtest=ItemFormTest,SolicitacaoControllerTest -Dit.test=FluxoPiIT,SolicitacaoIT,RegrasR1R2IT verify` também passaram (17 IT); são subconjunto, não devem ser somados aos 331.
 
 Comandos adicionais executados: `npm.cmd test --prefix tools` (6/6), `pwsh -NoProfile -File infra/tests/Test-Migrate-Team.ps1` (11/11, Java/Maven simulados), `npm.cmd run demo --prefix tools` com PI_DEMO_CONFIRM=FICTICIO (12/12, Chromium real). O ensaio usou banco isolado, volume próprio e duas JVMs; não alterou o banco compartilhado da equipe.
+
+## Auditoria de acessibilidade (T14)
+
+Execução de 26/11/2026 por Davi Fraga, referente a RF09/CA09 e RNF03. Escopo: telas de cadastro (geradora e coletora), nova solicitação e oportunidades (lista e detalhe). Critérios: contraste, rótulos dos campos e navegação somente por teclado. Referência: WCAG 2.1, nível AA, critérios 1.4.3 (texto, 4,5:1 ou 3:1 para texto grande), 1.4.11 (componentes e estados, 3:1), 1.3.1/3.3.2 (rótulos), 2.1.1/2.1.2 (teclado, sem armadilha) e 2.4.7 (foco visível). **O resultado não é declaração de conformidade WCAG.**
+
+Ambiente: branch `feat/felipe/cep-mapa` (telas com CEP/mapa), perfil dev com seeds fictícios, PostgreSQL 16 descartável em container próprio (porta 55432), sem uso do banco compartilhado. Contas `geradora@teste.com` e `coletora@teste.com` do seed. Chromium automatizado (Playwright) em 1366×900 e 390×844. Contraste calculado pela fórmula de luminância relativa da WCAG sobre as cores computadas; teclado percorrido com Tab, registrando elemento focado, indicador de foco e repetição de foco.
+
+| Tela | Contraste | Rótulos | Teclado |
+| --- | --- | --- | --- |
+| Cadastro geradora | Texto: 37 elementos, nenhuma falha. **Borda dos campos `#9bad9e` sobre `#ffffff`: 2,37:1 (falha 1.4.11).** | 10/10 campos com `<label for>`; CEP e senha com `aria-describedby` existente. | 21 paradas, ordem visual, foco visível em todas, sem armadilha; o mapa ocupa 5 paradas e libera o foco. |
+| Cadastro coletora | Texto: 41 elementos, nenhuma falha. Mesma falha de borda (2,37:1). | 11/11 campos com `<label for>`, incluindo raio de atendimento. | 22 paradas, mesmo resultado. CEP digitado por teclado preencheu endereço, cidade, UF e coordenadas e moveu o foco para Endereço. |
+| Nova solicitação | Texto: 57 elementos, nenhuma falha; mensagens de erro 8,16:1. **Borda dos campos sobre `#f5f7f3`: 2,20:1; anel de foco `#c28b20`: 2,78:1 (falhas 1.4.11).** | 20/20 campos com `<label>`, inclusive os itens dinâmicos (`itens0…itens2`). | 33 paradas, ciclo completo, foco visível. Envio sem localização é bloqueado com mensagem em `role="status"` e foco no CEP. |
+| Oportunidades (lista e detalhe) | Texto: 21 elementos, nenhuma falha. | Sem campos de formulário; links e botões com texto descritivo ("Ver e aceitar", "Aceitar esta coleta"). | 8 paradas na lista e 8 no detalhe; botão de aceite alcançável e acionável por teclado. |
+
+Em 390 px nenhuma das telas apresentou rolagem horizontal. Botões de estilo suave ("Localizar pelo CEP", "Sair") têm fundo próximo ao da página, mas o texto identifica o componente e tem contraste suficiente; registrados como observação, não como falha.
+
+**Limite de teclado no mapa.** O mapa recebe foco e permite deslocamento, mas a marcação do ponto exato ocorre somente por clique. A alternativa sem mouse é a busca pelo CEP, que depende de serviços externos (ViaCEP, Nominatim e Leaflet via unpkg). Se o CEP não for encontrado ou esses serviços estiverem indisponíveis, latitude e longitude ficam vazias, os campos estão ocultos e o servidor as exige: usuário apenas de teclado não conclui o cadastro nem a solicitação nesse caso.
+
+**Mensagens de erro.** Os textos são claros e ficam junto do campo. Na nova solicitação, porém, o resumo "Revise os campos destacados abaixo" não usa `role="alert"`, os campos inválidos não recebem `aria-invalid` nem `aria-describedby` apontando para a mensagem, e o foco volta ao início da página após o envio. O cadastro usa resumo com `role="alert"`.
+
+Recomendações, **não implementadas nesta auditoria** (combinar responsável com a equipe):
+
+1. Escurecer a borda dos campos e a cor do anel de foco até pelo menos 3:1 contra `#ffffff` e `#f5f7f3`.
+2. Oferecer alternativa por teclado à marcação no mapa, por exemplo campos de latitude/longitude visíveis quando o CEP falhar ou marcação do centro do mapa por tecla.
+3. Na nova solicitação, aplicar `role="alert"` ao resumo, `aria-invalid` e `aria-describedby` aos campos com erro e mover o foco para o resumo após o envio.
+
+Não verificados: leitor de tela real (NVDA/VoiceOver), ampliação de 200%/reflow além de 390 px, demais telas do sistema e ferramentas automáticas como Lighthouse/axe. Evidências: [cadastro geradora](evidencias/acessibilidade-20261126/cadastro-geradora-desktop.png) ([390 px](evidencias/acessibilidade-20261126/cadastro-geradora-390px.png)), [cadastro coletora](evidencias/acessibilidade-20261126/cadastro-coletora-desktop.png) ([390 px](evidencias/acessibilidade-20261126/cadastro-coletora-390px.png), [CEP por teclado](evidencias/acessibilidade-20261126/cadastro-coletora-cep-teclado.png)), [nova solicitação](evidencias/acessibilidade-20261126/nova-solicitacao-desktop.png) ([390 px](evidencias/acessibilidade-20261126/nova-solicitacao-390px.png), [sem localização](evidencias/acessibilidade-20261126/nova-solicitacao-erro-sem-mapa.png), [erros do servidor](evidencias/acessibilidade-20261126/nova-solicitacao-erros.png)), [oportunidades](evidencias/acessibilidade-20261126/oportunidades-desktop.png) ([390 px](evidencias/acessibilidade-20261126/oportunidades-390px.png)) e [detalhe](evidencias/acessibilidade-20261126/oportunidade-detalhe-desktop.png).
 
 ## Próximo ensaio entre computadores
 
