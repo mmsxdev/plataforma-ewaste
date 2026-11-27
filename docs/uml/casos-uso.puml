@@ -14,6 +14,8 @@ rectangle "E-Waste" {
   usecase "Aceitar e agendar coleta" as Aceitar
   usecase "Registrar retirada, mídias,\ndestinação e concluir" as Concluir
   usecase "Baixar documentos próprios" as Documentos
+  usecase "Enviar documentos e pedir análise" as Homologar
+  usecase "Aprovar ou reprovar homologação" as Analisar
 }
 Visitante --> Cadastro
 Visitante --> Pontos
@@ -24,10 +26,12 @@ Geradora --> Editar
 Geradora --> Documentos
 Coletora --> Aceitar
 Coletora --> Concluir
+Coletora --> Homologar
+Administrador --> Analisar
 note right of Administrador
-Administração SQL e homologação têm
-escopos próprios; permissões do papel
-não comprovam telas completas.
+Aprovação/reprovação possuem tela.
+Suspensão não tem ação na interface.
+Permissão SQL não substitui autorização do aplicativo.
 end note
 note bottom of Solicitar
 Ponto selecionado ativo e compatível.

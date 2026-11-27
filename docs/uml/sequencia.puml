@@ -58,6 +58,7 @@ O diagrama não fixa ordem entre listeners.
 Alertas geram eventos próprios na sua transação.
 end note
 note over Pontos, AVL
+Homologação e alertas retroativos: sequencia-homologacao.puml.
 Também buscar(id) consulta árvore reconstruída
 a partir do banco; sem cache global.
 end note

@@ -30,21 +30,19 @@ Só o módulo `solicitacao` altera o status. O Dev 4 pede `marcarColetada` e `ma
 | `usuario.api.UsuarioAtual` | Dev 1 | todos | Real: `IdentidadeService` (usuário autenticado, persistido e ativo) |
 | `usuario.api.EmpresaConsulta` | Dev 1 | Dev 2, 3, 4, 5 | Real: `EmpresaConsultaService` (repositório JPA) |
 | `homologacao.api.ColetorasAptas` | Dev 2 | Dev 3 | Real: `ColetorasAptasService` |
-| `armazenamento.api.Armazenamento` | Dev 2 | Dev 2, Dev 4 | Real: `ArmazenamentoEmDisco` |
-| `solicitacao.api.SolicitacaoConsulta` | Dev 3 | Dev 4, Dev 5 | Real: busca por id e lista da coletora |
+| `armazenamento.api.Armazenamento` | Dev 2 | Dev 2, Dev 4 | Real: `ArmazenamentoEmDisco` fora de team; `ArmazenamentoCompartilhado` em team |
+| `solicitacao.api.SolicitacaoConsulta` | Dev 3 | Dev 3, Dev 4 | Real: busca por id, lista da coletora e `listarAbertas()` para alerta retroativo |
 | `solicitacao.api.TransicaoSolicitacao` | Dev 3 | Dev 4 | Real: transições para coletada e concluída |
 | `rastreio.api.RastreioConsulta` | Dev 4 | Dev 3 | Linha do tempo da solicitação |
 | `documento.api.EmissorDocumentos` | Dev 4 | Dev 4 | Emissão após a conclusão do rastreio |
 
-O login usa a implementação real `IdentidadeService`, com consulta por e-mail sem distinção de maiúsculas, BCrypt e bloqueio de contas inativas. As três classes provisórias de `usuario/servico` foram substituídas; as interfaces e os DTOs de `usuario/api` permanecem compatíveis. A tela customizada `templates/usuario/login.html` é servida por `UsuarioController`; Spring Security processa a autenticação.
+O login usa a implementação real `IdentidadeService`, com consulta por e-mail sem distinção de maiúsculas, BCrypt e bloqueio de contas inativas. As interfaces e os DTOs de `usuario/api` são atendidos pelas implementações reais. A tela customizada `templates/usuario/login.html` é servida por `UsuarioController`; Spring Security processa a autenticação.
 
 ## Consulta de pontos e adequação PI
 
 `mapa.api.PontosColeta` expõe `consultar(cidade,tipo)`, `buscar(id)`, `buscarParaHistorico(id)` e `validar(id,tipos)` com projeções `PontoResumo`. `PontosColetaService` carrega registros JDBC ativos numa `ArvoreAvl` própria antes da busca/percurso e filtros. `solicitacao` usa apenas esse contrato público para validar seleção, não acessa implementação interna de mapa. `ponto_descarte_id` e `solicitacao_item.identificacao` são adições nullable da V600 para manter registros antigos sem preenchimento inventado. Todos os itens de nova solicitação precisam identificação, com ou sem ponto; coleta no endereço sem ponto continua válida. `buscarParaHistorico` inclui pontos que deixaram de receber novos pedidos, preservando a consulta da referência antiga.
 
 `Armazenamento` mantém o contrato: `ArmazenamentoEmDisco` fora de team; `ArmazenamentoCompartilhado` em team grava bytes em PostgreSQL V200. Não há SMB obrigatório. Referências antigas não são apagadas nem importadas automaticamente. Clientes team não rodam Flyway; operador separado aplica migrations. `RastreioService` usa a Procedure `registrar_destinacao_pi` da V601 na transação de destinação; detalhes em [sql-recursos.md](sql-recursos.md).
-
-**Como funcionam as provisórias:** todas têm `@Fallback`. Quando o dono cria a implementação real, uma classe `@Service` comum que implementa a mesma interface, o Spring passa a injetar a real automaticamente. O dono então **apaga a provisória no mesmo PR**.
 
 ## Eventos de domínio (`shared.events`)
 
@@ -54,7 +52,7 @@ Ouvir: `@TransactionalEventListener` (roda depois do commit). Se o listener grav
 | Evento | Publicado por | Ouvido por |
 | --- | --- | --- |
 | `EmpresaCadastradaEvent(empresaId, tipo)` | Dev 1 | Dev 2 (cria homologação PENDENTE para coletoras) |
-| `ColetoraHomologadaEvent(coletoraId)` | Dev 2 | Dev 5 |
+| `ColetoraHomologadaEvent(coletoraId)` | `HomologacaoService.aprovar` (Dev 2) | `roteamento.servico.AlertaAoHomologar` (Dev 3), AFTER_COMMIT/REQUIRES_NEW; alertas retroativos de ABERTAS no raio |
 | `ColetoraReprovadaEvent(coletoraId, motivo)` | Dev 2 | Dev 5 |
 | `SolicitacaoCriadaEvent(solicitacaoId, geradoraId)` | Dev 3 | Dev 3 (roteamento), Dev 4 |
 | `AlertasEnviadosEvent(solicitacaoId, coletoraIds)` | Dev 3 | Dev 4, Dev 5 (notifica as coletoras) |
@@ -66,7 +64,7 @@ Ouvir: `@TransactionalEventListener` (roda depois do commit). Se o listener grav
 
 ## Rotas
 
-A tabela registra contratos de prefixo/acesso, não prova endpoints completos. `/coletora/homologacao`, `/admin/homologacoes`, `/admin/financeiro`, `/admin/pontos-descarte`, `/coletora/assinatura`, `/notificacoes` e `/api/notificacoes/**` não têm fluxo de interface completo nesta entrega. Os links indisponíveis foram retirados da navegação. Eventos citados como consumidos por Dev 5 são contratos futuros, não confirmação de listener implementado.
+A tabela registra contratos de prefixo/acesso, não prova endpoints completos. `/admin/financeiro`, `/admin/pontos-descarte`, `/coletora/assinatura`, `/notificacoes` e `/api/notificacoes/**` não têm fluxo de interface completo nesta entrega. Os links indisponíveis foram retirados da navegação. Eventos citados como consumidos por Dev 5 são contratos futuros, não confirmação de listener implementado.
 
 | Prefixo | Acesso | Módulos |
 | --- | --- | --- |
@@ -90,3 +88,7 @@ Senha de todos: `senha123`
 | `geradora@teste.com` | GERADORA | Geradora Exemplo Ltda (São Paulo) |
 | `coletora@teste.com` | COLETORA | Recicla Centro (São Paulo, raio de 50 km) |
 | `coletora2@teste.com` | COLETORA | EcoColeta Rio (Rio de Janeiro, a ~360 km: fora do raio) |
+
+### Contrato de homologação implementado
+
+`/coletora/homologacao` oferece consulta, upload em `/documentos`, envio em `/enviar` e download próprio em `/documentos/{id}`. `/admin/homologacoes` lista análises, aprova em `/{id}/aprovar`, reprova em `/{id}/reprovar` e consulta arquivos em `/{id}/documentos/{documentoId}`. Os POSTs usam CSRF e perfil; o serviço exige estado EM_ANALISE para decisão. Reprovação conserva o motivo e permite reenvio pela coletora. Não há endpoint de tela para suspender. `SolicitacaoConsulta.listarAbertas()` é consumido também por `AlertaAoHomologar`; aptidão, raio e existência do alerta são verificados antes de gravar a oportunidade retroativa.

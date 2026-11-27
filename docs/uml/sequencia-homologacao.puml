@@ -1,0 +1,68 @@
+@startuml
+!pragma layout smetana
+title Homologação: análise, decisão e alerta retroativo
+actor Coletora
+actor ADMIN
+boundary HomologacaoColetoraController as WebC
+boundary AdminHomologacaoController as WebA
+control HomologacaoService as H
+control "Spring / transação" as Tx
+control ApplicationEventPublisher as Publisher
+control AlertaAoHomologar as Retro
+entity "APIs e repositório de alertas" as APIs
+database PostgreSQL as DB
+Coletora -> WebC : POST /coletora/homologacao/documentos
+WebC -> H : enviarDocumento(coletoraId, tipo, validade, arquivo)
+H -> DB : homologação e referência do documento
+note over H, DB
+Armazenamento: bytes em PostgreSQL no perfil team;
+fora dele, arquivos em disco conforme contrato.
+end note
+Coletora -> WebC : POST /coletora/homologacao/enviar
+WebC -> H : enviarParaAnalise(coletoraId)
+H -> H : exigir documentos obrigatórios válidos
+H -> DB : status EM_ANALISE / COMMIT
+ADMIN -> WebA : consultar /admin/homologacoes e arquivos
+WebA -> H : todas() / documentoParaAdmin(id, documentoId)
+H --> WebA : dados e arquivos autorizados
+alt aprovação válida
+  ADMIN -> WebA : POST /{id}/aprovar (CSRF)
+  WebA -> Tx : aprovar(id, adminLogado)
+  Tx -> H : aprovar(id, adminId)
+  H -> H : validar EM_ANALISE e documentos
+  H -> DB : status APROVADA
+  H -> Publisher : publishEvent(ColetoraHomologadaEvent)
+  H --> Tx : concluir método
+  Tx -> DB : COMMIT
+  Tx -> Retro : AFTER_COMMIT aoHomologar(evento)
+  Retro -> APIs : ColetorasAptas.listarAptas()
+  alt coletora apta
+    Retro -> APIs : EmpresaConsulta.buscar(coletoraId)
+    Retro -> APIs : SolicitacaoConsulta.listarAbertas()
+    loop ABERTAS dentro do raio e sem alerta existente
+      Retro -> DB : REQUIRES_NEW: gravar AlertaSolicitacao
+      Retro -> Publisher : publishEvent(AlertasEnviadosEvent)
+    end
+  else não apta
+    Retro -> Retro : sair sem alertar
+  end
+  Tx --> WebA : confirmação
+else reprovação
+  ADMIN -> WebA : POST /{id}/reprovar, motivo (CSRF)
+  WebA -> H : reprovar(id, adminId, motivo)
+  H -> DB : status REPROVADA e motivo
+  H -> Publisher : publishEvent(ColetoraReprovadaEvent)
+  Tx -> DB : COMMIT
+  WebA --> ADMIN : confirmação
+  Coletora -> WebC : consultar motivo, corrigir e reenviar
+end
+note over WebC, WebA
+Papéis e propriedade verificados no servidor.
+Documentos ausentes/vencidos ou estado inválido recusam decisão.
+Não há ação de suspensão na interface.
+end note
+note over Retro, DB
+O consumo retroativo usa transação própria; não existe uma
+única transação englobando upload, análise e todos os listeners.
+end note
+@enduml

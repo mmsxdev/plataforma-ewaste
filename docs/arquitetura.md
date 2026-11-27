@@ -8,7 +8,7 @@ Monólito modular em Spring Boot: um único deploy, com o código dividido em m�
 - Segurança por prefixo de rota: `/geradora/**`, `/coletora/**` e `/admin/**`, cada um restrito ao perfil correspondente.
 - Banco PostgreSQL com esquema versionado por Flyway. O Hibernate só valida (`ddl-auto: validate`).
 
-Fluxo principal: homologação libera a coletora → a geradora cria a solicitação → o roteamento alerta as coletoras aptas no raio → a primeira aceita e agenda → a coleta e as mídias são registradas → os documentos (CDF, laudo, certificado) são emitidos → a geradora baixa os documentos no painel. A consulta textual de pontos integra o início da solicitação; mapa cartográfico não é obrigatório. Telas de homologação administrativa/financeiro e notificações ainda não estão disponíveis; os atalhos não oferecem essas ações.
+Fluxo principal: homologação libera a coletora → a geradora cria a solicitação → o roteamento alerta as coletoras aptas no raio → a primeira aceita e agenda → a coleta e as mídias são registradas → os documentos (CDF, laudo, certificado) são emitidos → a geradora baixa os documentos no painel. A consulta textual de pontos integra o início da solicitação; mapa cartográfico não é obrigatório. A homologação tem telas de upload/solicitação de análise pela coletora e de aprovação/reprovação pelo ADMIN. Suspensão não tem ação na interface. Financeiro e notificações ainda não possuem interface completa.
 
 ## Adequação ao PI oficial
 
@@ -36,9 +36,12 @@ Mesmo em B2B, nome/e-mail e possivelmente localização/imagem podem identificar
 
 Proteção operacional ainda depende de rede, permissões do host, segredos e backups; o código não configura automaticamente TLS, criptografia de volume ou firewall. Não alegar criptografia em repouso por haver BYTEA ou hash. RSA didático de teoria-computacao.md é separado da proteção real.
 
-Referência: BRASIL. **Lei nº 13.709, de 14 de agosto de 2018**. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm. Acesso em: 23 nov. 2026. Referência normativa para análise acadêmica, sem declaração de conformidade.
+Os contratos entre módulos estão em [contratos](contratos.md).
 
-Os contratos entre módulos estão em [contratos.md](contratos.md).
+## Referências
+
+BRASIL. **Lei nº 13.709, de 14 de agosto de 2018**. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm. Acesso em: 23 nov. 2026. Referência normativa para análise acadêmica, sem declaração de conformidade.
+
 
 ## Validação da arquitetura nesta entrega
 
@@ -51,3 +54,9 @@ No fechamento de 24/11/2026, `verify spotless:check` passou com 236 unitários +
 ## Anfitriã planejada e responsabilidades
 
 A transferência do PostgreSQL para a máquina de Felipe foi aprovada, mas não executada. A instância atual em Miguel permanece preservada até backup/restauração e teste de acesso/dados/arquivos em dois computadores. Rafael será operador do banco e Felipe responsável pelas cópias/recuperação. O destino de backup fora da futura anfitriã está pendente; guardar somente na máquina de Felipe não constitui cópia externa. As evidências locais acima são históricas e não comprovam essa transferência. Ver [equipe](equipe.md) e [implantação](implantacao.md).
+
+## Homologação e recuperação de oportunidades
+
+`HomologacaoColetoraController` e `AdminHomologacaoController` usam `HomologacaoService`. A coletora envia os documentos obrigatórios e pede análise; o ADMIN aprova ou reprova com motivo. Serviço e domínio validam estado/documentos; os downloads preservam perfil e propriedade. A aprovação publica `ColetoraHomologadaEvent` dentro da transação. `AlertaAoHomologar` recebe após commit e abre uma transação `REQUIRES_NEW`: confere aptidão, busca solicitações ABERTAS via `SolicitacaoConsulta.listarAbertas()`, filtra o raio e grava alertas ainda inexistentes, publicando `AlertasEnviadosEvent`. Uma coletora aprovada depois da criação do pedido pode assim receber a oportunidade. A ordem entre listeners distintos não é garantida.
+
+As figuras de classes e sequência de homologação em docs/uml representam essa implementação. A presença de suspensão no domínio não comprova um comando de suspensão na tela. Telas de homologação foram acrescentadas em e765791; os registros anteriores de indisponibilidade são históricos.

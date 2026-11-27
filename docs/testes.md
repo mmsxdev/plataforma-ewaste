@@ -1,6 +1,6 @@
 # Testes, critérios de aceitação e evidências
 
-**Fechamento validado em 24/11/2026:** 236 testes unitários + 95 IT, sem falhas/erros/pulos; spotless:check aprovado; E2E Chromium 12/12, Node 6/6 e guard do migrador 11/11. Resumos atuais em evidencias/fechamento-20261124/. O ensaio anterior de backup/restauração permanece histórico, sem nova execução nesta rodada. Duas instâncias foram exercitadas no mesmo Windows, não em dois computadores. O ensaio de rede com outro integrante continua pendente. Resultados abaixo se referem a esta execução local, não a CI remoto ou aprovação acadêmica.
+**Fechamento validado em 24/11/2026:** 236 testes unitários + 95 IT, sem falhas/erros/pulos; spotless:check aprovado; E2E Chromium 12/12, Node 6/6 e guard do migrador 11/11. Resumos atuais em evidencias/fechamento-20261124/. O ensaio anterior de backup/restauração permanece histórico, sem nova execução em 24/11. Duas instâncias foram exercitadas no mesmo Windows, não em dois computadores. O ensaio de rede com outro integrante continua pendente. Resultados abaixo se referem a esta execução local, não a CI remoto ou aprovação acadêmica.
 
 ## Ambiente e comandos
 
@@ -50,7 +50,7 @@ Testes Java referenciados são relativos a `src/test/java/br/com/ewaste/`. Usar 
 
 ## Roteiro individual
 
-Cada integrante deve selecionar uma história, localizar UML e implementação, explicar uma decisão e apresentar um teste associado com resultado obtido. As áreas principais e revisões cruzadas foram definidas por autorização do usuário em [equipe.md](equipe.md). Cada integrante estuda o fluxo completo e demonstra seu foco: Miguel — Design/identidade/segurança; Davi — requisitos/solicitação/AVL; Guilherme — rastreio/documentos/Teoria; Felipe — qualidade/armazenamento/recuperação; Rafael — SQL/BDII/Administração/custos. Essas atribuições futuras não comprovam contribuições já realizadas; o registro individual e o ensaio ainda precisam acontecer.
+Cada integrante deve selecionar uma história, localizar UML e implementação, explicar uma decisão e apresentar um teste associado com resultado obtido. As áreas principais e revisões cruzadas foram definidas pela equipe em [equipe.md](equipe.md). Cada integrante estuda o fluxo completo e demonstra seu foco: Miguel — Design/identidade/segurança; Davi — requisitos/solicitação/AVL; Guilherme — rastreio/documentos/Teoria; Felipe — qualidade/armazenamento/recuperação; Rafael — SQL/BDII/Administração/custos. Essas atribuições futuras não comprovam contribuições já realizadas; o registro individual e o ensaio ainda precisam acontecer.
 
 ## Evidências do navegador e limites
 
@@ -68,7 +68,7 @@ Baseline histórico preservado em [testes-resumo.json](evidencias/testes-resumo.
 
 **Rodada aprovada: 331 testes Java (236 unitários + 95 IT), zero falhas, erros ou ignorados; spotless:check aprovado. E2E: 12/12.** Evidências novas estão publicadas em `docs/evidencias/fechamento-20261124/`, sem sobrescrever os JSON/PNG antigos. Os testes Node de configuração do E2E passaram (6/6): fuso São Paulo/virada de ano, data futura, overrides inválidos/passados e URLs locais distintas. Bootstrap executado com `npm ci --prefix tools` e `npm run browser:install --prefix tools`, Playwright 1.65.1 pinado; Chromium gerenciado instalado. Isso valida preparação/configuração, não substitui o E2E nem altera o total Java.
 
-E2E de fechamento: [resultado.json](evidencias/fechamento-20261124/resultado.json), run `fechamento-20261124-final`, de 24/11/2026. Node v22.21.1, Playwright 1.65.1 e Chromium gerenciado 159.0.8154.6, sem junction/runtime do Codex. Duas JVMs locais 18080/18081 apontaram ao banco isolado de auditoria na porta 15432; criaram solicitação **5**. Data de retirada foi calculada dinamicamente para 26/11/2026 09h27 em São Paulo. Há seis PNG e CDF fictício na mesma pasta; o JSON registra hash do PDF. A solicitação 6 e os horários anteriores pertencem à evidência histórica, não foram sobrescritos.
+E2E de fechamento: [resultado.json](evidencias/fechamento-20261124/resultado.json), run `fechamento-20261124-final`, de 24/11/2026. Node v22.21.1, Playwright 1.65.1 e Chromium gerenciado 159.0.8154.6, sem dependências fora do repositório. Duas JVMs locais 18080/18081 apontaram ao banco isolado de auditoria na porta 15432; criaram solicitação **5**. Data de retirada foi calculada dinamicamente para 26/11/2026 09h27 em São Paulo. Há seis PNG e CDF fictício na mesma pasta; o JSON registra hash do PDF. A solicitação 6 e os horários anteriores pertencem à evidência histórica, não foram sobrescritos.
 
 O guard do migrador passou em 11 cenários: [migrador-cenarios.json](evidencias/fechamento-20261124/migrador-cenarios.json). Os casos permitidos simulam Java; não são prova de migração do banco comum. DER lógico corrigido expõe atributos VARCHAR/NUMERIC e PK caminho; UML corrige empresa opcional de ADMIN, assinatura criar(Solicitacao) e listeners separados AFTER_COMMIT/REQUIRES_NEW. PNGs foram regenerados antes dos PDFs afetados.
 
@@ -106,3 +106,13 @@ Não verificados: leitor de tela real (NVDA/VoiceOver), ampliação de 200%/refl
 ## Próximo ensaio entre computadores
 
 A segunda máquina será a de Felipe, escolhida também como futura anfitriã do PostgreSQL; Rafael operará o banco e Felipe as cópias/recuperação. A transferência ainda não ocorreu. T15 continua pendente até teste real autorizado de registro em uma máquina/consulta em outra e envio/recuperação de arquivo, incluindo origem não autorizada bloqueada. Os resultados anteriores de duas JVMs no mesmo Windows permanecem históricos e não serão reapresentados como prova desse ensaio. Todas as novas massas devem ser fictícias; não há produção ou dados pessoais reais planejados.
+
+## Rodada de coordenação e Design — 26/11/2026
+
+`verify spotless:check`: BUILD SUCCESS, **248 unitários + 97 IT = 345**, zero falhas/erros/ignorados, JDK 21/Docker/Testcontainers descartável. [Resumo atual](evidencias/design-homologacao-20261126/testes-java.json). As contagens de 24/11 são históricas.
+
+O navegador real concluiu **12/12** no [fluxo integrado](evidencias/design-homologacao-20261126/fluxo-integrado/resultado.json) e **10/10** no [fluxo de homologação](evidencias/design-homologacao-20261126/homologacao/resultado.json): coletora fictícia, solicitação anterior à aprovação, rejeição sem documentos, upload, análise, reprovação/motivo, correção/reenvio, aprovação, alerta retroativo e acesso ao documento próprio/alheio. No ensaio de homologação, HTTPS externo foi bloqueado para exercitar o cadastro por coordenadas manuais sem CDN/CEP. Dois aplicativos locais usaram banco isolado na porta 15432; isso não comprova VPS nem dois computadores.
+
+A [reprodução anterior](evidencias/design-homologacao-20261126/reproducao-download-500.json) passou em nove casos e encontrou HTTP 500 no download fora da coletora dona. Após correção, os dois controllers devolvem404 vazio; dois testes específicos e o E2E final confirmam a negativa sem arquivo. Esse resultado inicial falho permanece histórico, sem ser apresentado como aprovação.
+
+Treze testes Node cobrem seis casos de configuração do ensaio e sete do seletor de localização: concorrência de CEP/geocoder, invalidação das coordenadas e alternativa manual em falha externa. Não equivalem a treze novos testes Java nem devem ser somados aos 345.

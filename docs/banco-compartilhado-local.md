@@ -33,7 +33,7 @@ Reservar IP privado/DHCP para a anfitriã. `localhost` na máquina do colega apo
 
 O script não muda a categoria da rede. Cria permissão para os IPs informados e bloqueios IPv4 complementares para a porta 5432, incluindo quando há regras anteriores permissivas. Não abre roteador, internet ou todos os endereços da LAN. Se regras E-Waste já existirem, o script interrompe para conferência; não apaga regras de terceiros. Docker Desktop/WSL pode exigir conferência adicional de firewall; a prova é testar origem autorizada e outra não autorizada.
 
-Só depois da proteção, ajustar no `.env` da anfitriã `DB_BIND_IP=<IP_PRIVADO_ANFITRIA>` e o host de `DB_URL` para esse mesmo IP; executar `docker compose up -d db`. Confirmar o IP ATUAL com `Get-NetIPAddress`; ele mudou durante esta execução, portanto não copiar um IP antigo de um log. Se Docker não puder vincular o endereço, conferir a interface e voltar ao bind local sem apagar o volume. Esta sessão não tinha privilégio de administrador e não executou a liberação da rede.
+Só depois da proteção, ajustar no `.env` da anfitriã `DB_BIND_IP=<IP_PRIVADO_ANFITRIA>` e o host de `DB_URL` para esse mesmo IP; executar `docker compose up -d db`. Confirmar o IP ATUAL com `Get-NetIPAddress`; ele mudou durante esta execução, portanto não copiar um IP antigo de um log. Se Docker não puder vincular o endereço, conferir a interface e voltar ao bind local sem apagar o volume. A liberação da rede exige privilégio de administrador e ainda não foi executada.
 
 ## Configuração de cada integrante
 

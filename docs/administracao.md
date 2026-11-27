@@ -1,6 +1,6 @@
 # Fundamentos da Administração — E-Waste
 
-Entrega baseada nas pp.6–7 do PDF oficial. Identidade aprovada pela equipe e funções definidas por autorização do usuário em 24/11/2026. Custos continuam estimativas didáticas, não despesas pagas ou salários reais. Referência canônica: [equipe e decisões](equipe.md).
+Entrega baseada nas pp.6–7 do PDF oficial. Identidade aprovada e funções definidas pela equipe em 24/11/2026. Custos continuam estimativas didáticas, não despesas pagas ou salários reais. Referência canônica: [equipe e decisões](equipe.md).
 
 ## Identidade e planejamento estratégico
 
@@ -14,7 +14,7 @@ Missão descreve a finalidade atual; Visão é uma aspiração, sem promessa de 
 
 ## Organograma e responsabilidades definidas
 
-Grupo 01, Engenharia de Software, 4º período, turma 1: Davi Fraga, Guilherme Gonçalves, Miguel Melo, Felipe Rohnelt e Rafael Camargo. Matrículas dispensadas. Funções definidas com a autorização do usuário; não são alegações sobre contribuições já realizadas.
+Grupo 01, Engenharia de Software, 4º período, turma 1: Davi Fraga, Guilherme Gonçalves, Miguel Melo, Felipe Rohnelt e Rafael Camargo. Matrículas dispensadas. Funções definidas pela equipe; não são alegações sobre contribuições já realizadas.
 
 Fonte gráfica: [uml/organograma.puml](uml/organograma.puml); [PNG](uml/organograma.png). Responsabilidades e revisão cruzada detalhadas em [equipe.md](equipe.md).
 
@@ -26,7 +26,7 @@ Coordenação e Design — Miguel Melo
 └── Banco de Dados II, Administração e custos — Rafael Camargo
 ```
 
-Miguel coordena dependências e a entrega; os focos colaboram com essa coordenação, sem vínculo empregatício presumido. Todos estudam o projeto completo e participam de revisão cruzada. Rafael é operador do banco/migrations; Felipe responde pelas cópias e ensaios de recuperação. A futura anfitriã será o computador de Felipe, mas a transferência e o ensaio de rede ainda não foram executados; backup nesse mesmo computador não conta como cópia externa. A participação de cinco integrantes foi confirmada pelo usuário como aceita pelos professores, mantendo-se a divergência original do PDF registrada em requisitos.md.
+Miguel coordena dependências e a entrega; os focos colaboram com essa coordenação, sem vínculo empregatício presumido. Todos estudam o projeto completo e participam de revisão cruzada. Rafael é operador do banco/migrations; Felipe responde pelas cópias e ensaios de recuperação. A futura anfitriã será o computador de Felipe, mas a transferência e o ensaio de rede ainda não foram executados; backup nesse mesmo computador não conta como cópia externa. A participação de cinco integrantes foi aceita pelos professores, mantendo-se a divergência original do PDF registrada em requisitos.md.
 
 ## Custos e premissas
 
