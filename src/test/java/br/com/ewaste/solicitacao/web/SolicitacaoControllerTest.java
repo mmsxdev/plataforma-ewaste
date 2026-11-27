@@ -133,6 +133,36 @@ class SolicitacaoControllerTest {
   }
 
   @Test
+  void errosFicamAssociadosAosCamposParaLeitorDeTela() throws Exception {
+    String html =
+        mvc.perform(valido("pesoEstimadoKg", "0", "uf", "SPX", "itens[0].quantidade", "0"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    assertThat(html).containsPattern("<p class=\"error-box\" role=\"alert\" tabindex=\"-1\"");
+    assertThat(campo(html, "pesoEstimadoKg"))
+        .contains("aria-invalid=\"true\"", "aria-describedby=\"pesoEstimadoKg-erro\"");
+    assertThat(campo(html, "uf")).contains("aria-invalid=\"true\"", "aria-describedby=\"uf-erro\"");
+    assertThat(campo(html, "itens[0].quantidade"))
+        .contains("aria-invalid=\"true\"", "aria-describedby=\"itens0.quantidade-erro\"");
+    assertThat(html)
+        .contains("id=\"pesoEstimadoKg-erro\"", "id=\"uf-erro\"", "id=\"itens0.quantidade-erro\"");
+    assertThat(campo(html, "cidade")).doesNotContain("aria-invalid", "aria-describedby");
+  }
+
+  /** Tag de abertura do campo com o {@code name} informado. */
+  private static String campo(String html, String nome) {
+    var tag =
+        java.util.regex.Pattern.compile(
+                "<(?:input|select)[^>]*name=\"" + java.util.regex.Pattern.quote(nome) + "\"[^>]*>")
+            .matcher(html);
+    assertThat(tag.find()).as("campo %s na página", nome).isTrue();
+    return tag.group();
+  }
+
+  @Test
   void semLocalERecusadoEMantemOQueFoiDigitado() throws Exception {
     mvc.perform(valido("latitude", "", "longitude", ""))
         .andExpect(status().isOk())
