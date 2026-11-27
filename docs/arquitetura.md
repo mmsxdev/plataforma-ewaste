@@ -32,11 +32,27 @@ Somente operador aplica Flyway; team exige configuração privada, valida o esqu
 | Fotos, números de série, documentos / evidências | referências em tabelas e bytes no PostgreSQL team; disco fora de team | Donos autorizados por serviço; tipos/tamanho/conteúdo validados; não servir pasta pública irrestrita. Evitar rostos/dados pessoais na massa fictícia. |
 | Estados e auditoria / acompanhamento e integridade | evento_rastreio, solicitacao_auditoria | Usuários autorizados e operador; conta SQL técnica registrada não identifica pessoa humana nem torna trilha imutável contra DBA. |
 
-Mesmo em B2B, nome/e-mail e possivelmente localização/imagem podem identificar pessoas naturais. A LGPD demanda análise conforme finalidade e contexto; a exceção para fins exclusivamente acadêmicos do art.4º II b mantém aplicação dos arts.7º e 11. Usar dados fictícios no protótipo reduz exposição, mas não autoriza afirmar dispensa geral ou conformidade jurídica integral. A equipe confirmou uso exclusivamente acadêmico com dados fictícios e sem produção ou uso planejado de pessoas reais. O prazo de retenção da massa de demonstração ainda não foi definido. Bases legais, responsável pelo tratamento e canal de atendimento exigiriam decisão específica antes de qualquer mudança para dados reais, fora do escopo atual. Não inferir consentimento do mero cadastro nem dispensa jurídica geral. [Decisão e responsabilidades](equipe.md).
+Mesmo em B2B, nome/e-mail e possivelmente localização/imagem podem identificar pessoas naturais. A LGPD demanda análise conforme finalidade e contexto; a exceção para fins exclusivamente acadêmicos do art.4º II b mantém aplicação dos arts.7º e 11. Usar dados fictícios no protótipo reduz exposição, mas não autoriza afirmar dispensa geral ou conformidade jurídica integral. A equipe confirmou uso exclusivamente acadêmico com dados fictícios e sem produção ou uso planejado de pessoas reais. O prazo de retenção da massa de demonstração está definido na seção seguinte. Bases legais, responsável pelo tratamento e canal de atendimento exigiriam decisão específica antes de qualquer mudança para dados reais, fora do escopo atual. Não inferir consentimento do mero cadastro nem dispensa jurídica geral. [Decisão e responsabilidades](equipe.md).
 
 Proteção operacional ainda depende de rede, permissões do host, segredos e backups; o código não configura automaticamente TLS, criptografia de volume ou firewall. Não alegar criptografia em repouso por haver BYTEA ou hash. RSA didático de teoria-computacao.md é separado da proteção real.
 
 Os contratos entre módulos estão em [contratos](contratos.md).
+
+### Retenção da massa de demonstração
+
+A massa de demonstração reúne contas, empresas, solicitações, eventos, evidências e PDFs, todos fictícios. Ela existe para desenvolver, avaliar e apresentar o PI; a finalidade termina com a avaliação. Por isso, a massa fica guardada até **31/12/2026** e é eliminada nesta data. O prazo cobre a entrega (05/12/2026), a apresentação (07/12/2026), o ponto de controle de 25/12/2026 mantido no calendário adotado e um eventual pedido de nova demonstração pelos professores.
+
+| Onde está | O que eliminar | Responsável |
+| --- | --- | --- |
+| PostgreSQL team, na anfitriã em uso | Banco de demonstração, inclusive os bytes em `arquivo_compartilhado` | Rafael, operador do banco |
+| Cópias de backup e bancos de ensaio de restauração | Todas as cópias da massa, sem esperar o rodízio de 7 diárias e 4 semanais | Felipe, responsável pelas cópias |
+| Computadores dos integrantes | Bancos locais, `STORAGE_DIR`, `target/evidencias` e PDFs baixados | Cada integrante |
+
+Permanecem no repositório o código, as migrações, os seeds fictícios e `docs/evidencias`. Essas evidências guardam contagens, hashes, resultados e capturas de tela com dados fictícios. Com os seeds, a demonstração pode ser recriada do zero sem guardar a massa antiga.
+
+Dado real inserido por engano, como e-mail, telefone ou rosto em foto, é apagado assim que for notado, sem esperar o prazo. Cada eliminação é registrada numa issue do repositório, com data, responsável e locais apagados, sem copiar os dados.
+
+O critério usa a LGPD como referência de projeto: o tratamento termina quando a finalidade é alcançada (art. 15, I), os dados são eliminados após o término (art. 16) e o tratamento se limita ao necessário (art. 6º, III). Como a massa é fictícia, esta decisão não é declaração de conformidade. Prazos para dados reais de conta, histórico e documentos dependeriam de base legal e de obrigações do setor e continuam fora do escopo.
 
 ## Referências
 
