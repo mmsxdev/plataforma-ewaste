@@ -38,7 +38,7 @@ Modelo adotado: **ABNT, capa, folha de rosto (contracapa) e sumário**. A revis�
 
 ## Dados e custos
 
-Uso exclusivamente acadêmico, com contas, empresas, materiais e mídias fictícios; **sem implantação em produção nem uso planejado de dados pessoais reais**. O prazo de retenção dos dados de demonstração ainda não foi definido. Esta decisão não elimina a análise acadêmica de dados pessoais/segurança nem constitui alegação geral de conformidade jurídica.
+Uso exclusivamente acadêmico, com contas, empresas, materiais e mídias fictícios; **sem implantação em produção nem uso planejado de dados pessoais reais**. Os dados de demonstração ficam guardados até 31/12/2026 e são eliminados nesta data, inclusive nas cópias de backup; responsáveis e locais estão em [arquitetura.md](arquitetura.md). Esta decisão não elimina a análise acadêmica de dados pessoais/segurança nem constitui alegação geral de conformidade jurídica.
 
 Taxa didática de desenvolvimento aprovada: **R$120/h**, mantendo 80 horas totais estimadas e reserva de 10%. Desenvolvimento base R$9.600 + reserva R$960 = **R$10.560**. Operação permanece **R$120/mês** e horizonte de três meses totaliza **R$10.920**. A taxa de suporte operacional permanece R$30/h. Não são salários reais, horas realizadas ou despesas comprovadas; fórmulas e premissas estão na [planilha](custos.xlsx) e no [CSV](custos-premissas.csv).
 
