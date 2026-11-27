@@ -69,4 +69,4 @@ Roteiro de transferência autorizado, ainda não executado: [transferencia-felip
 
 ## Destino revisto para VPS — decisão posterior
 
-Em 25/11 o usuário substituiu o plano de anfitriã no PC do Felipe por uma VPS pessoal dele. A restauração local e a aplicação UP no Felipe foram relatadas pelo usuário; não foram verificadas diretamente nesta sessão. A VPS ainda aguarda configuração/acesso e comprovação de dados/arquivos/rede/backup. O acesso dos integrantes será limitado ao projeto; administração geral da VPS permanece com Felipe. Não apresentar a VPS como implantada. O teste local desta sessão usa somente a instância isolada na porta 15432.
+Em 25/11 a equipe substituiu o plano de anfitriã no PC do Felipe por uma VPS administrada por ele. A restauração local e a aplicação UP no computador de Felipe foram concluídas por ele; a evidência formal ainda deve ser anexada. A VPS ainda aguarda configuração/acesso e comprovação de dados/arquivos/rede/backup. O acesso dos integrantes será limitado ao projeto; administração geral da VPS permanece com Felipe. Não apresentar a VPS como implantada. O teste local de 26/11 usa somente a instância isolada na porta 15432.

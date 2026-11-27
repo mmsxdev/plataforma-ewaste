@@ -1,6 +1,6 @@
 # Ferramentas de demonstração
 
-Node.js 22 ou superior e npm. As dependências de teste do navegador pertencem a este diretório, não à aplicação Java. Não dependem de uma instalação do Codex, junction em target ou Chrome em caminho fixo.
+Node.js 22 ou superior e npm. As dependências de teste do navegador pertencem a este diretório, não à aplicação Java. Não dependem de instalações externas, junction em target ou Chrome em caminho fixo.
 
 ## Bootstrap do navegador
 

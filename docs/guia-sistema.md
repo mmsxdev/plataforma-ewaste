@@ -16,7 +16,7 @@ Faça login com a conta criada. Os usuários dos seeds existem somente em ambien
 4. Envie. Um ponto indisponível ou incompatível deve provocar mensagem de rejeição, sem pedido parcial. Corrija o material ou volte à consulta.
 5. Na solicitação criada, confira situação e histórico. A escolha do ponto informa o destino; não significa que uma coletora já assumiu. O modelo B2B mantém roteamento para coletoras aptas no raio.
 
-Coleta no endereço sem ponto continua disponível por compatibilidade com o fluxo existente. Não apresentar essa alternativa como prova de que entrega presencial foi implementada; a suficiência do recorte de coleta foi informada pelo usuário como confirmada pelos professores, sem alegar que existe entrega presencial.
+Coleta no endereço sem ponto continua disponível por compatibilidade com o fluxo existente. Não apresentar essa alternativa como prova de que entrega presencial foi implementada; a suficiência do recorte de coleta foi confirmada pelos professores, sem alegar que existe entrega presencial.
 
 ## 3 Corrigir e acompanhar
 
@@ -40,7 +40,7 @@ Evidências históricas estão em [evidencias](evidencias/). A rodada E2E de fec
 
 ## 6 Limites e cuidados
 
-A homologação possui telas de envio, análise, aprovação e reprovação. Suspensão permanece sem ação na interface; financeiro e notificações não possuem telas completas. Não usar dados pessoais reais, importar fotos reais ou expor credenciais. Problemas de acesso ao banco/rede são tratados pelo operador, sem reset/limpeza dos dados. As divergências originais e confirmações posteriores de datas/grupo/B2B estão em [requisitos](requisitos.md) e [equipe](equipe.md). O destino atual planejado é a VPS pessoal do Felipe; a restauração local no PC dele foi relatada pelo usuário, mas VPS/rede/cópia externa ainda não foram comprovadas nesta sessão. Não apontar clientes para cópias divergentes durante a preparação.
+A homologação possui telas de envio, análise, aprovação e reprovação. Suspensão permanece sem ação na interface; financeiro e notificações não possuem telas completas. Não usar dados pessoais reais, importar fotos reais ou expor credenciais. Problemas de acesso ao banco/rede são tratados pelo operador, sem reset/limpeza dos dados. As divergências originais e confirmações posteriores de datas/grupo/B2B estão em [requisitos](requisitos.md) e [equipe](equipe.md). O destino atual planejado é a VPS administrada por Felipe; a restauração local no computador de Felipe foi concluída, mas VPS, rede e cópia externa ainda não foram comprovadas. Não apontar clientes para cópias divergentes durante a preparação.
 
 ## Homologação e alertas retroativos
 

@@ -8,7 +8,7 @@ Antes de criar o banco foram listados containers, volumes e rótulos: nenhum ide
 
 ## Transição operacional aprovada em 24/11/2026
 
-A futura anfitriã do PostgreSQL compartilhado será **a máquina de Felipe Rohnelt**, por escolha explícita do usuário. **Rafael Camargo é o operador do banco/migrador; Felipe responde pelas cópias e ensaios de recuperação.** A instância atual em Miguel permanece preservada até a transferência ser executada e validada. Esta decisão documental não indica que o banco foi movido, que IP/firewall/VPN estejam configurados ou que o acesso entre computadores já tenha passado.
+A futura anfitriã do PostgreSQL compartilhado será **a máquina de Felipe Rohnelt**, por decisão da equipe. **Rafael Camargo é o operador do banco/migrador; Felipe responde pelas cópias e ensaios de recuperação.** A instância atual em Miguel permanece preservada até a transferência ser executada e validada. Esta decisão documental não indica que o banco foi movido, que IP/firewall/VPN estejam configurados ou que o acesso entre computadores já tenha passado.
 
 Antes da troca: inventariar o ambiente de Felipe sem reutilizar volumes desconhecidos; fixar a revisão do esquema; produzir backup consistente do banco e arquivos; restaurar em destino isolado, conferir contagens/bytes/hash/privilégios e uma operação/download; preparar acesso apenas às máquinas autorizadas e executar o teste cruzado real. Só depois promover a instância de Felipe e trocar as URLs dos clientes de forma coordenada. Durante a preparação, a cópia de destino não é outro banco comum para escrita independente. Não apagar a origem nem substituir volumes/dados para concluir o ensaio.
 
