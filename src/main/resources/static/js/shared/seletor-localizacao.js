@@ -2,6 +2,7 @@
    Opcional: #cep e #cep-buscar localizam a rua (ViaCEP + Nominatim/OpenStreetMap) e
    preenchem #endereco, #cidade e #uf quando existirem. O CEP não é enviado ao servidor.
    Opcional: #raioAtendimentoKm (km) desenha o perímetro de atendimento em volta do ponto.
+   Teclado: com o mapa em foco, as setas e +/- movem o mapa (Leaflet) e Enter/Espaço marca o centro.
    Carrega Leaflet apenas nas telas que usam o seletor; coordenadas manuais sempre disponíveis. */
 (() => {
   'use strict';
@@ -69,6 +70,14 @@
       cancelarBusca();
       definirCoordenadas(latlng.lat, latlng.lng);
       marcar(latlng); informar('Localização selecionada. Confira o endereço informado.');
+    });
+    // Alternativa ao clique para quem usa só o teclado (WCAG 2.1.1); ignora os botões de zoom.
+    container.addEventListener('keydown', (evento) => {
+      if (evento.target !== container || (evento.key !== 'Enter' && evento.key !== ' ')) return;
+      evento.preventDefault();
+      const centro = mapa.getCenter();
+      definirCoordenadas(centro.lat, centro.lng);
+      marcar(centro); informar('Localização marcada no centro do mapa. Confira o endereço informado.');
     });
     [latitude, longitude].forEach((campo) => campo.addEventListener('change', () => {
       cancelarBusca();

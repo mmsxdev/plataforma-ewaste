@@ -17,3 +17,7 @@ document.querySelectorAll('.itens-form').forEach((linha) => {
   });
   validar();
 });
+
+// Página devolvida com erros: o foco vai ao resumo para o leitor de tela anunciá-lo.
+const resumoErros = document.querySelector('form .error-box[tabindex="-1"]');
+if (resumoErros) resumoErros.focus();
