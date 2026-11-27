@@ -6,7 +6,7 @@
   <p class="eyebrow" th:text="${tipo == 'coletora' ? 'Parceiros de coleta' : 'Empresas geradoras'}"></p>
   <h1 th:text="${tipo == 'coletora' ? 'Cadastre sua coletora' : 'Dê um destino aos seus resíduos'}"></h1>
   <p th:if="${tipo == 'coletora'}">Após o cadastro, envie sua documentação para homologação. O cadastro não habilita o recebimento de oportunidades automaticamente.</p>
-  <p>Preencha todos os campos. A localização é indicada pelo CEP e pelo mapa.</p>
+  <p>Preencha todos os campos. Indique a localização pelo CEP, pelo mapa ou pelas coordenadas manuais.</p>
   <form class="card" th:action="@{/cadastro/{tipo}(tipo=${tipo})}" th:object="${cadastro}" method="post">
     <div class="error-box" role="alert" th:if="${#fields.hasAnyErrors()}">
       <strong>Revise os dados antes de continuar.</strong><ul><li th:each="erro : ${#fields.allErrors()}" th:text="${erro}"></li></ul>
@@ -29,8 +29,14 @@
     <small id="cep-ajuda">Preenche endereço, cidade e UF e leva o mapa até a rua. O CEP não é armazenado.</small>
     <div id="mapa-localizacao" class="map" aria-label="Mapa para selecionar localização" aria-describedby="localizacao-ajuda"></div>
     <p id="localizacao-status" role="status"></p>
-    <input type="hidden" th:field="*{latitude}">
-    <input type="hidden" th:field="*{longitude}">
+    <details id="localizacao-manual" open>
+      <summary>Informar coordenadas manualmente</summary>
+      <p id="coordenadas-ajuda">Alternativa ao mapa e à busca por CEP. Use graus decimais para indicar a localização exata.</p>
+      <div class="form-grid">
+        <div><label for="latitude">Latitude</label><input type="number" th:field="*{latitude}" min="-90" max="90" step="any" required aria-describedby="coordenadas-ajuda"><span class="erro" th:errors="*{latitude}"></span></div>
+        <div><label for="longitude">Longitude</label><input type="number" th:field="*{longitude}" min="-180" max="180" step="any" required aria-describedby="coordenadas-ajuda"><span class="erro" th:errors="*{longitude}"></span></div>
+      </div>
+    </details>
     <div class="form-grid" th:if="${tipo == 'coletora'}">
       <div><label for="raioAtendimentoKm">Raio de atendimento (km)</label><input th:field="*{raioAtendimentoKm}" required type="number" min="1" step="1"></div>
     </div>

@@ -150,6 +150,24 @@ class SolicitacaoControllerTest {
     assertThat(html)
         .contains("id=\"pesoEstimadoKg-erro\"", "id=\"uf-erro\"", "id=\"itens0.quantidade-erro\"");
     assertThat(campo(html, "cidade")).doesNotContain("aria-invalid", "aria-describedby");
+    assertThat(campo(html, "latitude"))
+        .doesNotContain("aria-invalid")
+        .contains("aria-describedby=\"coordenadas-ajuda\"");
+  }
+
+  @Test
+  void coordenadasAusentesFicamAssociadasAAjudaEAoErro() throws Exception {
+    String html =
+        mvc.perform(valido("latitude", "", "longitude", ""))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    assertThat(campo(html, "latitude"))
+        .contains("aria-invalid=\"true\"", "aria-describedby=\"coordenadas-ajuda latitude-erro\"");
+    assertThat(campo(html, "longitude"))
+        .contains("aria-invalid=\"true\"", "aria-describedby=\"coordenadas-ajuda longitude-erro\"");
+    assertThat(html).contains("id=\"latitude-erro\"", "id=\"longitude-erro\"");
   }
 
   /** Tag de abertura do campo com o {@code name} informado. */

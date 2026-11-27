@@ -85,10 +85,14 @@
       </div>
       <div id="mapa-localizacao" class="map secao" aria-label="Mapa para selecionar o local da coleta" aria-describedby="localizacao-ajuda"></div>
       <p id="localizacao-status" role="status"></p>
-      <input type="hidden" th:field="*{latitude}">
-      <input type="hidden" th:field="*{longitude}">
-      <span class="erro" th:if="${#fields.hasErrors('latitude')}" th:errors="*{latitude}"></span>
-      <span class="erro" th:if="${#fields.hasErrors('longitude')}" th:errors="*{longitude}"></span>
+      <details id="localizacao-manual" open>
+        <summary>Informar coordenadas manualmente</summary>
+        <p id="coordenadas-ajuda">Alternativa ao mapa e à busca por CEP. Use graus decimais para indicar a localização exata da retirada.</p>
+        <div class="form-grid">
+          <div><label for="latitude">Latitude</label><input type="number" th:field="*{latitude}" min="-90" max="90" step="any" required th:aria-invalid="${#fields.hasErrors('latitude')} ? 'true'" th:aria-describedby="${#fields.hasErrors('latitude')} ? 'coordenadas-ajuda latitude-erro' : 'coordenadas-ajuda'"><span class="erro" id="latitude-erro" th:errors="*{latitude}"></span></div>
+          <div><label for="longitude">Longitude</label><input type="number" th:field="*{longitude}" min="-180" max="180" step="any" required th:aria-invalid="${#fields.hasErrors('longitude')} ? 'true'" th:aria-describedby="${#fields.hasErrors('longitude')} ? 'coordenadas-ajuda longitude-erro' : 'coordenadas-ajuda'"><span class="erro" id="longitude-erro" th:errors="*{longitude}"></span></div>
+        </div>
+      </details>
       <p class="dica">A localização define quais coletoras da região recebem o alerta.</p>
 
       <button type="submit">Criar solicitação</button>

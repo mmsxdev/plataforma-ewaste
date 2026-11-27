@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-26",
+  "command": "npm.cmd test --prefix tools",
+  "tests": 13,
+  "passed": 13,
+  "failed": 0,
+  "skipped": 0,
+  "scope": "6 testes de configuração; 7 testes do seletor de localização, com serviços/DOM simulados"
+}

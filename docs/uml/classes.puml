@@ -74,4 +74,75 @@ Associações entre módulos por ID,
 sem entidades JPA cruzadas.
 PontoResumo é projeção JDBC, não entidade JPA.
 end note
+package "Homologação e alerta retroativo" {
+  class Homologacao {
+    empresaId : Long
+    status : StatusHomologacao
+    enviarParaAnalise()
+    aprovar(adminId)
+    reprovar(adminId, motivo)
+  }
+  class DocumentoHomologacao {
+    tipo : TipoDocumentoHomologacao
+    arquivoRef : String
+    validade : LocalDate
+  }
+  class HomologacaoColetoraController
+  class AdminHomologacaoController
+  class HomologacaoService {
+    enviarDocumento(coletoraId, tipo, validade, arquivo)
+    enviarParaAnalise(coletoraId)
+    aprovar(homologacaoId, adminId)
+    reprovar(homologacaoId, adminId, motivo)
+  }
+  interface ColetorasAptas {
+    listarAptas()
+  }
+  enum StatusHomologacao {
+    PENDENTE
+    EM_ANALISE
+    APROVADA
+    REPROVADA
+    SUSPENSA
+  }
+  interface EmpresaConsulta {
+    buscar(id)
+  }
+  class ColetorasAptasService
+  class ColetoraHomologadaEvent <<record>> {
+    coletoraId : Long
+  }
+  class AlertaAoHomologar {
+    aoHomologar(evento)
+  }
+  interface SolicitacaoConsulta {
+    listarAbertas()
+  }
+  class AlertaSolicitacaoRepository
+  class AlertaSolicitacao {
+    solicitacaoId : Long
+    coletoraId : Long
+    distanciaKm : BigDecimal
+  }
+  class AlertasEnviadosEvent <<record>>
+  Homologacao "1" *-- "0..*" DocumentoHomologacao
+  HomologacaoColetoraController --> HomologacaoService
+  AdminHomologacaoController --> HomologacaoService
+  HomologacaoService --> Homologacao
+  HomologacaoService ..> ColetoraHomologadaEvent : publica na aprovação
+  ColetorasAptasService ..|> ColetorasAptas
+  ColetoraHomologadaEvent ..> AlertaAoHomologar : AFTER_COMMIT / REQUIRES_NEW
+  AlertaAoHomologar --> EmpresaConsulta
+  AlertaAoHomologar --> ColetorasAptas
+  AlertaAoHomologar --> SolicitacaoConsulta
+  AlertaAoHomologar --> AlertaSolicitacaoRepository
+  AlertaSolicitacaoRepository --> AlertaSolicitacao
+  AlertaAoHomologar ..> AlertasEnviadosEvent : publica após gravar
+}
+Empresa "1" -- "0..1" Homologacao : empresaId
+note bottom of AlertaAoHomologar
+Só solicitações ABERTAS no raio, com coletora apta.
+Referências entre módulos são IDs/APIs, sem JPA cruzada.
+Suspender não possui ação na interface atual.
+end note
 @enduml

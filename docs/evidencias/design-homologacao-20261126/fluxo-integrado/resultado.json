@@ -1,0 +1,71 @@
+{
+  "started": "2026-11-26T22:23:24.120Z",
+  "scope": "Duas JVMs locais no mesmo computador; teste entre duas máquinas permanece pendente",
+  "run_id": "design-integrado-final-20261126",
+  "tag": "PI-1795731804120",
+  "apps": {
+    "A": "http://127.0.0.1:18080",
+    "B": "http://127.0.0.1:18081"
+  },
+  "schedule": {
+    "value": "2026-11-28T19:23",
+    "timeZone": "America/Sao_Paulo",
+    "instant": "2026-11-28T22:23:00.000Z"
+  },
+  "node": "v22.21.1",
+  "checks": [
+    {
+      "name": "home e identidade visíveis",
+      "passed": true
+    },
+    {
+      "name": "cadastro fictício pela interface",
+      "passed": true
+    },
+    {
+      "name": "consulta banco → AVL → lista e categoria",
+      "passed": true
+    },
+    {
+      "name": "rejeição de material incompatível pelo servidor",
+      "passed": true
+    },
+    {
+      "name": "solicitação válida e persistência",
+      "passed": true
+    },
+    {
+      "name": "registro criado em A aparece em B",
+      "passed": true
+    },
+    {
+      "name": "edição autorizada enquanto aberta",
+      "passed": true
+    },
+    {
+      "name": "coletora aceita e agenda pelo navegador",
+      "passed": true
+    },
+    {
+      "name": "edição rejeitada após aceite",
+      "passed": true
+    },
+    {
+      "name": "upload em A recuperado em B",
+      "passed": true
+    },
+    {
+      "name": "destinação via procedure e PDFs recuperados em B",
+      "passed": true
+    },
+    {
+      "name": "interface móvel e navegação por teclado",
+      "passed": true
+    }
+  ],
+  "browser": "159.0.8154.6",
+  "solicitacao_id": 9,
+  "pdf_sha256": "e8da78556bf8ad6581eb1d5c233c6f2087f88c2cff281724f41c18b2e3d115ba",
+  "passed": true,
+  "finished": "2026-11-26T22:23:28.156Z"
+}

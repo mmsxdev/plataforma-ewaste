@@ -8,6 +8,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,5 +72,31 @@ class HomologacaoControllersTest {
     mvc.perform(post("/admin/homologacoes/3/aprovar").with(user("a").roles("ADMIN")).with(csrf()))
         .andExpect(redirectedUrl("/admin/homologacoes"));
     verify(servico).aprovar(3L, 1L);
+  }
+
+  @Test
+  void documentoDeOutraColetoraRetorna404SemArquivoNemDetalheInterno() throws Exception {
+    when(usuarioAtual.atual())
+        .thenReturn(new UsuarioLogado(5L, 8L, "Coletora", PerfilUsuario.COLETORA));
+    when(servico.documentoDaColetora(8L, 99L))
+        .thenThrow(new IllegalArgumentException("Documento pertence a outra empresa."));
+
+    mvc.perform(get("/coletora/homologacao/documentos/99").with(user("c").roles("COLETORA")))
+        .andExpect(status().isNotFound())
+        .andExpect(content().string(""))
+        .andExpect(header().doesNotExist("Content-Disposition"));
+    verify(servico).documentoDaColetora(8L, 99L);
+  }
+
+  @Test
+  void adminComHomologacaoInexistenteRetorna404SemDetalheInterno() throws Exception {
+    when(servico.documentoParaAdmin(999L, 55L))
+        .thenThrow(new IllegalArgumentException("Homologação não encontrada."));
+
+    mvc.perform(get("/admin/homologacoes/999/documentos/55").with(user("a").roles("ADMIN")))
+        .andExpect(status().isNotFound())
+        .andExpect(content().string(""))
+        .andExpect(header().doesNotExist("Content-Disposition"));
+    verify(servico).documentoParaAdmin(999L, 55L);
   }
 }

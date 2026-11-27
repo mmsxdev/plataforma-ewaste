@@ -335,6 +335,8 @@ Fonte: `V601__recursos_academicos.sql`.
 
 Atomicidade: empresa/usuário e solicitação/itens em transação; no team bytes e referências participam do mesmo banco. Consistência: validações de domínio e PK/FK/check/unique. Isolamento: locks de solicitação, @Version e testes concorrentes em operações críticas; não alegar serialização de toda a aplicação. Durabilidade: commit/WAL do PostgreSQL; backup e recuperação continuam necessários contra falha do host. Fora do team, arquivos de disco não integram rollback SQL automaticamente.
 
+A documentação do PostgreSQL fundamenta os recursos do SGBD descritos nesta seção (PostgreSQL Global Development Group, 2026).
+
 As provas históricas anteriores ao fechamento de 24/11/2026 incluem testes de rollback/concorrência, Function/View/Procedure/Trigger no verify aprovado (229 unitários + 91 IT, zero falhas/erros/pulos). A destinação pela Procedure também foi exercitada no navegador; a restauração isolada foi executada. Detalhes em [testes](testes.md); não inferimos aprovação só pela presença de @Transactional.
 
 ## Administração, permissões e recuperação
@@ -345,11 +347,11 @@ Política proposta: backup diário/pré-migração, retenção 7 diários/4 sema
 
 ## Referências
 
-FACULDADE SENAI FATESG. **Projeto Integrador 2026-2: Engenharia de Software, 4º período**. Goiânia, 2026. p.3–4.
+FACULDADE SENAI FATESG. **Projeto Integrador 2026-2: Engenharia de Software, 4º período**. Goiânia, 2026. 9 p. Documento fornecido à equipe, arquivo PI2026-2 ENG4-T1.pdf.
 
 POSTGRESQL GLOBAL DEVELOPMENT GROUP. **PostgreSQL 16 documentation**. 2026. Disponível em: https://www.postgresql.org/docs/16/index.html. Acesso em: 23 nov. 2026.
 
-E-WASTE. **Migrations V1–V601 e contratos entre módulos**. Código-fonte deste repositório, src/main/resources/db/migration e docs/contratos.md. 2026.
+E-WASTE. **Migrations V1-V601 e contratos entre módulos**. Goiânia, 2026. Código-fonte e documentação, diretórios src/main/resources/db/migration e docs/contratos.md. Disponível em: https://github.com/mmsxdev/plataforma-ewaste. Acesso em: 26 nov. 2026.
 
 ## Evidência de recuperação e limites operacionais
 

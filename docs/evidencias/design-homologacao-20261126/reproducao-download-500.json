@@ -1,0 +1,58 @@
+{
+  "started": "2026-11-26T22:19:45.740Z",
+  "run_id": "homologacao-final-20261126-1",
+  "scope": "Navegador real, uma aplicação local de demonstração; não comprova duas máquinas ou VPS",
+  "app": "http://127.0.0.1:18080",
+  "node": "v22.21.1",
+  "tag": "HOMO-1795731585737-0413",
+  "servicos_externos": "HTTPS externo bloqueado para exercitar coordenadas manuais sem CDN/CEP",
+  "validade_documento": "2027-11-26",
+  "pdf_fixture_sha256": "f9285d1fd8d5130fc9911c8a7eae78c1ead655914e65ad164e5cc5cb27cba3a2",
+  "checks": [
+    {
+      "name": "cadastro de coletora fictícia por coordenadas manuais",
+      "passed": true
+    },
+    {
+      "name": "solicitação ABERTA criada antes da aprovação",
+      "passed": true
+    },
+    {
+      "name": "UI e servidor recusam análise sem documentos obrigatórios",
+      "passed": true
+    },
+    {
+      "name": "upload dos dois PDFs obrigatórios e envio para análise",
+      "passed": true
+    },
+    {
+      "name": "ADMIN reprova com motivo e coletora visualiza a decisão",
+      "passed": true
+    },
+    {
+      "name": "coletora corrige documento e reenvia para análise",
+      "passed": true
+    },
+    {
+      "name": "ADMIN aprova a coletora com documentos em dia",
+      "passed": true
+    },
+    {
+      "name": "solicitação antiga chega retroativamente às oportunidades da coletora aprovada",
+      "passed": true
+    },
+    {
+      "name": "coletora baixa o próprio PDF com bytes íntegros",
+      "passed": true
+    }
+  ],
+  "browser": "159.0.8154.6",
+  "solicitacao_id": 7,
+  "homologacao_id": 3,
+  "pdf_recuperado_sha256": "f9285d1fd8d5130fc9911c8a7eae78c1ead655914e65ad164e5cc5cb27cba3a2",
+  "download_outra_coletora_status": 500,
+  "passed": false,
+  "failed_check": "outra coletora não consegue baixar o documento",
+  "error": "AssertionError [ERR_ASSERTION]: Esperado 400/403/404 ao negar documento, recebido 500",
+  "finished": "2026-11-26T22:19:51.110Z"
+}

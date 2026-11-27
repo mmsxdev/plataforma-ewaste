@@ -70,7 +70,11 @@ class HomologacaoColetoraController {
 
   @GetMapping("/documentos/{documentoId}")
   ResponseEntity<Resource> documento(@PathVariable Long documentoId) {
-    return Arquivos.download(homologacoes.documentoDaColetora(coletora(), documentoId));
+    try {
+      return Arquivos.download(homologacoes.documentoDaColetora(coletora(), documentoId));
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.notFound().build();
+    }
   }
 
   private String executar(RedirectAttributes redirect, String sucesso, Runnable acao) {
