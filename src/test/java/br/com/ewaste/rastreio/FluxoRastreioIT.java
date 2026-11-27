@@ -1,10 +1,14 @@
 package br.com.ewaste.rastreio;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import br.com.ewaste.TestcontainersConfiguration;
@@ -18,6 +22,13 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.parser.PdfTextExtractor;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +120,59 @@ class FluxoRastreioIT {
 
     assertThat(statusSolicitacao()).isEqualTo("AGENDADA");
     assertThat(rastreio.listar(solicitacao)).isEmpty();
+  }
+
+  @Test
+  void coletaSoEntraQuandoAgendada() {
+    jdbc.update(
+        "UPDATE solicitacao SET status = 'ACEITA', agendada_para = NULL WHERE id = ?", solicitacao);
+
+    assertThatThrownBy(
+            () ->
+                rastreio.registrarColeta(
+                    solicitacao, coletora, usuario, new BigDecimal("247.50"), null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("estado atual");
+
+    assertThat(statusSolicitacao()).isEqualTo("ACEITA");
+    assertThat(rastreio.listar(solicitacao)).isEmpty();
+  }
+
+  @Test
+  void cliqueDuploNaColetaRegistraUmaVezSemErro500() throws Exception {
+    CountDownLatch largada = new CountDownLatch(1);
+    Callable<RuntimeException> envio =
+        () -> {
+          largada.await();
+          try {
+            rastreio.registrarColeta(
+                solicitacao, coletora, usuario, new BigDecimal("247.50"), null);
+            return null;
+          } catch (RuntimeException e) {
+            return e;
+          }
+        };
+    try (ExecutorService pool = Executors.newFixedThreadPool(2)) {
+      Future<RuntimeException> primeiro = pool.submit(envio);
+      Future<RuntimeException> segundo = pool.submit(envio);
+      largada.countDown();
+
+      assertThat(
+              Stream.of(primeiro.get(30, SECONDS), segundo.get(30, SECONDS))
+                  .filter(Objects::nonNull))
+          .singleElement()
+          .isInstanceOf(IllegalArgumentException.class);
+    }
+    assertThat(statusSolicitacao()).isEqualTo("COLETADA");
+    assertThat(rastreio.listar(solicitacao)).extracting("tipo").containsExactly("COLETADA");
+
+    mvc.perform(
+            multipart("/coletora/coletas/{id}/coletar", solicitacao)
+                .param("pesoRealKg", "247.50")
+                .with(user("coletora@teste.com").roles("COLETORA"))
+                .with(csrf()))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(flash().attribute("erro", org.hamcrest.Matchers.containsString("estado atual")));
   }
 
   @Test

@@ -114,6 +114,7 @@ public class RastreioService implements RastreioConsulta {
     SolicitacaoResumo s = buscarDaColetora(id, coletoraId);
     BigDecimal peso = validarPeso(pesoRealKg);
     exigirStatus(s, StatusSolicitacao.AGENDADA);
+    travarNoStatus(id, StatusSolicitacao.AGENDADA);
     transicoes.marcarColetada(id);
     String evidencia = guardarFoto(foto, id);
     jdbc.update(
@@ -147,7 +148,7 @@ public class RastreioService implements RastreioConsulta {
         || !NIVEIS.contains(nivel)) {
       throw new IllegalArgumentException("Confira os dados da mídia destruída.");
     }
-    travarSeColetada(id);
+    travarNoStatus(id, StatusSolicitacao.COLETADA);
     if (listarMidias(id).size() >= s.qtdMidias()) {
       throw new IllegalArgumentException("Todas as mídias já foram registradas.");
     }
@@ -174,7 +175,7 @@ public class RastreioService implements RastreioConsulta {
     if (destinacao == null || destinacao.isBlank() || destinacao.length() > 500) {
       throw new IllegalArgumentException("Descreva a destinação final.");
     }
-    travarSeColetada(id);
+    travarNoStatus(id, StatusSolicitacao.COLETADA);
     if (existeEvento(id, "DESTINADA")) {
       throw new IllegalArgumentException("A destinação já foi registrada.");
     }
@@ -188,7 +189,7 @@ public class RastreioService implements RastreioConsulta {
   public void concluir(Long id, Long coletoraId, Long usuarioId) {
     SolicitacaoResumo s = buscarDaColetora(id, coletoraId);
     exigirStatus(s, StatusSolicitacao.COLETADA);
-    travarSeColetada(id);
+    travarNoStatus(id, StatusSolicitacao.COLETADA);
     List<EventoResumo> historico = listar(id);
     BigDecimal peso =
         historico.stream()
@@ -265,11 +266,15 @@ public class RastreioService implements RastreioConsulta {
         > 0;
   }
 
-  private void travarSeColetada(Long id) {
+  /**
+   * Trava a linha da solicitação até o fim da transação e confere o status de novo. Num clique
+   * duplo, o segundo envio espera o primeiro terminar e para aqui, antes de gravar foto ou evento.
+   */
+  private void travarNoStatus(Long id, StatusSolicitacao esperado) {
     String status =
         jdbc.queryForObject(
             "SELECT status FROM solicitacao WHERE id = ? FOR UPDATE", String.class, id);
-    if (!StatusSolicitacao.COLETADA.name().equals(status)) {
+    if (!esperado.name().equals(status)) {
       throw new IllegalArgumentException(
           "Esta operação não está disponível no estado atual da coleta.");
     }
